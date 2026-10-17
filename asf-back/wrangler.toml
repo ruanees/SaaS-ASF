@@ -28,6 +28,13 @@ command = "npm run build"
 "@fastify/static" = "./src/vazio.js"
 "@nestjs/platform-fastify" = "./src/vazio.js"
 
+# O @nestjs/swagger carrega o módulo da Swagger UI ao ser importado, e ele faz
+# createRequire(import.meta.url) no topo. No Worker import.meta.url não existe e o
+# boot cai. A Swagger UI nunca é usada aqui (só o /openapi.json), então um
+# caminho fixo basta para o módulo carregar sem erro.
+[define]
+"import.meta.url" = '"file:///worker.js"'
+
 [vars]
 # Públicas por definição (a RLS protege o dado). Segredos vão como Secret do
 # Worker (wrangler secret put), nunca aqui.
