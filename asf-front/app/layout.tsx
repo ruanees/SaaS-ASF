@@ -1,10 +1,27 @@
 import type { Metadata, Viewport } from 'next';
+import { Fredoka, Nunito_Sans } from 'next/font/google';
 import '../styles/tokens.css';
 import '../styles/components.css';
 
+// Brandbook, seção 04: Fredoka nos títulos, nome do animal, número e
+// indicadores; Nunito Sans no resto. O next/font baixa no build e serve do
+// próprio domínio (a CSP só permite fontes de 'self').
+const fredoka = Fredoka({
+  subsets: ['latin'],
+  weight: ['500', '600'],
+  variable: '--fonte-fredoka',
+  display: 'swap',
+});
+const nunito = Nunito_Sans({
+  subsets: ['latin'],
+  weight: ['400', '700', '800'],
+  variable: '--fonte-nunito',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
-  title: { default: 'Associação São Francisco', template: '%s · ASF' },
-  description: 'Sistema interno da Associação São Francisco',
+  title: { default: 'São Francisco', template: '%s · São Francisco' },
+  description: 'Sistema interno da Associação São Francisco Defensora dos Animais',
   robots: { index: false, follow: false },
 };
 
@@ -12,8 +29,8 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f6f5f2' },
-    { media: '(prefers-color-scheme: dark)', color: '#141716' },
+    { media: '(prefers-color-scheme: light)', color: '#fbf6ee' },
+    { media: '(prefers-color-scheme: dark)', color: '#1c140e' },
   ],
 };
 
@@ -22,7 +39,7 @@ const scriptTema = `try{var t=localStorage.getItem('asf-tema');if(t==='claro'||t
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="pt-BR" className={`${fredoka.variable} ${nunito.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: scriptTema }} />
       </head>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Símbolo simplificado do brandbook (seção 07): auréola sobre círculo em Hábito.
+       Esboço até o vetor final sair do selo. -->
+  <circle cx="16" cy="19" r="11" fill="#4A2E1B"/>
+  <ellipse cx="16" cy="5.5" rx="8.5" ry="3" fill="none" stroke="#F4CF1D" stroke-width="2.4"/>
+</svg>

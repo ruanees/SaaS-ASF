@@ -688,7 +688,7 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 - [x] Migração 002: triggers de auditoria (`criado_por`, `atualizado_por`) e tabela `auditoria` sem `update` nem `delete`
 - [x] Provas pgTAP: conta sem linha em `usuarios` não lê nada; usuário desativado não lê nada; anônimo não lê nada; só admin mexe em `usuarios` e `configuracoes`
 - [x] `seed.sql` com um usuário fictício de cada papel
-- [ ] SMTP próprio configurado no Supabase Auth
+- [ ] SMTP próprio configurado no Supabase Auth — **adiado** (Resend; até lá convites e recuperação por e-mail não são confiáveis e usuários são criados no painel)
 
 **Back**
 - [x] `AuthModule` com guard global e `@Publico()`
@@ -712,7 +712,7 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 - [x] CSP, HSTS, `frame-ancestors` e `noindex`
 
 **LGPD e segurança**
-- [ ] MFA obrigatório para `admin` e `coordenacao`
+- [ ] ~~MFA obrigatório para `admin` e `coordenacao`~~ — **adiado para a Fase 6** (decisão de 17/10/2026; código pronto no PR #15, em rascunho)
 - [ ] Política de privacidade e registro das operações de tratamento (rascunho, para revisão jurídica)
 - [ ] Acordo entre a associação e quem mantém o sistema, se for de fora (rascunho)
 
@@ -960,6 +960,7 @@ Cada número tem uma definição escrita. Sem isso, "total de animais" significa
 
 Funcionalidade: F-20.
 
+- [ ] MFA obrigatório para `admin` e `coordenacao` (veio da Fase 0; PR #15: atualizar com a `main` e renumerar a migração antes do merge)
 - [ ] Rotina semanal de retenção: lista pessoas além do prazo para a coordenação aprovar a anonimização
 - [ ] Rotina semanal de arquivos órfãos e de conferência de backup
 - [ ] Tela de auditoria para admin (quem acessou contato, quem exportou)
@@ -1012,7 +1013,7 @@ Decisões que precisam da Associação São Francisco antes da fase indicada:
 - **Fase 0:** quem será admin do sistema (sugestão: duas pessoas, para a associação não ficar sem acesso se uma sair).
 - **Fase 0:** ligar o Cloudflare Access como camada extra de entrada? Protege mais, mas pede uma verificação por e-mail a mais ao entrar.
 - **Fase 1:** o número de identificação no formato `AAAA-NNNN` atende, ou a associação já usa outro? Animais já cadastrados em papel mantêm o número antigo?
-- **Fase 1:** filhote sem sexo identificado precisa de uma terceira opção?
+- ~~**Fase 1:** filhote sem sexo identificado precisa de uma terceira opção?~~ **Decidido (17/10/2026): sim.** O enum `sexo` ganha `nao_identificado`; os indicadores de machos e fêmeas mostram essa terceira contagem.
 - **Fase 2:** quais vacinas e intervalos de reforço a associação usa?
 - **Fase 2:** a coordenação quer o resumo diário de pendências por e-mail?
 - **Fase 4:** o termo de adoção atual da associação (para alinhar campos e base legal).

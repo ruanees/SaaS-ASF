@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Saídas do build da Cloudflare (enormes; travavam o lint)
+    ".open-next/**",
+    ".wrangler/**",
     // Gerado por openapi-typescript (npm run tipos)
     "types/api.d.ts",
   ]),

@@ -7,6 +7,15 @@ Por enquanto esta pasta vive dentro do repositório `SaaS-ASF`, ao lado de `asf-
 
 Next.js 16: antes de usar uma API do Next, conferir a documentação da versão instalada em `node_modules/next/dist/docs/` (ver `AGENTS.md`). Exemplo: o antigo `middleware.ts` agora é `proxy.ts`.
 
+## Identidade visual
+
+O brandbook está em `docs/brandbook.pdf` (v1.0). Cores, raios e fontes já estão em `styles/tokens.css`; usar sempre os tokens de papel (`--acao`, `--fundo`, `--cartao`, `--selo-*`), nunca o hex direto.
+- Um botão sólido (`data-tipo="principal"`) por tela; o resto em contorno ou texto.
+- Selo preenchido é situação ou saúde (`data-cor`); selo de contorno é local (`data-contorno`). A cor nunca aparece sem o nome.
+- Leishmaniose reagente é o único selo com ícone e borda (`data-alerta`).
+- O selo da associação não se redesenha, não se recorta e não leva contorno nem sombra (`components/marca.tsx`).
+- Grafismo da auréola (`.aureola`) só em capas e telas vazias.
+
 ## Sessão
 
 Os tokens ficam em cookies `httpOnly` (`lib/cookies.ts`, `lib/sessao.ts`): o JavaScript do navegador nunca os lê. Páginas e server actions chamam o back pelo servidor do front (`lib/api.ts`); o `proxy.ts` manda para `/entrar` quem não tem sessão e renova o token perto de vencer.

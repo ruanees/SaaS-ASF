@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useRef } from 'react';
 import { itemAtivo, type ItemMenu } from '@/lib/menu';
 import { sair } from '@/app/(sistema)/acoes';
+import { Assinatura } from './marca';
 import { SeletorTema } from './seletor-tema';
 
 function Item({ item, caminho }: { item: ItemMenu; caminho: string }) {
@@ -46,8 +47,16 @@ export function Menu({ itens, nome }: { itens: ItemMenu[]; nome: string }) {
 
   return (
     <>
+      <header className="cabecalho-celular">
+        <Link href="/" className="link-assinatura" aria-label="Início">
+          <Assinatura subtitulo={false} />
+        </Link>
+      </header>
+
       <nav className="menu-lateral" aria-label="Menu principal">
-        <span className="marca-nome">Associação São Francisco</span>
+        <Link href="/" className="link-assinatura" aria-label="Início">
+          <Assinatura />
+        </Link>
         {itens.map((item) => (
           <Item key={item.rota} item={item} caminho={caminho} />
         ))}
