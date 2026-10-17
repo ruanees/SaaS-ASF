@@ -1,0 +1,408 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsIn,
+  IsInt,
+  IsISO8601,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Length,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
+
+// Listas fechadas: espelham os enums do banco (migração 005).
+export const ESPECIES = ['cao', 'gato'] as const;
+export const SEXOS = ['macho', 'femea', 'nao_identificado'] as const;
+export const PORTES = ['pequeno', 'medio', 'grande'] as const;
+export const ORIGENS = [
+  'resgate',
+  'castracao',
+  'comunitario',
+  'outra',
+] as const;
+export const SITUACOES = [
+  'em_acolhimento',
+  'adotado',
+  'devolvido_comunidade',
+  'transferido',
+  'obito',
+] as const;
+export const LOCAIS = ['sede', 'lar_temporario', 'clinica'] as const;
+export const PRECISOES = ['exata', 'aproximada'] as const;
+
+export type Especie = (typeof ESPECIES)[number];
+export type Sexo = (typeof SEXOS)[number];
+export type Porte = (typeof PORTES)[number];
+export type Origem = (typeof ORIGENS)[number];
+export type Situacao = (typeof SITUACOES)[number];
+export type Local = (typeof LOCAIS)[number];
+
+const aparar = ({ value }: { value: unknown }) =>
+  typeof value === 'string' ? value.trim() : value;
+const DATA = { strict: true } as const;
+const MSG_DATA = { message: 'Data inválida (use AAAA-MM-DD).' };
+
+// Respostas -------------------------------------------------------------------
+
+export class ClinicaDto {
+  @ApiProperty({ format: 'uuid' }) id: string;
+  @ApiProperty() nome: string;
+  @ApiProperty() ativo: boolean;
+}
+
+export class AnimalResumoDto {
+  @ApiProperty({ format: 'uuid' }) id: string;
+  @ApiProperty({ example: '2026-0042' }) numero: string;
+  @ApiProperty({ type: String, nullable: true }) nome: string | null;
+  @ApiProperty({ enum: ESPECIES }) especie: Especie;
+  @ApiProperty({ enum: SEXOS }) sexo: Sexo;
+  @ApiProperty({ type: String, format: 'date', nullable: true })
+  nascimento_estimado: string | null;
+  @ApiProperty({ enum: PRECISOES, nullable: true })
+  idade_precisao: (typeof PRECISOES)[number] | null;
+  @ApiProperty({ enum: PORTES, nullable: true }) porte: Porte | null;
+  @ApiProperty({ enum: SITUACOES }) situacao: Situacao;
+  @ApiProperty({ enum: LOCAIS, nullable: true }) local: Local | null;
+  @ApiProperty() disponivel_adocao: boolean;
+  @ApiProperty({ type: String, format: 'date' }) data_entrada: string;
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'URL assinada da foto principal (vale 5 min)',
+  })
+  foto_url: string | null;
+}
+
+export class ListaAnimaisDto {
+  @ApiProperty({ type: [AnimalResumoDto] }) itens: AnimalResumoDto[];
+  @ApiProperty() total: number;
+  @ApiProperty() pagina: number;
+  @ApiProperty() por_pagina: number;
+}
+
+export class AnimalDto extends AnimalResumoDto {
+  @ApiProperty({ enum: ORIGENS }) origem: Origem;
+  @ApiProperty({ type: String, nullable: true }) origem_detalhe: string | null;
+  @ApiProperty({ type: String, nullable: true }) observacoes: string | null;
+  @ApiProperty({ type: ClinicaDto, nullable: true }) clinica: ClinicaDto | null;
+  @ApiProperty({ format: 'date-time' }) criado_em: string;
+  @ApiProperty({ format: 'date-time' }) atualizado_em: string;
+}
+
+export class MovimentacaoDto {
+  @ApiProperty({ format: 'uuid' }) id: string;
+  @ApiProperty({ enum: ['entrada', 'mudanca', 'reentrada'] }) tipo:
+    'entrada' | 'mudanca' | 'reentrada';
+  @ApiProperty({ enum: ORIGENS, nullable: true }) origem: Origem | null;
+  @ApiProperty({ enum: SITUACOES }) situacao: Situacao;
+  @ApiProperty({ enum: LOCAIS, nullable: true }) local: Local | null;
+  @ApiProperty() disponivel_adocao: boolean;
+  @ApiProperty({ type: String, nullable: true }) clinica: string | null;
+  @ApiProperty({ type: String, format: 'date' }) data: string;
+  @ApiProperty({ type: String, nullable: true }) motivo: string | null;
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'Nome de quem registrou',
+  })
+  autor: string | null;
+  @ApiProperty({ format: 'date-time' }) criado_em: string;
+}
+
+export class DuplicadoDto {
+  @ApiProperty({ format: 'uuid' }) id: string;
+  @ApiProperty() numero: string;
+  @ApiProperty({ type: String, nullable: true }) nome: string | null;
+  @ApiProperty({ enum: SEXOS }) sexo: Sexo;
+  @ApiProperty({ enum: SITUACOES }) situacao: Situacao;
+  @ApiProperty({ type: String, format: 'date' }) data_entrada: string;
+}
+
+export class FotoAssinadaDto {
+  @ApiProperty({ description: 'Caminho decidido pelo servidor' })
+  caminho: string;
+  @ApiProperty({ description: 'URL assinada para o envio (PUT com o arquivo)' })
+  url: string;
+}
+
+export class FotoDto {
+  @ApiProperty({ format: 'uuid' }) id: string;
+  @ApiProperty() caminho: string;
+  @ApiProperty({ type: String, nullable: true }) url: string | null;
+}
+
+// Entradas ---------------------------------------------------------------------
+
+export class FiltroAnimaisDto {
+  @ApiPropertyOptional({ enum: ESPECIES })
+  @IsOptional()
+  @IsIn(ESPECIES)
+  especie?: Especie;
+
+  @ApiPropertyOptional({ enum: SEXOS })
+  @IsOptional()
+  @IsIn(SEXOS)
+  sexo?: Sexo;
+
+  @ApiPropertyOptional({ enum: PORTES })
+  @IsOptional()
+  @IsIn(PORTES)
+  porte?: Porte;
+
+  @ApiPropertyOptional({ enum: SITUACOES })
+  @IsOptional()
+  @IsIn(SITUACOES)
+  situacao?: Situacao;
+
+  @ApiPropertyOptional({ enum: LOCAIS })
+  @IsOptional()
+  @IsIn(LOCAIS)
+  local?: Local;
+
+  @ApiPropertyOptional({ enum: ['sim', 'nao'] })
+  @IsOptional()
+  @IsIn(['sim', 'nao'])
+  disponivel?: 'sim' | 'nao';
+
+  @ApiPropertyOptional({ description: 'Número ou nome' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(60)
+  q?: string;
+
+  @ApiPropertyOptional({ default: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  pagina?: number;
+
+  @ApiPropertyOptional({ default: 20, maximum: 50 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(50)
+  por_pagina?: number;
+}
+
+export class DuplicadosQueryDto {
+  @ApiProperty()
+  @Transform(aparar)
+  @IsString()
+  @Length(1, 80)
+  nome: string;
+
+  @ApiProperty({ enum: ESPECIES })
+  @IsIn(ESPECIES)
+  especie: Especie;
+
+  @ApiProperty({ enum: SEXOS })
+  @IsIn(SEXOS)
+  sexo: Sexo;
+}
+
+export class CriarAnimalDto {
+  @ApiPropertyOptional({ maxLength: 80 })
+  @IsOptional()
+  @Transform(aparar)
+  @IsString()
+  @MaxLength(80, { message: 'Nome com no máximo 80 caracteres.' })
+  nome?: string;
+
+  @ApiProperty({ enum: ESPECIES })
+  @IsIn(ESPECIES, { message: 'Escolha a espécie.' })
+  especie: Especie;
+
+  @ApiProperty({ enum: SEXOS })
+  @IsIn(SEXOS, { message: 'Escolha o sexo.' })
+  sexo: Sexo;
+
+  @ApiPropertyOptional({ format: 'date' })
+  @IsOptional()
+  @IsISO8601(DATA, MSG_DATA)
+  nascimento_estimado?: string;
+
+  @ApiPropertyOptional({ enum: PRECISOES })
+  @IsOptional()
+  @IsIn(PRECISOES)
+  idade_precisao?: (typeof PRECISOES)[number];
+
+  @ApiPropertyOptional({ enum: PORTES })
+  @IsOptional()
+  @IsIn(PORTES)
+  porte?: Porte;
+
+  @ApiProperty({ format: 'date' })
+  @IsISO8601(DATA, { message: 'Informe a data de entrada do animal.' })
+  data_entrada: string;
+
+  @ApiProperty({ enum: ORIGENS })
+  @IsIn(ORIGENS, { message: 'Escolha a origem.' })
+  origem: Origem;
+
+  @ApiPropertyOptional({ maxLength: 200 })
+  @IsOptional()
+  @Transform(aparar)
+  @IsString()
+  @MaxLength(200)
+  origem_detalhe?: string;
+
+  @ApiProperty({ enum: LOCAIS })
+  @IsIn(LOCAIS, { message: 'Informe onde o animal está.' })
+  local: Local;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  disponivel_adocao?: boolean;
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID('all', { message: 'Clínica inválida.' })
+  clinica_id?: string;
+
+  @ApiPropertyOptional({ maxLength: 2000 })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  observacoes?: string;
+}
+
+// Campo a campo: só os dados cadastrais. Situação e local mudam por movimentação.
+// null limpa o campo (quando o banco permite).
+export class AlterarAnimalDto {
+  @ApiPropertyOptional({ type: String, nullable: true })
+  @IsOptional()
+  @Transform(aparar)
+  @IsString()
+  @MaxLength(80, { message: 'Nome com no máximo 80 caracteres.' })
+  nome?: string | null;
+
+  @ApiPropertyOptional({ enum: ESPECIES })
+  @IsOptional()
+  @IsIn(ESPECIES)
+  especie?: Especie;
+
+  @ApiPropertyOptional({ enum: SEXOS })
+  @IsOptional()
+  @IsIn(SEXOS)
+  sexo?: Sexo;
+
+  @ApiPropertyOptional({ type: String, format: 'date', nullable: true })
+  @IsOptional()
+  @IsISO8601(DATA, MSG_DATA)
+  nascimento_estimado?: string | null;
+
+  @ApiPropertyOptional({ enum: PRECISOES, nullable: true })
+  @IsOptional()
+  @IsIn(PRECISOES)
+  idade_precisao?: (typeof PRECISOES)[number] | null;
+
+  @ApiPropertyOptional({ enum: PORTES, nullable: true })
+  @IsOptional()
+  @IsIn(PORTES)
+  porte?: Porte | null;
+
+  @ApiPropertyOptional({ format: 'date' })
+  @IsOptional()
+  @IsISO8601(DATA, MSG_DATA)
+  data_entrada?: string;
+
+  @ApiPropertyOptional({ enum: ORIGENS })
+  @IsOptional()
+  @IsIn(ORIGENS)
+  origem?: Origem;
+
+  @ApiPropertyOptional({ type: String, nullable: true })
+  @IsOptional()
+  @Transform(aparar)
+  @IsString()
+  @MaxLength(200)
+  origem_detalhe?: string | null;
+
+  @ApiPropertyOptional({ type: String, nullable: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  observacoes?: string | null;
+}
+
+export class NovaMovimentacaoDto {
+  @ApiProperty({ enum: SITUACOES })
+  @IsIn(SITUACOES, { message: 'Situação inválida.' })
+  situacao: Situacao;
+
+  @ApiPropertyOptional({ enum: LOCAIS })
+  @IsOptional()
+  @IsIn(LOCAIS)
+  local?: Local;
+
+  @ApiProperty()
+  @IsBoolean()
+  disponivel_adocao: boolean;
+
+  @ApiProperty({ format: 'date' })
+  @IsISO8601(DATA, { message: 'Informe a data.' })
+  data: string;
+
+  @ApiPropertyOptional({ maxLength: 500 })
+  @IsOptional()
+  @Transform(aparar)
+  @IsString()
+  @MaxLength(500)
+  motivo?: string;
+
+  @ApiPropertyOptional({ enum: ['mudanca', 'reentrada'], default: 'mudanca' })
+  @IsOptional()
+  @IsIn(['mudanca', 'reentrada'])
+  tipo?: 'mudanca' | 'reentrada';
+
+  @ApiPropertyOptional({
+    enum: ORIGENS,
+    description: 'Obrigatória na reentrada',
+  })
+  @IsOptional()
+  @IsIn(ORIGENS)
+  origem?: Origem;
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID('all', { message: 'Clínica inválida.' })
+  clinica_id?: string;
+}
+
+export const FOTO_TAMANHO_MAXIMO = 5 * 1024 * 1024;
+
+export class AssinarFotoDto {
+  @ApiProperty({ enum: ['image/webp'] })
+  @IsIn(['image/webp'], {
+    message: 'A foto precisa ser reprocessada em WebP antes do envio.',
+  })
+  tipo: 'image/webp';
+
+  @ApiProperty({ description: 'Tamanho em bytes (até 5 MB)' })
+  @IsInt()
+  @Min(1)
+  @Max(FOTO_TAMANHO_MAXIMO, { message: 'A foto pode ter no máximo 5 MB.' })
+  tamanho: number;
+}
+
+export class RegistrarFotoDto {
+  @ApiProperty()
+  @IsString()
+  @Length(1, 120)
+  caminho: string;
+}
+
+export class CriarClinicaDto {
+  @ApiProperty({ maxLength: 120 })
+  @Transform(aparar)
+  @IsString()
+  @Length(1, 120, { message: 'Nome da clínica com 1 a 120 caracteres.' })
+  nome: string;
+}

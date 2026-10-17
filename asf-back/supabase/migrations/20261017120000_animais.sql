@@ -98,7 +98,7 @@ create table public.movimentacoes (
   data date not null,
   motivo text check (motivo is null or length(motivo) <= 500),
   criado_em timestamptz not null default now(),
-  criado_por uuid,
+  criado_por uuid references public.usuarios(user_id),  -- para o histórico mostrar quem fez
   atualizado_em timestamptz not null default now(),
   atualizado_por uuid,
   check (tipo = 'mudanca' or origem is not null),
