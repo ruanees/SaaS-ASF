@@ -29,3 +29,6 @@ desktop.ini
 .idea/
 *.log
 npm-debug.log*
+
+# Gerado por npm run openapi
+asf-back/openapi.json
