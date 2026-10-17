@@ -1,0 +1,53 @@
+name: asf-back
+
+on:
+  push:
+    branches: [main]
+    paths: ['asf-back/**', '.github/workflows/back.yml']
+  pull_request:
+    paths: ['asf-back/**', '.github/workflows/back.yml']
+
+concurrency:
+  group: back-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: asf-back
+
+jobs:
+  app:
+    name: Nest (tipos, lint, testes, build, openapi)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: asf-back/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run test:e2e
+      # O mesmo comando que a Cloudflare roda na publicação.
+      - run: npm run build
+      - run: npm run openapi
+      - run: npm audit --omit=dev --audit-level=high
+
+  banco:
+    name: Banco (migrações + provas pgTAP)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      # Sobe só o Postgres local, aplica todas as migrações e o seed do zero.
+      - run: supabase db start
+      - run: supabase db reset --local
+      # Provas de RLS e regras (supabase/tests).
+      - run: supabase test db
+      # Avisos do linter do Supabase (security definer sem search_path etc.).
+      - run: supabase db lint --level warning --fail-on warning

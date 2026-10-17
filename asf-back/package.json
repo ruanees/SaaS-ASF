@@ -21,7 +21,7 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
     "dev": "nest start --watch",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "openapi": "nest build \u0026\u0026 node dist/openapi.js"
+    "openapi": "nest build && node dist/openapi.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
@@ -48,6 +48,7 @@
     "oxlint-tsgolint": "^7.0.2001",
     "prettier": "^3.4.2",
     "source-map-support": "^0.5.21",
+    "supabase": "^2.121.0",
     "supertest": "^7.0.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
