@@ -26,3 +26,7 @@ export type LarTemporario = Esquemas['LarTemporarioDto'];
 export type Adocao = Esquemas['AdocaoDto'];
 export type BaseLegal = PessoaResumo['base_legal'];
 export type Vinculo = PessoaResumo['vinculos'][number];
+export type Indicadores = Esquemas['IndicadoresDto'];
+export type PontoMensal = Esquemas['PontoMensalDto'];
+export type Relatorio = Esquemas['RelatorioDto'];
+export type SecaoRelatorio = Relatorio['secao'];

@@ -931,7 +931,7 @@ Funcionalidades: F-18, F-19.
 
 ### Dicionário de indicadores
 
-Cada número tem uma definição escrita. Sem isso, "total de animais" significa uma coisa para a coordenação e outra para o código. As definições abaixo são uma proposta e precisam ser confirmadas com a associação.
+Cada número tem uma definição escrita. Sem isso, "total de animais" significa uma coisa para a coordenação e outra para o código. As definições abaixo são uma proposta e precisam ser confirmadas com a associação. **Situação em 17/10/2026:** implementadas como estão aqui; as perguntas 23 (regras) e 24 (relatórios) do questionário ainda não voltaram. "Em tratamento" conta só quem está sob cuidado agora, como os outros números de saúde.
 
 | Indicador | Regra proposta |
 |---|---|
@@ -948,20 +948,20 @@ Cada número tem uma definição escrita. Sem isso, "total de animais" significa
 | Castrados e devolvidos à comunidade | movimentações para `devolvido_comunidade` no período |
 
 **Banco**
-- [ ] Função `indicadores(de, ate)`: devolve os onze números numa chamada, a partir das views
-- [ ] Provas pgTAP de cada regra do dicionário, com um seed que conhece a resposta certa
+- [x] Função `indicadores(de, ate)`: devolve os onze números numa chamada, a partir das views
+- [x] Provas pgTAP de cada regra do dicionário, com um seed que conhece a resposta certa
 
 **Back**
-- [ ] `GET /indicadores?de=&ate=`
-- [ ] `ReportBuilderService`: um construtor que devolve `{quadros, colunas, linhas}`; tela, CSV e impressão percorrem a mesma saída
-- [ ] Relatórios: animais por situação, vacinação, castração, adoções no período, movimentações
-- [ ] Exportação registrada na auditoria; relatórios para voluntário saem sem dado pessoal
+- [x] `GET /indicadores?de=&ate=`
+- [x] `ReportBuilderService`: um construtor que devolve `{quadros, colunas, linhas}`; tela, CSV e impressão percorrem a mesma saída
+- [x] Relatórios: animais por situação, vacinação, castração, adoções no período, movimentações
+- [x] Exportação registrada na auditoria; relatórios para voluntário saem sem dado pessoal
 
 **Front**
-- [ ] Painel inicial com os onze indicadores e o filtro de período
-- [ ] Gráficos simples (espécie, sexo, entradas e adoções por mês), com legenda e redesenho ao trocar de tema
-- [ ] Tocar num indicador abre a lista de animais já filtrada
-- [ ] Tela de relatórios com escolha de seção, CSV e impressão
+- [x] Painel inicial com os onze indicadores e o filtro de período
+- [x] Gráficos simples (espécie, sexo, entradas e adoções por mês), com legenda e redesenho ao trocar de tema
+- [x] Tocar num indicador abre a lista de animais já filtrada
+- [x] Tela de relatórios com escolha de seção, CSV e impressão
 
 **Casos de borda**
 - Sistema recém-instalado: todos os números aparecem como zero, não como erro.

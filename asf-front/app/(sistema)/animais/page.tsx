@@ -11,7 +11,7 @@ import { Filtros } from './filtros';
 export const metadata: Metadata = { title: 'Animais' };
 
 type Filtro = NonNullable<paths['/animais']['get']['parameters']['query']>;
-const CHAVES = ['especie', 'sexo', 'porte', 'situacao', 'local', 'disponivel', 'q'] as const;
+const CHAVES = ['especie', 'sexo', 'porte', 'situacao', 'local', 'disponivel', 'vacinacao', 'castracao', 'tratamento', 'q'] as const;
 const POR_PAGINA = 20;
 
 export default async function PaginaAnimais({ searchParams }: PageProps<'/animais'>) {

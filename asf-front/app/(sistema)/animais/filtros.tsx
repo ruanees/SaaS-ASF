@@ -68,6 +68,18 @@ export function Filtros({ valores }: { valores: Record<string, string> }) {
         )}
         {seletor('local', 'Local', Object.entries(LOCAL))}
       </div>
+      <div className="grade" data-n="3">
+        {seletor('vacinacao', 'Vacinação', [
+          ['em_dia', 'Em dia'],
+          ['pendente', 'Pendente'],
+        ])}
+        {seletor('castracao', 'Castração', [
+          ['castrado', 'Castrado'],
+          ['nao_castrado', 'Não castrado'],
+          ['agendada', 'Agendada'],
+        ])}
+        {seletor('tratamento', 'Tratamento', [['sim', 'Em tratamento']])}
+      </div>
       <label className="linha" style={{ gap: 'var(--e-2)' }}>
         <input
           type="checkbox"
