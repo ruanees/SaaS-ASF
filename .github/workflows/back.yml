@@ -53,3 +53,34 @@ jobs:
       - run: supabase test db
       # Avisos do linter do Supabase (security definer sem search_path etc.).
       - run: supabase db lint --level warning --fail-on warning
+
+  worker:
+    name: Worker (empacota e sobe no workerd)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: asf-back/package-lock.json
+      - run: npm ci
+      # Empacota como a publicação faria (build do Nest + bundle do wrangler).
+      - run: npx wrangler deploy --dry-run --outdir .wrangler/saida
+        env:
+          WRANGLER_SEND_METRICS: 'false'
+      # Sobe o Worker no runtime da Cloudflare e prova que o Nest responde.
+      - name: Sobe no workerd e chama /saude, /openapi.json e /eu
+        env:
+          WRANGLER_SEND_METRICS: 'false'
+        run: |
+          npx wrangler dev --local --port 8787 > wrangler.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf -o saude.json http://localhost:8787/saude && break
+            sleep 2
+          done
+          if [ ! -s saude.json ]; then echo "Worker não respondeu:"; cat wrangler.log; exit 1; fi
+          cat saude.json
+          grep -q '"situacao":"ok"' saude.json
+          curl -sf http://localhost:8787/openapi.json | grep -q '"/eu"'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8787/eu)" = "401"

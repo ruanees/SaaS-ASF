@@ -37,3 +37,39 @@ jobs:
       # O mesmo comando que a Cloudflare roda na publicação.
       - run: npm run build
       - run: npm audit --omit=dev --audit-level=high
+
+  worker:
+    name: Worker (OpenNext no workerd)
+    runs-on: ubuntu-latest
+    env:
+      API_URL: http://localhost:3001
+      SUPABASE_URL: https://exemplo.supabase.co
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: asf-front/package-lock.json
+      - run: npm ci
+      - run: npm run build:worker
+      # Limite do plano gratuito: 3 MB comprimido.
+      - run: npx wrangler deploy --dry-run --outdir .wrangler/saida
+      # Sobe no runtime da Cloudflare: tela de entrar abre e o proxy.ts manda
+      # quem não tem sessão para /entrar (proxy em modo Node é experimental
+      # no OpenNext; esta prova pega se quebrar).
+      - name: Sobe no workerd e confere /entrar e o redirecionamento
+        run: |
+          npx wrangler dev --local --port 8788 > wrangler.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf -D entrar.cab -o entrar.html http://localhost:8788/entrar && break
+            sleep 2
+          done
+          if [ ! -s entrar.html ]; then echo "Worker não respondeu:"; cat wrangler.log; exit 1; fi
+          grep -q 'Entrar' entrar.html
+          grep -qi "^content-security-policy: .*frame-ancestors 'none'" entrar.cab
+          grep -qi '^x-robots-tag: noindex' entrar.cab
+          curl -s -o /dev/null -D cabecalhos.txt http://localhost:8788/configuracoes
+          cat cabecalhos.txt
+          grep -qi '^location: .*/entrar' cabecalhos.txt

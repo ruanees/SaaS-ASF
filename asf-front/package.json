@@ -1,31 +1,36 @@
 {
-    "name":  "asf-front",
-    "version":  "0.1.0",
-    "private":  true,
-    "scripts":  {
-                    "build":  "next build",
-                    "start":  "next start",
-                    "lint":  "eslint",
-                    "typecheck":  "next typegen \u0026\u0026 tsc --noEmit",
-                    "test":  "vitest run",
-                    "tipos":  "node scripts/tipos.mjs",
-                    "dev":  "next dev"
-                },
-    "dependencies":  {
-                         "next":  "16.4.2",
-                         "openapi-fetch":  "^0.17.0",
-                         "react":  "19.3.0",
-                         "react-dom":  "19.3.0",
-                         "server-only":  "^0.0.1"
-                     },
-    "devDependencies":  {
-                            "@types/node":  "^24.19.2",
-                            "@types/react":  "^19",
-                            "@types/react-dom":  "^19",
-                            "eslint":  "^9",
-                            "eslint-config-next":  "16.4.2",
-                            "openapi-typescript":  "^7.13.0",
-                            "typescript":  "^5",
-                            "vitest":  "^4.1.12"
-                        }
+    "name": "asf-front",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "build": "next build",
+        "start": "next start",
+        "lint": "eslint",
+        "typecheck": "next typegen && tsc --noEmit",
+        "test": "vitest run",
+        "tipos": "node scripts/tipos.mjs",
+        "dev": "next dev",
+        "build:worker": "opennextjs-cloudflare build",
+        "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+        "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+    },
+    "dependencies": {
+        "next": "16.4.2",
+        "openapi-fetch": "^0.17.0",
+        "react": "19.3.0",
+        "react-dom": "19.3.0",
+        "server-only": "^0.0.1"
+    },
+    "devDependencies": {
+        "@opennextjs/cloudflare": "^1.20.12",
+        "@types/node": "^24.19.2",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "eslint": "^9",
+        "eslint-config-next": "16.4.2",
+        "openapi-typescript": "^7.13.0",
+        "typescript": "^5",
+        "vitest": "^4.1.12",
+        "wrangler": "^4.151.1"
+    }
 }

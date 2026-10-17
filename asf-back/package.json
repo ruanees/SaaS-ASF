@@ -1,7 +1,7 @@
 {
   "name": "asf-back",
   "version": "0.0.1",
-  "description": "Back (BFF) do sistema interno da Associação São Francisco",
+  "description": "Back (BFF) do sistema interno da AssociaÃ§Ã£o SÃ£o Francisco",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -21,7 +21,9 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
     "dev": "nest start --watch",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "openapi": "nest build && node dist/openapi.js"
+    "openapi": "nest build \u0026\u0026 node dist/openapi.js",
+    "worker:dev": "wrangler dev",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
@@ -36,6 +38,7 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261016.1",
     "@nestjs/cli": "^12.0.0",
     "@nestjs/mau": "^0.2.6",
     "@nestjs/schematics": "^12.0.0",
@@ -52,6 +55,7 @@
     "supertest": "^7.0.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.2",
+    "wrangler": "^4.151.1"
   }
 }
