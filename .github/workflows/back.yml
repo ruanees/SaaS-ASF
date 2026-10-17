@@ -20,8 +20,8 @@ jobs:
     name: Nest (tipos, lint, testes, build, openapi)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -40,10 +40,12 @@ jobs:
     name: Banco (migrações + provas pgTAP)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: supabase/setup-cli@v1
+      - uses: actions/checkout@v7
+      - uses: supabase/setup-cli@v3
         with:
-          version: latest
+          # Versão fixa, igual à do package.json: 'latest' consulta a API do GitHub
+          # e falha por limite de requisições.
+          version: 2.121.0
       # Sobe só o Postgres local, aplica todas as migrações e o seed do zero.
       - run: supabase db start
       - run: supabase db reset --local
