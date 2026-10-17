@@ -40,8 +40,8 @@ command = "npm run build"
 # Worker (wrangler secret put), nunca aqui.
 SUPABASE_URL = "https://dfpaflwwqyphmpxxbsad.supabase.co"
 SUPABASE_PUBLISHABLE_KEY = "sb_publishable_NQsjvB8bQblTStOYpGrTNw_wk5dNGaE"
-# Trocar pelo domínio do front publicado.
-FRONT_URL = "http://localhost:3000"
+# Front publicado: links de convite e de recuperação de senha voltam para cá.
+FRONT_URL = "https://asf-front.balbuquerc.workers.dev"
 
 [observability]
 enabled = true
