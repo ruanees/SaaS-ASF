@@ -116,7 +116,7 @@ export default async function Relatorios({ searchParams }: PageProps<'/relatorio
           </div>
           <div className="grade-indicadores">
             {r.dados.quadros.map((q) => (
-              <div key={q.rotulo} className="cartao indicador" data-pequeno>
+              <div key={q.rotulo} className="cartao cartao-indicador" data-pequeno>
                 <span className="indicador-valor">{q.valor}</span>
                 <span className="indicador-rotulo">{q.rotulo}</span>
               </div>
