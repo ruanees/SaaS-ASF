@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "asf-back", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "asf-back", "run", "start:prod"], "port": 3001 },
+    { "name": "asf-front", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "asf-front", "run", "start"], "port": 3000 }
+  ]
+}

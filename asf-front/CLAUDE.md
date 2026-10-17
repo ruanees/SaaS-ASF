@@ -5,6 +5,12 @@ Front do sistema interno da Associação São Francisco: cadastro e acompanhamen
 
 Por enquanto esta pasta vive dentro do repositório `SaaS-ASF`, ao lado de `asf-back/` (ADR 0009). Tratar como projeto independente: nada aqui importa arquivo de `../asf-back`; o único contrato com o back é o `/openapi.json`.
 
+Next.js 16: antes de usar uma API do Next, conferir a documentação da versão instalada em `node_modules/next/dist/docs/` (ver `AGENTS.md`). Exemplo: o antigo `middleware.ts` agora é `proxy.ts`.
+
+## Sessão
+
+Os tokens ficam em cookies `httpOnly` (`lib/cookies.ts`, `lib/sessao.ts`): o JavaScript do navegador nunca os lê. Páginas e server actions chamam o back pelo servidor do front (`lib/api.ts`); o `proxy.ts` manda para `/entrar` quem não tem sessão e renova o token perto de vencer.
+
 ## Pilha
 
 - Next.js (App Router) + TypeScript
