@@ -6,6 +6,7 @@ import { SelosSaude } from '@/components/selos-saude';
 import { api, chamar, obterEu } from '@/lib/api';
 import { hojeIso, idade } from '@/lib/formato';
 import { ESPECIE, SEXO, nomeDoAnimal } from '@/lib/rotulos';
+import { AbaAdocao } from './aba-adocao';
 import { AbaDados } from './aba-dados';
 import { AbaProntuario } from './aba-prontuario';
 import { AbaSaude } from './aba-saude';
@@ -19,13 +20,14 @@ const ABAS = [
   { chave: 'situacao', rotulo: 'Situação' },
   { chave: 'saude', rotulo: 'Saúde' },
   { chave: 'prontuario', rotulo: 'Prontuário' },
-  { chave: 'adocao', rotulo: 'Adoção', emBreve: true },
+  { chave: 'adocao', rotulo: 'Adoção' },
 ] as const;
 
 export default async function FichaAnimal({ params, searchParams }: PageProps<'/animais/[id]'>) {
   const { id } = await params;
   const sp = await searchParams;
-  const aba = sp.aba === 'situacao' || sp.aba === 'saude' || sp.aba === 'prontuario' ? sp.aba : 'dados';
+  const aba =
+    sp.aba === 'situacao' || sp.aba === 'saude' || sp.aba === 'prontuario' || sp.aba === 'adocao' ? sp.aba : 'dados';
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const cliente = await api();
@@ -92,28 +94,24 @@ export default async function FichaAnimal({ params, searchParams }: PageProps<'/
       </header>
 
       <nav className="abas" aria-label="Seções da ficha">
-        {ABAS.map((t) =>
-          'emBreve' in t ? (
-            <span key={t.chave} className="aba" data-em-breve aria-disabled="true">
-              {t.rotulo} <span className="selo">em breve</span>
-            </span>
-          ) : (
-            <Link
-              key={t.chave}
-              className="aba"
-              href={t.chave === 'dados' ? `/animais/${a.id}` : `/animais/${a.id}?aba=${t.chave}`}
-              aria-current={aba === t.chave ? 'page' : undefined}
-            >
-              {t.rotulo}
-            </Link>
-          ),
-        )}
+        {ABAS.map((t) => (
+          <Link
+            key={t.chave}
+            className="aba"
+            href={t.chave === 'dados' ? `/animais/${a.id}` : `/animais/${a.id}?aba=${t.chave}`}
+            aria-current={aba === t.chave ? 'page' : undefined}
+          >
+            {t.rotulo}
+          </Link>
+        ))}
       </nav>
 
       {aba === 'dados' ? (
         <AbaDados animal={a} hoje={hojeIso()} podeExcluir={podeExcluir} />
       ) : aba === 'saude' ? (
         <AbaSaude animal={a} hoje={hojeIso()} />
+      ) : aba === 'adocao' ? (
+        <AbaAdocao animal={a} hoje={hojeIso()} pessoa={typeof sp.pessoa === 'string' ? sp.pessoa : undefined} />
       ) : aba === 'prontuario' ? (
         <AbaProntuario animal={a} hoje={hojeIso()} tipo={typeof sp.tipo === 'string' ? sp.tipo : undefined} />
       ) : (

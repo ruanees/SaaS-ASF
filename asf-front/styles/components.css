@@ -293,3 +293,18 @@ p { margin: 0; }
   .tabela-impressao tr { break-inside: avoid; }
   .tabela-impressao th, .tabela-impressao td { border-color: var(--cordao); }
 }
+
+/* Selo que é link (filtros, animais de uma pessoa): sem sublinhado --------- */
+a.selo, button.selo { text-decoration: none; cursor: pointer; font-family: inherit; border: 0; }
+a.selo:hover, button.selo:hover { text-decoration: underline; }
+
+/* Pessoas ------------------------------------------------------------------- */
+.lista-pessoas { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e-3); }
+.cartao-pessoa {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--e-2);
+  text-decoration: none; color: inherit; padding: var(--e-4);
+}
+.nome-pessoa { font-family: var(--fonte-titulo); font-size: 1.125rem; font-weight: 600; color: var(--titulo); }
+select[size] { padding: var(--e-1); min-height: auto; }
+select[size] option { padding: var(--e-2); border-radius: var(--raio); }
+details > summary { cursor: pointer; font-weight: 700; color: var(--acao); min-height: var(--toque); display: flex; align-items: center; }

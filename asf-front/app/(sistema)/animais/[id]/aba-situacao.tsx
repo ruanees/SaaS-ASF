@@ -1,11 +1,15 @@
 import Link from 'next/link';
-import { api, chamar } from '@/lib/api';
+import { api, chamar, obterEu } from '@/lib/api';
 import { fd } from '@/lib/formato';
 import { LOCAL, ORIGEM, SITUACAO } from '@/lib/rotulos';
 import type { Animal, Movimentacao } from '@/lib/tipos';
 import { FormsSituacao } from './forms-situacao';
 
 function descrever(m: Movimentacao): string {
+  if (m.tipo === 'devolucao') return 'Devolvido pelo adotante; voltou para a sede';
+  if (m.situacao === 'adotado') return `Adotado${m.pessoa ? ` por ${m.pessoa.nome}` : ''}`;
+  if (m.situacao === 'transferido') return `Transferido${m.destino ? ` para ${m.destino}` : ''}`;
+  if (m.situacao === 'devolvido_comunidade') return `Devolvido à comunidade${m.destino ? ` (${m.destino})` : ''}`;
   if (m.tipo === 'entrada') {
     return `Entrada${m.origem ? ` (${ORIGEM[m.origem].toLowerCase()})` : ''}${m.local ? ` na ${m.local === 'sede' ? 'sede' : LOCAL[m.local].toLowerCase()}` : ''}`;
   }
@@ -13,16 +17,26 @@ function descrever(m: Movimentacao): string {
     return `Voltou para a associação${m.origem ? ` (${ORIGEM[m.origem].toLowerCase()})` : ''}`;
   }
   if (m.situacao !== 'em_acolhimento') return SITUACAO[m.situacao].rotulo;
-  const onde = m.local === 'clinica' ? `Clínica${m.clinica ? ` ${m.clinica}` : ''}` : m.local ? LOCAL[m.local] : '';
+  const onde =
+    m.local === 'clinica'
+      ? `Clínica${m.clinica ? ` ${m.clinica}` : ''}`
+      : m.local === 'lar_temporario'
+        ? `Lar temporário${m.pessoa ? ` de ${m.pessoa.nome}` : ''}`
+        : m.local
+          ? LOCAL[m.local]
+          : '';
   return `${onde}${m.disponivel_adocao ? ' · disponível para adoção' : ''}`;
 }
 
 export async function AbaSituacao({ animal, hoje }: { animal: Animal; hoje: string }) {
   const cliente = await api();
-  const [historico, clinicas] = await Promise.all([
+  const [historico, clinicas, lares, eu] = await Promise.all([
     chamar(cliente.GET('/animais/{id}/movimentacoes', { params: { path: { id: animal.id } } })),
     chamar(cliente.GET('/clinicas')),
+    chamar(cliente.GET('/pessoas', { params: { query: { vinculo: 'lar_temporario', por_pagina: 100 } } })),
+    obterEu(),
   ]);
+  const coordena = eu.ok && (eu.dados.papel === 'admin' || eu.dados.papel === 'coordenacao');
 
   return (
     <div className="pilha" data-e="5">
@@ -33,12 +47,27 @@ export async function AbaSituacao({ animal, hoje }: { animal: Animal; hoje: stri
           {animal.situacao === 'em_acolhimento' && animal.local && (
             <>
               {' '}
-              · {animal.local === 'clinica' && animal.clinica ? `Clínica ${animal.clinica.nome}` : LOCAL[animal.local]}
+              ·{' '}
+              {animal.local === 'clinica' && animal.clinica ? (
+                `Clínica ${animal.clinica.nome}`
+              ) : animal.local === 'lar_temporario' && animal.responsavel ? (
+                <>
+                  Lar temporário de <Link href={`/pessoas/${animal.responsavel.id}`}>{animal.responsavel.nome}</Link>
+                </>
+              ) : (
+                LOCAL[animal.local]
+              )}
               {animal.disponivel_adocao ? ' · disponível para adoção' : ''}
             </>
           )}
         </p>
-        <FormsSituacao animal={animal} hoje={hoje} clinicas={clinicas.ok ? clinicas.dados : []} />
+        <FormsSituacao
+          animal={animal}
+          hoje={hoje}
+          clinicas={clinicas.ok ? clinicas.dados : []}
+          lares={lares.ok ? lares.dados.itens : []}
+          coordena={coordena}
+        />
       </section>
 
       <section className="cartao pilha">

@@ -1,6 +1,6 @@
 // Nomes das listas fechadas como aparecem na tela, e a cor de cada selo
 // (brandbook, seção 03). A cor nunca aparece sem o nome.
-import type { Esquemas } from './tipos';
+import type { BaseLegal, Esquemas, Vinculo } from './tipos';
 
 type Animal = Esquemas['AnimalDto'];
 export type Especie = Animal['especie'];
@@ -102,3 +102,31 @@ export const EXAMES_COMUNS = [
   'Cinomose',
   'Parvovirose',
 ] as const;
+
+// Pessoas (Fase 4; ADR 0006, 0007 e 0010) -------------------------------------
+export const VINCULO: Record<Vinculo, string> = {
+  adotante: 'Adotante',
+  lar_temporario: 'Lar temporário',
+};
+
+// Bases legais da seção 04 do plano. Texto provisório até a revisão jurídica.
+export const BASE_LEGAL: Record<BaseLegal, { rotulo: string; ajuda: string }> = {
+  execucao_contrato: { rotulo: 'Execução de contrato', ajuda: 'O termo de adoção.' },
+  acordo_voluntariado: { rotulo: 'Acordo de voluntariado', ajuda: 'O acordo com quem é lar temporário.' },
+  consentimento: { rotulo: 'Consentimento', ajuda: 'A pessoa autorizou por escrito.' },
+  legitimo_interesse: { rotulo: 'Legítimo interesse', ajuda: 'Só com orientação da assessoria jurídica.' },
+};
+
+/** Base legal sugerida para cada vínculo (a pessoa pode trocar). */
+export const BASE_SUGERIDA: Record<Vinculo, BaseLegal> = {
+  adotante: 'execucao_contrato',
+  lar_temporario: 'acordo_voluntariado',
+};
+
+// Aviso curto de privacidade (docs/lgpd/politica-de-privacidade.md). Provisório
+// até a associação indicar o encarregado e revisar o texto (ADR 0010).
+export const AVISO_PRIVACIDADE =
+  'Os dados servem só para acompanhar a adoção ou o lar temporário e falar com a pessoa sobre o animal. ' +
+  'Só a coordenação da associação vê telefone, e-mail e endereço. Guardamos por 60 meses depois do fim do ' +
+  'vínculo e depois anonimizamos. Para ver, corrigir ou pedir a anonimização dos dados, a pessoa fala com a ' +
+  'coordenação da associação.';
