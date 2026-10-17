@@ -2,7 +2,7 @@
 -- entrada) e o que muda no estado de saúde e nas pendências.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(32);
+select plan(31);
 
 delete from public.usuarios;
 delete from public.numeracao;
