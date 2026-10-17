@@ -675,7 +675,7 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 - [ ] `.env.example` nos dois, `.env` no `.gitignore`
 - [ ] `CLAUDE.md` nos dois e os ADRs 0001 a 0008 em `docs/adr/`
 - [ ] CI por repo: typecheck, lint, testes e `npm run build` (o mesmo comando da Cloudflare)
-- [ ] CI do back: `supabase db reset` + `supabase test db` (provas de RLS) + conferir que o `openapi.json` gera
+- [x] CI do back: `supabase db reset` + `supabase test db` (provas de RLS) + conferir que o `openapi.json` gera
 - [ ] Dependabot ligado
 - [ ] Deploy contínuo dos dois pelo Workers Builds da Cloudflare (sem token no GitHub)
 - [ ] Back: `wrangler.toml` com `nodejs_compat`, a flag `enable_nodejs_http_server_modules` e os `alias` dos módulos que o Nest carrega por `require` dinâmico
@@ -683,11 +683,11 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 - [ ] Sentry nos dois, com o filtro de dado pessoal (`beforeSend`) e um erro de teste conferido no painel
 
 **Banco**
-- [ ] Projeto Supabase na região São Paulo, com cadastro público desligado
-- [ ] Migração 001: `configuracoes`, `usuarios`, enum `papel`, schema `app`, `papel`, `tem_papel`, `hoje`
-- [ ] Migração 002: triggers de auditoria (`criado_por`, `atualizado_por`) e tabela `auditoria` sem `update` nem `delete`
-- [ ] Provas pgTAP: conta sem linha em `usuarios` não lê nada; usuário desativado não lê nada; anônimo não lê nada; só admin mexe em `usuarios` e `configuracoes`
-- [ ] `seed.sql` com um usuário fictício de cada papel
+- [x] Projeto Supabase na região São Paulo, com cadastro público desligado
+- [x] Migração 001: `configuracoes`, `usuarios`, enum `papel`, schema `app`, `papel`, `tem_papel`, `hoje`
+- [x] Migração 002: triggers de auditoria (`criado_por`, `atualizado_por`) e tabela `auditoria` sem `update` nem `delete`
+- [x] Provas pgTAP: conta sem linha em `usuarios` não lê nada; usuário desativado não lê nada; anônimo não lê nada; só admin mexe em `usuarios` e `configuracoes`
+- [x] `seed.sql` com um usuário fictício de cada papel
 - [ ] SMTP próprio configurado no Supabase Auth
 
 **Back**
