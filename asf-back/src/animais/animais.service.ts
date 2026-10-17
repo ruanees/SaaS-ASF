@@ -74,7 +74,9 @@ export class AnimaisService {
     }
     const busca = limparBusca(filtro.q);
     if (busca) {
-      consulta = consulta.or(`numero.ilike.%${busca}%,nome.ilike.%${busca}%`);
+      consulta = consulta.or(
+        `numero.ilike.%${busca}%,nome.ilike.%${busca}%,microchip.ilike.%${busca.replace(/s/g, '')}%`,
+      );
     }
 
     const { data, error, count } = await consulta
@@ -107,7 +109,7 @@ export class AnimaisService {
       await sb
         .from('animais')
         .select(
-          `${CAMPOS_RESUMO}, origem, origem_detalhe, observacoes, criado_em, atualizado_em, clinica:clinicas(id, nome, ativo), animal_fotos(caminho)`,
+          `${CAMPOS_RESUMO}, origem, origem_detalhe, observacoes, microchip, microchip_data, criado_em, atualizado_em, clinica:clinicas(id, nome, ativo), animal_fotos(caminho)`,
         )
         .eq('id', id)
         .eq('animal_fotos.principal', true)
@@ -117,6 +119,8 @@ export class AnimaisService {
           origem: AnimalDto['origem'];
           origem_detalhe: string | null;
           observacoes: string | null;
+          microchip: string | null;
+          microchip_data: string | null;
           criado_em: string;
           atualizado_em: string;
           clinica: AnimalDto['clinica'];
@@ -133,6 +137,8 @@ export class AnimaisService {
       origem: linha.origem,
       origem_detalhe: linha.origem_detalhe,
       observacoes: linha.observacoes,
+      microchip: linha.microchip,
+      microchip_data: linha.microchip_data,
       clinica: linha.clinica,
       criado_em: linha.criado_em,
       atualizado_em: linha.atualizado_em,

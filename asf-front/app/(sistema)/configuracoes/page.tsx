@@ -93,7 +93,8 @@ export default async function Configuracoes() {
       <section className="cartao pilha" aria-labelledby="titulo-vacinas">
         <h2 id="titulo-vacinas">Catálogo de vacinas</h2>
         <p className="ajuda">
-          As vacinas que a associação usa, por espécie. O reforço sugere a próxima dose quando alguém registra a vacina.
+          As vacinas que a associação usa, por espécie. Na primeira vez o sistema sugere as doses iniciais (por exemplo, 3
+          doses a cada 21 dias); depois, o reforço.
         </p>
         {!vacinas.ok ? (
           <p className="aviso" data-tipo="erro" role="alert">
@@ -108,6 +109,7 @@ export default async function Configuracoes() {
                 <tr>
                   <th scope="col">Vacina</th>
                   <th scope="col">Espécie</th>
+                  <th scope="col">Primeira vez</th>
                   <th scope="col">Reforço (dias)</th>
                   <th scope="col">Situação</th>
                 </tr>

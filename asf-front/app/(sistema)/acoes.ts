@@ -74,12 +74,21 @@ export async function criarVacinaTipo(_: EstadoAcao, form: FormData): Promise<Es
   const nome = texto(form, 'nome');
   const especie = texto(form, 'especie') as 'cao' | 'gato';
   const reforco = texto(form, 'reforco_dias');
+  const doses = Number(texto(form, 'doses_iniciais') || 1);
+  const intervalo = texto(form, 'intervalo_inicial_dias');
   if (!nome) return { erro: 'Informe o nome da vacina.' };
+  if (doses > 1 && !intervalo) return { erro: 'Informe os dias entre as doses da primeira vez.' };
   if (especie !== 'cao' && especie !== 'gato') return { erro: 'Escolha a espécie.' };
   const cliente = await api();
   const r = await chamar(
     cliente.POST('/vacinas-tipos', {
-      body: { nome, especie, reforco_dias: reforco ? Number(reforco) : null },
+      body: {
+        nome,
+        especie,
+        reforco_dias: reforco ? Number(reforco) : null,
+        doses_iniciais: doses,
+        intervalo_inicial_dias: doses > 1 && intervalo ? Number(intervalo) : null,
+      },
     }),
   );
   if (!r.ok) return { erro: r.falha.mensagem };

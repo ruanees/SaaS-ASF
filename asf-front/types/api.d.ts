@@ -356,6 +356,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/animais/{id}/antiparasitarios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SaudeAnimalController_registrarAntiparasitario"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/{id}/sugestao": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SaudeAnimalController_sugestao"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/animais/{id}/castracoes": {
         parameters: {
             query?: never;
@@ -591,6 +623,9 @@ export interface components {
             origem_detalhe: string | null;
             observacoes: string | null;
             clinica: components["schemas"]["ClinicaDto"] | null;
+            microchip: string | null;
+            /** Format: date */
+            microchip_data: string | null;
             /** Format: date-time */
             criado_em: string;
             /** Format: date-time */
@@ -614,6 +649,10 @@ export interface components {
             origem?: "resgate" | "castracao" | "comunitario" | "outra";
             origem_detalhe?: string | null;
             observacoes?: string | null;
+            /** @description 9 a 20 letras ou números */
+            microchip?: string | null;
+            /** Format: date */
+            microchip_data?: string | null;
         };
         MovimentacaoDto: {
             /** Format: uuid */
@@ -690,6 +729,10 @@ export interface components {
             especie: "cao" | "gato";
             /** @description Dias até o reforço (sugere a próxima dose) */
             reforco_dias: number | null;
+            /** @description Doses da primeira vacinação (ex.: 3) */
+            doses_iniciais: number;
+            /** @description Dias entre as doses iniciais (ex.: 21) */
+            intervalo_inicial_dias: number | null;
             ativo: boolean;
         };
         CriarVacinaTipoDto: {
@@ -697,10 +740,19 @@ export interface components {
             /** @enum {string} */
             especie: "cao" | "gato";
             reforco_dias?: number | null;
+            /**
+             * @description Doses da primeira vacinação
+             * @default 1
+             */
+            doses_iniciais: number;
+            /** @description Dias entre as doses iniciais */
+            intervalo_inicial_dias?: number | null;
         };
         AlterarVacinaTipoDto: {
             nome?: string;
             reforco_dias?: number | null;
+            doses_iniciais?: number;
+            intervalo_inicial_dias?: number | null;
             ativo?: boolean;
         };
         EstadoSaudeDto: {
@@ -721,6 +773,9 @@ export interface components {
             /** Format: date */
             proxima_vermifugacao: string | null;
             vermifugacao_vencida: boolean;
+            /** Format: date */
+            proximo_antiparasitario: string | null;
+            antiparasitario_vencido: boolean;
         };
         VacinacaoDto: {
             /** Format: uuid */
@@ -735,6 +790,15 @@ export interface components {
             veterinario: string | null;
         };
         VermifugacaoDto: {
+            /** Format: uuid */
+            atendimento_id: string;
+            produto: string;
+            /** Format: date */
+            data: string;
+            /** Format: date */
+            proxima_dose: string | null;
+        };
+        AntiparasitarioDto: {
             /** Format: uuid */
             atendimento_id: string;
             produto: string;
@@ -764,6 +828,7 @@ export interface components {
             estado: components["schemas"]["EstadoSaudeDto"];
             vacinacoes: components["schemas"]["VacinacaoDto"][];
             vermifugacoes: components["schemas"]["VermifugacaoDto"][];
+            antiparasitarios: components["schemas"]["AntiparasitarioDto"][];
             castracoes: components["schemas"]["CastracaoDto"][];
         };
         NovaVacinacaoDto: {
@@ -788,6 +853,22 @@ export interface components {
             proxima_dose?: string;
             observacoes?: string;
         };
+        NovoAntiparasitarioDto: {
+            /** @example Simparic */
+            produto: string;
+            /** Format: date */
+            data: string;
+            /** Format: date */
+            proxima_dose?: string;
+            observacoes?: string;
+        };
+        SugestaoDto: {
+            /**
+             * Format: date
+             * @description Próxima dose sugerida (pode ser alterada)
+             */
+            proxima_dose: string | null;
+        };
         NovaCastracaoDto: {
             /** Format: uuid */
             clinica_id?: string;
@@ -804,6 +885,8 @@ export interface components {
              * @description Obrigatória para agendar e realizar
              */
             data?: string;
+            /** @description Microchip aplicado na cirurgia */
+            microchip?: string;
         };
         AlterarCastracaoDto: {
             /** Format: uuid */
@@ -819,10 +902,12 @@ export interface components {
              */
             data?: string;
             motivo?: string;
+            /** @description Microchip aplicado na cirurgia */
+            microchip?: string;
         };
         PendenciaDto: {
             /** @enum {string} */
-            tipo: "vacina" | "vermifugacao" | "castracao";
+            tipo: "vacina" | "vermifugacao" | "antiparasitario" | "castracao" | "castracao_prioridade";
             /** Format: uuid */
             animal_id: string;
             numero: string;
@@ -1474,6 +1559,60 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SaudeAnimalDto"];
+                };
+            };
+        };
+    };
+    SaudeAnimalController_registrarAntiparasitario: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NovoAntiparasitarioDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SaudeAnimalDto"];
+                };
+            };
+        };
+    };
+    SaudeAnimalController_sugestao: {
+        parameters: {
+            query: {
+                tipo: "vacina" | "vermifugacao" | "antiparasitario";
+                /** @description Data da aplicação */
+                data: string;
+                /** @description Obrigatório para vacina */
+                vacina_tipo_id?: string;
+                /** @description Produto (antiparasitário) */
+                produto?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SugestaoDto"];
                 };
             };
         };

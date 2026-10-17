@@ -9,6 +9,7 @@ import {
   IsString,
   IsUUID,
   Length,
+  Matches,
   Max,
   MaxLength,
   Min,
@@ -102,6 +103,9 @@ export class AnimalDto extends AnimalResumoDto {
   @ApiProperty({ type: String, nullable: true }) origem_detalhe: string | null;
   @ApiProperty({ type: String, nullable: true }) observacoes: string | null;
   @ApiProperty({ type: ClinicaDto, nullable: true }) clinica: ClinicaDto | null;
+  @ApiProperty({ type: String, nullable: true }) microchip: string | null;
+  @ApiProperty({ type: String, format: 'date', nullable: true })
+  microchip_data: string | null;
   @ApiProperty({ format: 'date-time' }) criado_em: string;
   @ApiProperty({ format: 'date-time' }) atualizado_em: string;
 }
@@ -343,6 +347,26 @@ export class AlterarAnimalDto {
   @IsString()
   @MaxLength(2000)
   observacoes?: string | null;
+
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: '9 a 20 letras ou números',
+  })
+  @IsOptional()
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.replace(/s/g, '').toUpperCase() : value,
+  )
+  @IsString()
+  @Matches(/^[0-9A-Z]{9,20}$/, {
+    message: 'Microchip com 9 a 20 letras ou números.',
+  })
+  microchip?: string | null;
+
+  @ApiPropertyOptional({ type: String, format: 'date', nullable: true })
+  @IsOptional()
+  @IsISO8601(DATA, MSG_DATA)
+  microchip_data?: string | null;
 }
 
 export class NovaMovimentacaoDto {

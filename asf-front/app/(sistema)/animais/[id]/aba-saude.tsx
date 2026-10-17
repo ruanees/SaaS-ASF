@@ -3,7 +3,7 @@ import { SelosSaude } from '@/components/selos-saude';
 import { api, chamar } from '@/lib/api';
 import { fd } from '@/lib/formato';
 import type { Animal } from '@/lib/tipos';
-import { FormCastracao, FormVacina, FormVermifugacao } from './forms-saude';
+import { FormAntiparasitario, FormCastracao, FormVacina, FormVermifugacao } from './forms-saude';
 
 export async function AbaSaude({ animal, hoje }: { animal: Animal; hoje: string }) {
   const cliente = await api();
@@ -29,7 +29,8 @@ export async function AbaSaude({ animal, hoje }: { animal: Animal; hoje: string 
   }
   const s = saude.dados;
   const listaClinicas = clinicas.ok ? clinicas.dados : [];
-  const emAcolhimento = animal.situacao === 'em_acolhimento';
+  // Adotado também: a associação agenda a castração junto com o adotante.
+  const podeAgendar = animal.situacao === 'em_acolhimento' || animal.situacao === 'adotado';
 
   return (
     <div className="pilha" data-e="5">
@@ -82,7 +83,7 @@ export async function AbaSaude({ animal, hoje }: { animal: Animal; hoje: string 
           estado={s.estado}
           castracoes={s.castracoes}
           clinicas={listaClinicas}
-          emAcolhimento={emAcolhimento}
+          podeAgendar={podeAgendar}
         />
       </section>
 
@@ -104,6 +105,26 @@ export async function AbaSaude({ animal, hoje }: { animal: Animal; hoje: string 
           </ul>
         )}
         <FormVermifugacao animalId={animal.id} hoje={hoje} />
+      </section>
+
+      <section className="cartao pilha" aria-labelledby="t-anti">
+        <h2 id="t-anti">Antipulgas e carrapatos</h2>
+        {s.antiparasitarios.length === 0 ? (
+          <p>Nenhuma aplicação registrada.</p>
+        ) : (
+          <ul className="linha-do-tempo">
+            {s.antiparasitarios.map((v) => (
+              <li key={v.atendimento_id}>
+                <span className="data">{fd(v.data)}</span>
+                <span className="pilha" data-e="2">
+                  <span>{v.produto}</span>
+                  {v.proxima_dose && <span className="ajuda">Próxima aplicação em {fd(v.proxima_dose)}</span>}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <FormAntiparasitario animalId={animal.id} hoje={hoje} />
       </section>
     </div>
   );

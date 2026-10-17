@@ -57,7 +57,8 @@ export default async function FichaAnimal({ params, searchParams }: PageProps<'/
 
       {sp.novo === '1' && (
         <p className="aviso" data-tipo="ok" role="status">
-          {nomeDoAnimal(a)} cadastrado com o número {a.numero}. Envie uma foto para facilitar a identificação.
+          {nomeDoAnimal(a)} cadastrado com o número {a.numero}. Envie uma foto para facilitar a identificação e, se
+          aplicou, registre o Simparic de admissão em <Link href={`/animais/${a.id}?aba=saude`}>Saúde</Link>.
         </p>
       )}
 
