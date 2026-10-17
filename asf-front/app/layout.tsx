@@ -1,20 +1,25 @@
 import type { Metadata, Viewport } from 'next';
-import { Fredoka, Nunito_Sans } from 'next/font/google';
+import localFont from 'next/font/local';
 import '../styles/tokens.css';
 import '../styles/components.css';
 
 // Brandbook, seção 04: Fredoka nos títulos, nome do animal, número e
-// indicadores; Nunito Sans no resto. O next/font baixa no build e serve do
-// próprio domínio (a CSP só permite fontes de 'self').
-const fredoka = Fredoka({
-  subsets: ['latin'],
-  weight: ['500', '600'],
+// indicadores; Nunito Sans no resto. Arquivos no próprio repositório: o build
+// não depende do Google Fonts e a CSP só permite fontes de 'self'.
+const fredoka = localFont({
+  src: [
+    { path: './fontes/fredoka-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: './fontes/fredoka-latin-600-normal.woff2', weight: '600', style: 'normal' },
+  ],
   variable: '--fonte-fredoka',
   display: 'swap',
 });
-const nunito = Nunito_Sans({
-  subsets: ['latin'],
-  weight: ['400', '700', '800'],
+const nunito = localFont({
+  src: [
+    { path: './fontes/nunito-sans-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: './fontes/nunito-sans-latin-700-normal.woff2', weight: '700', style: 'normal' },
+    { path: './fontes/nunito-sans-latin-800-normal.woff2', weight: '800', style: 'normal' },
+  ],
   variable: '--fonte-nunito',
   display: 'swap',
 });
