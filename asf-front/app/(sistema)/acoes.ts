@@ -59,3 +59,13 @@ export async function alterarUsuario(_: EstadoAcao, form: FormData): Promise<Est
   revalidatePath('/configuracoes');
   return { ok: 'Alteração salva.' };
 }
+
+export async function criarClinica(_: EstadoAcao, form: FormData): Promise<EstadoAcao> {
+  const nome = texto(form, 'nome');
+  if (!nome) return { erro: 'Informe o nome da clínica.' };
+  const cliente = await api();
+  const r = await chamar(cliente.POST('/clinicas', { body: { nome } }));
+  if (!r.ok) return { erro: r.falha.mensagem };
+  revalidatePath('/configuracoes');
+  return { ok: `${nome} cadastrada.` };
+}

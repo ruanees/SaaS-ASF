@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react';
 import type { Usuario } from '@/lib/tipos';
-import { alterarUsuario, convidar, type EstadoAcao } from '../acoes';
+import { alterarUsuario, convidar, criarClinica, type EstadoAcao } from '../acoes';
 
 const PAPEIS = [
   ['voluntario', 'Voluntário(a)'],
@@ -118,5 +118,32 @@ export function LinhaUsuario({
         </form>
       </td>
     </tr>
+  );
+}
+
+export function FormClinica() {
+  const [estado, acao, enviando] = useActionState<EstadoAcao, FormData>(criarClinica, {});
+  return (
+    <form action={acao} className="pilha" noValidate>
+      {estado.erro && (
+        <p className="aviso" data-tipo="erro" role="alert">
+          {estado.erro}
+        </p>
+      )}
+      {estado.ok && (
+        <p className="aviso" data-tipo="ok" role="status">
+          {estado.ok}
+        </p>
+      )}
+      <div className="linha" style={{ alignItems: 'flex-end' }}>
+        <div className="campo" style={{ flex: 1, minWidth: 200 }}>
+          <label htmlFor="clinica-nome">Nome da clínica</label>
+          <input id="clinica-nome" name="nome" maxLength={120} required autoComplete="off" />
+        </div>
+        <button className="botao" type="submit" disabled={enviando}>
+          {enviando ? 'Cadastrando…' : 'Cadastrar clínica'}
+        </button>
+      </div>
+    </form>
   );
 }
