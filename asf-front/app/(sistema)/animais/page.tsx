@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SelosAnimal } from '@/components/selos-animal';
+import { SelosSaude } from '@/components/selos-saude';
 import { api, chamar } from '@/lib/api';
 import { idade } from '@/lib/formato';
 import { ESPECIE, SEXO, nomeDoAnimal } from '@/lib/rotulos';
@@ -105,6 +106,9 @@ export default async function PaginaAnimais({ searchParams }: PageProps<'/animai
                         .join(' · ')}
                     </span>
                     <SelosAnimal situacao={a.situacao} local={a.local} disponivel={a.disponivel_adocao} />
+                    {a.situacao === 'em_acolhimento' && (
+                      <SelosSaude vacinacao={a.vacinacao_status} castracao={a.castracao_status} />
+                    )}
                   </span>
                 </Link>
               </li>

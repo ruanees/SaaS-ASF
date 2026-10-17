@@ -18,11 +18,11 @@ export interface ItemMenu {
 export const MENU: ItemMenu[] = [
   { rotulo: 'Início', rota: '/', fase: 0, celular: true },
   { rotulo: 'Animais', rota: '/animais', fase: 1, celular: true },
-  { rotulo: 'Pendências', rota: '/pendencias', fase: 2, emBreve: true, celular: true },
+  { rotulo: 'Pendências', rota: '/pendencias', fase: 2, celular: true },
   { rotulo: 'Pessoas', rota: '/pessoas', fase: 4, emBreve: true },
   { rotulo: 'Adoções', rota: '/adocoes', fase: 4, emBreve: true },
   { rotulo: 'Relatórios', rota: '/relatorios', fase: 5, emBreve: true },
-  { rotulo: 'Configurações', rota: '/configuracoes', fase: 0, papeis: ['admin'] },
+  { rotulo: 'Configurações', rota: '/configuracoes', fase: 0, papeis: ['admin', 'coordenacao'] },
   { rotulo: 'Auditoria', rota: '/auditoria', fase: 6, emBreve: true, papeis: ['admin'] },
 ];
 

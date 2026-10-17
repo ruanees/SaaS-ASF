@@ -96,3 +96,17 @@ const NOMES_PAPEL = {
 export function nomePapel(papel: keyof typeof NOMES_PAPEL): string {
   return NOMES_PAPEL[papel] ?? papel;
 }
+
+/** Soma dias a uma data AAAA-MM-DD (sugestão da próxima dose). */
+export function somarDias(iso: string, dias: number): string {
+  const d = DATA_PURA.exec(iso);
+  if (!d) return '';
+  const data = new Date(Date.UTC(+d[1], +d[2] - 1, +d[3] + dias));
+  return data.toISOString().slice(0, 10);
+}
+
+/** dd/mm, para frases curtas ("Próxima dose em 12/11"). */
+export function fdCurta(iso: string | null | undefined): string {
+  const d = iso ? DATA_PURA.exec(iso) : null;
+  return d ? `${d[3]}/${d[2]}` : '—';
+}

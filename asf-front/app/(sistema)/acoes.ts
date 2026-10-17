@@ -69,3 +69,36 @@ export async function criarClinica(_: EstadoAcao, form: FormData): Promise<Estad
   revalidatePath('/configuracoes');
   return { ok: `${nome} cadastrada.` };
 }
+
+export async function criarVacinaTipo(_: EstadoAcao, form: FormData): Promise<EstadoAcao> {
+  const nome = texto(form, 'nome');
+  const especie = texto(form, 'especie') as 'cao' | 'gato';
+  const reforco = texto(form, 'reforco_dias');
+  if (!nome) return { erro: 'Informe o nome da vacina.' };
+  if (especie !== 'cao' && especie !== 'gato') return { erro: 'Escolha a espécie.' };
+  const cliente = await api();
+  const r = await chamar(
+    cliente.POST('/vacinas-tipos', {
+      body: { nome, especie, reforco_dias: reforco ? Number(reforco) : null },
+    }),
+  );
+  if (!r.ok) return { erro: r.falha.mensagem };
+  revalidatePath('/configuracoes');
+  return { ok: `${nome} cadastrada no catálogo.` };
+}
+
+export async function alterarVacinaTipo(_: EstadoAcao, form: FormData): Promise<EstadoAcao> {
+  const id = texto(form, 'id');
+  const reforco = texto(form, 'reforco_dias');
+  const ativo = texto(form, 'ativo');
+  const corpo: { reforco_dias?: number | null; ativo?: boolean } = {};
+  if (form.has('reforco_dias')) corpo.reforco_dias = reforco ? Number(reforco) : null;
+  if (ativo === 'sim' || ativo === 'nao') corpo.ativo = ativo === 'sim';
+  const cliente = await api();
+  const r = await chamar(
+    cliente.PATCH('/vacinas-tipos/{id}', { params: { path: { id } }, body: corpo }),
+  );
+  if (!r.ok) return { erro: r.falha.mensagem };
+  revalidatePath('/configuracoes');
+  return { ok: 'Alteração salva.' };
+}
