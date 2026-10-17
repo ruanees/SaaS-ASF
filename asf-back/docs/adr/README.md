@@ -13,3 +13,4 @@ Cada registro guarda o porquê de uma escolha: o contexto, a decisão, as conseq
 | [0007](0007-lgpd-controladora-anonimizacao.md) | LGPD: associação controladora; anonimizar em vez de apagar | aceita |
 | [0008](0008-hospedagem-cloudflare-supabase-sp.md) | Hospedagem: Cloudflare Workers e Supabase na região São Paulo | aceita |
 | [0009](0009-um-repositorio-duas-pastas.md) | Um repositório com duas pastas independentes, separável depois | aceita |
+| [0010](0010-fase-4-antes-da-revisao-lgpd.md) | Fase 4 construída antes da revisão da LGPD, com padrões provisórios | aceita |
