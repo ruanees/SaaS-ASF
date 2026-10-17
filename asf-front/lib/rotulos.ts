@@ -62,3 +62,43 @@ export const CASTRACAO: Record<StatusCastracao, { rotulo: string; cor?: string }
   agendada: { rotulo: 'Castração agendada', cor: 'azul' },
   nao_castrado: { rotulo: 'Não castrado' },
 };
+
+// Prontuário -----------------------------------------------------------------
+export type TipoAtendimento = Esquemas['AtendimentoDto']['tipo'];
+export type ResultadoExame = NonNullable<Esquemas['AtendimentoDto']['exame']>['resultado'];
+
+export const TIPO_ATENDIMENTO: Record<TipoAtendimento, string> = {
+  consulta: 'Consulta',
+  retorno: 'Retorno',
+  exame: 'Exame',
+  teste: 'Teste',
+  tratamento: 'Tratamento',
+  internacao: 'Internação',
+  vacina: 'Vacina',
+  vermifugacao: 'Vermifugação',
+  antiparasitario: 'Antipulgas e carrapatos',
+  castracao: 'Castração',
+  obito: 'Óbito',
+};
+
+// Brandbook, seção 03 · Exames e testes.
+export const RESULTADO: Record<ResultadoExame, { rotulo: string; cor?: string }> = {
+  aguardando: { rotulo: 'Aguardando resultado', cor: 'amarelo' },
+  nao_reagente: { rotulo: 'Não reagente', cor: 'verde' },
+  normal: { rotulo: 'Normal', cor: 'verde' },
+  reagente: { rotulo: 'Reagente', cor: 'vermelho' },
+  alterado: { rotulo: 'Alterado', cor: 'laranja' },
+  inconclusivo: { rotulo: 'Inconclusivo' },
+  ver_laudo: { rotulo: 'Ver laudo' },
+};
+
+// Atalhos de exames e testes (plano, Fase 3; 4DX pedido pela associação).
+export const EXAMES_COMUNS = [
+  'Hemograma',
+  'Bioquímico (fígado e rins)',
+  'Leishmaniose (calazar)',
+  '4DX',
+  'FIV/FeLV',
+  'Cinomose',
+  'Parvovirose',
+] as const;

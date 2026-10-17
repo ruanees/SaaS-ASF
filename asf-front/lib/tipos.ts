@@ -16,3 +16,5 @@ export type SaudeAnimal = Esquemas['SaudeAnimalDto'];
 export type EstadoSaude = Esquemas['EstadoSaudeDto'];
 export type VacinaTipo = Esquemas['VacinaTipoDto'];
 export type Pendencia = Esquemas['PendenciaDto'];
+export type Atendimento = Esquemas['AtendimentoDto'];
+export type Prontuario = Esquemas['ProntuarioDto'];

@@ -106,9 +106,12 @@ export default async function PaginaAnimais({ searchParams }: PageProps<'/animai
                         .join(' · ')}
                     </span>
                     <SelosAnimal situacao={a.situacao} local={a.local} disponivel={a.disponivel_adocao} />
-                    {a.situacao === 'em_acolhimento' && (
-                      <SelosSaude vacinacao={a.vacinacao_status} castracao={a.castracao_status} />
-                    )}
+                    <SelosSaude
+                      vacinacao={a.situacao === 'em_acolhimento' ? a.vacinacao_status : null}
+                      castracao={a.situacao === 'em_acolhimento' ? a.castracao_status : null}
+                      emTratamento={a.situacao === 'em_acolhimento' ? a.em_tratamento : null}
+                      leishmaniose={a.leishmaniose_reagente}
+                    />
                   </span>
                 </Link>
               </li>

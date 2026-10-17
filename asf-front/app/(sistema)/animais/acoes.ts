@@ -72,8 +72,29 @@ export async function cadastrarAnimal(_: EstadoAcao, form: FormData): Promise<Es
   const r = await chamar(cliente.POST('/animais', { body: corpo }));
   if (!r.ok) return { erro: r.falha.mensagem };
 
+  // Saúde na entrada: condição, exames pedidos e tratamento iniciado.
+  const condicao = opcional(texto(form, 'condicao_entrada'));
+  const exames = form.getAll('exames').filter((e): e is string => typeof e === 'string' && e.trim() !== '');
+  const medicamento = texto(form, 'medicamento');
+  let saude = '';
+  if (condicao || exames.length > 0 || medicamento) {
+    const s = await chamar(
+      cliente.POST('/animais/{id}/saude-entrada', {
+        params: { path: { id: r.dados.id } },
+        body: {
+          condicao,
+          exames,
+          tratamento: medicamento
+            ? { medicamento, dose: opcional(texto(form, 'dose')), frequencia: opcional(texto(form, 'frequencia')) }
+            : undefined,
+        },
+      }),
+    );
+    if (!s.ok) saude = '&saude=falhou';
+  }
+
   revalidatePath('/animais');
-  redirect(`/animais/${r.dados.id}?novo=1`);
+  redirect(`/animais/${r.dados.id}?novo=1${saude}`);
 }
 
 // Ficha: campo a campo ------------------------------------------------------------

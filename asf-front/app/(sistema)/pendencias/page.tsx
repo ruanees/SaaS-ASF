@@ -13,16 +13,18 @@ const TIPO: Record<Pendencia['tipo'], string> = {
   antiparasitario: 'Antipulgas e carrapatos',
   castracao: 'Castração',
   castracao_prioridade: 'Castração',
+  exame: 'Exame',
 };
 
 const EH_CASTRACAO = (p: Pendencia) => p.tipo === 'castracao' || p.tipo === 'castracao_prioridade';
+const EH_EXAME = (p: Pendencia) => p.tipo === 'exame';
 
 function Lista({ itens }: { itens: Pendencia[] }) {
   return (
     <ul className="lista-pendencias">
       {itens.map((p) => (
         <li key={`${p.tipo}-${p.animal_id}-${p.descricao}`}>
-          <Link href={`/animais/${p.animal_id}?aba=saude`} className="cartao cartao-pendencia">
+          <Link href={`/animais/${p.animal_id}?aba=${EH_EXAME(p) ? 'prontuario' : 'saude'}`} className="cartao cartao-pendencia">
             <span className="data">{fd(p.data)}</span>
             <span className="pilha" data-e="2">
               <span>
@@ -35,10 +37,12 @@ function Lista({ itens }: { itens: Pendencia[] }) {
             </span>
             <span
               className="selo"
-              data-cor={p.tipo === 'castracao_prioridade' ? undefined : p.vencida ? 'vermelho' : p.tipo === 'castracao' ? 'azul' : 'amarelo'}
+              data-cor={p.tipo === 'castracao_prioridade' ? undefined : EH_EXAME(p) ? 'laranja' : p.vencida ? 'vermelho' : p.tipo === 'castracao' ? 'azul' : 'amarelo'}
             >
               {p.tipo === 'castracao_prioridade'
                 ? 'Sem castração'
+                : EH_EXAME(p)
+                  ? 'Aguardando resultado'
                 : p.vencida
                   ? p.tipo === 'castracao'
                     ? 'Data passou'
@@ -77,7 +81,8 @@ export default async function Pendencias() {
   }
 
   const vencidas = r.dados.filter((p) => p.vencida);
-  const proximas = r.dados.filter((p) => !p.vencida && !EH_CASTRACAO(p));
+  const proximas = r.dados.filter((p) => !p.vencida && !EH_CASTRACAO(p) && !EH_EXAME(p));
+  const exames = r.dados.filter(EH_EXAME);
   const castracoes = r.dados.filter((p) => !p.vencida && p.tipo === 'castracao');
   const prioridade = r.dados.filter((p) => p.tipo === 'castracao_prioridade');
 
@@ -87,7 +92,7 @@ export default async function Pendencias() {
         <h1>Pendências</h1>
         <p className="ajuda">
           Vacinas, vermífugos e antipulgas vencidos ou a vencer, castrações agendadas (inclusive com adotantes) e as fêmeas
-          ainda sem castração.
+          ainda sem castração e os exames esperando resultado.
         </p>
       </div>
 
@@ -115,6 +120,13 @@ export default async function Pendencias() {
               <h2 id="p-prioridade">Prioridade de castração: fêmeas ({prioridade.length})</h2>
               <p className="ajuda">Gatas e cadelas em acolhimento sem castração realizada nem agendada. A data é a da entrada.</p>
               <Lista itens={prioridade} />
+            </section>
+          )}
+          {exames.length > 0 && (
+            <section className="pilha" aria-labelledby="p-exames">
+              <h2 id="p-exames">Exames aguardando resultado ({exames.length})</h2>
+              <p className="ajuda">A data é a do pedido. O resultado é registrado no prontuário do animal.</p>
+              <Lista itens={exames} />
             </section>
           )}
           {castracoes.length > 0 && (

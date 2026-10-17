@@ -22,6 +22,7 @@ const ROTULO_CAMPO: Record<string, string> = {
   observacoes: 'observações',
   microchip: 'microchip',
   microchip_data: 'data do microchip',
+  condicao_entrada: 'condição na entrada',
 };
 
 // Cada campo salva ao sair dele, sem redesenhar a ficha. O selo de gravação
@@ -199,6 +200,17 @@ export function AbaDados({ animal, hoje, podeExcluir }: { animal: Animal; hoje: 
             />
           </div>
         )}
+        <div className="campo">
+          <label htmlFor="d-condicao">Condição na entrada</label>
+          <textarea
+            id="d-condicao"
+            rows={2}
+            maxLength={2000}
+            defaultValue={animal.condicao_entrada ?? ''}
+            onBlur={(e) => texto('condicao_entrada', e.target.value)}
+          />
+          <span className="ajuda">Como o animal chegou. Exames e tratamentos ficam no Prontuário.</span>
+        </div>
         <p className="ajuda">Voltas depois da primeira entrada ficam no histórico da aba Situação.</p>
       </section>
 

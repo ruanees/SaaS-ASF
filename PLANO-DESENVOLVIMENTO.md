@@ -840,25 +840,31 @@ Funcionalidades: F-07, F-08, F-09, F-10.
 Funcionalidades: F-11, F-12, F-13.
 
 **Banco**
-- [ ] Tabelas `exames`, `tratamentos`, `internacoes`
-- [ ] Balde privado `laudos`, só admin, coordenação e veterinário leem
-- [ ] View `animal_em_tratamento` (`security_invoker`): tratamento sem `fim`, internação sem `alta`, ou `local = 'clinica'`
-- [ ] RLS: voluntário lê o prontuário e não grava diagnóstico, exame ou tratamento
+- [x] Tabelas `exames`, `tratamentos`, `internacoes`
+- [x] Balde privado `laudos`, só admin, coordenação e veterinário leem
+- [x] View `animal_em_tratamento` (`security_invoker`): tratamento sem `fim`, internação sem `alta`, ou `local = 'clinica'`
+- [x] RLS: voluntário lê o prontuário e não grava diagnóstico, exame ou tratamento
 
 **Back**
-- [ ] `GET /animais/:id/prontuario`: linha do tempo de todos os atendimentos, por data e depois pela hora do registro, paginada
-- [ ] `POST /animais/:id/atendimentos` com o detalhe do tipo (consulta, exame, teste, tratamento, internação, retorno)
-- [ ] Envio de laudo em PDF ou imagem (mesmo fluxo de URL assinada)
-- [ ] `PATCH` para registrar resultado de exame que estava "aguardando", alta de internação e fim de tratamento
-- [ ] Atendimento do tipo `obito` chama `mover_animal` para `obito` na mesma transação
+- [x] `GET /animais/:id/prontuario`: linha do tempo de todos os atendimentos, por data e depois pela hora do registro, paginada
+- [x] `POST /animais/:id/atendimentos` com o detalhe do tipo (consulta, exame, teste, tratamento, internação, retorno)
+- [x] Envio de laudo em PDF ou imagem (mesmo fluxo de URL assinada)
+- [x] `PATCH` para registrar resultado de exame que estava "aguardando", alta de internação e fim de tratamento
+- [x] Atendimento do tipo `obito` chama `mover_animal` para `obito` na mesma transação
 
 **Front**
-- [ ] Aba Prontuário: linha do tempo com filtro por tipo; vacina, vermífugo e castração da Fase 2 aparecem nela, porque é a mesma tabela
-- [ ] Formulário único de atendimento: os campos mudam conforme o tipo escolhido
-- [ ] Testes com atalho para leishmaniose, FIV/FeLV, cinomose e parvovirose, com método e resultado
-- [ ] Resultado "reagente" de leishmaniose mostra um selo destacado na ficha e na lista
-- [ ] Exames com resultado "aguardando" aparecem em Pendências
-- [ ] Impressão da ficha clínica do animal (janela de impressão do navegador)
+- [x] Aba Prontuário: linha do tempo com filtro por tipo; vacina, vermífugo e castração da Fase 2 aparecem nela, porque é a mesma tabela
+- [x] Formulário único de atendimento: os campos mudam conforme o tipo escolhido
+- [x] Testes com atalho para leishmaniose, FIV/FeLV, cinomose e parvovirose, com método e resultado
+- [x] Resultado "reagente" de leishmaniose mostra um selo destacado na ficha e na lista
+- [x] Exames com resultado "aguardando" aparecem em Pendências
+- [x] Impressão da ficha clínica do animal (janela de impressão do navegador)
+
+**Saúde na entrada (pedido da associação: o "prontuáriozinho")**
+- [x] Coluna `condicao_entrada` no animal, editável na aba Dados
+- [x] `registrar_saude_entrada`: condição para todos; exames pedidos (aguardando resultado) e tratamento iniciado só para os papéis clínicos
+- [x] Seção "Saúde na entrada" no cadastro, com atalhos de hemograma, bioquímico, leishmaniose, 4DX, FIV/FeLV, cinomose e parvovirose
+- [x] Selo "em tratamento" na lista e na ficha
 
 **Casos de borda**
 - Vários atendimentos no mesmo dia: a ordem segue a hora em que foram registrados.

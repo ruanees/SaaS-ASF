@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useActionState, useEffect, useRef, useState, useTransition } from 'react';
 import { nascimentoEstimado } from '@/lib/formato';
-import { ORIGEM, PORTE, SEXO, SITUACAO } from '@/lib/rotulos';
+import { EXAMES_COMUNS, ORIGEM, PORTE, SEXO, SITUACAO } from '@/lib/rotulos';
 import type { Clinica, Duplicado } from '@/lib/tipos';
 import { cadastrarAnimal, procurarDuplicados, type EstadoAcao } from '../acoes';
 
@@ -22,7 +22,7 @@ function lerRascunho(): Valores {
   }
 }
 
-export function FormCadastro({ hoje, clinicas }: { hoje: string; clinicas: Clinica[] }) {
+export function FormCadastro({ hoje, clinicas, clinico }: { hoje: string; clinicas: Clinica[]; clinico: boolean }) {
   const inicial: Valores = { data_entrada: hoje, local: 'sede', unidade: 'anos' };
   const [v, setV] = useState<Valores>(inicial);
   const [estado, acao, enviando] = useActionState<EstadoAcao, FormData>(cadastrarAnimal, {});
@@ -49,6 +49,11 @@ export function FormCadastro({ hoje, clinicas }: { hoje: string; clinicas: Clini
       return novo;
     });
     if (['nome', 'especie', 'sexo'].includes(nome)) setDuplicados(null);
+  }
+
+  const exames = (v.exames ?? '').split('|').filter(Boolean);
+  function alternarExame(nome: string) {
+    mudar('exames', (exames.includes(nome) ? exames.filter((e) => e !== nome) : [...exames, nome]).join('|'));
   }
 
   const quantidade = Number(v.quantidade);
@@ -204,6 +209,54 @@ export function FormCadastro({ hoje, clinicas }: { hoje: string; clinicas: Clini
           <label htmlFor="observacoes">Observações</label>
           <textarea id="observacoes" name="observacoes" rows={3} maxLength={2000} value={v.observacoes ?? ''} onChange={(e) => mudar('observacoes', e.target.value)} />
         </div>
+      </section>
+
+      <section className="cartao pilha">
+        <h2>Saúde na entrada</h2>
+        <div className="campo">
+          <label htmlFor="condicao_entrada">Como chegou</label>
+          <textarea
+            id="condicao_entrada"
+            name="condicao_entrada"
+            rows={2}
+            maxLength={2000}
+            placeholder="Ex.: sarna generalizada, magro, ferida na pata"
+            value={v.condicao_entrada ?? ''}
+            onChange={(e) => mudar('condicao_entrada', e.target.value)}
+          />
+        </div>
+        {clinico ? (
+          <>
+            <fieldset className="campo" style={{ border: 0, padding: 0, margin: 0 }}>
+              <legend className="rotulo-campo">Exames pedidos</legend>
+              <div className="linha">
+                {EXAMES_COMUNS.map((n) => (
+                  <label key={n} className="opcao">
+                    <input type="checkbox" name="exames" value={n} checked={exames.includes(n)} onChange={() => alternarExame(n)} />
+                    {n}
+                  </label>
+                ))}
+              </div>
+              <span className="ajuda">Entram no prontuário aguardando resultado.</span>
+            </fieldset>
+            <div className="grade" data-n="3">
+              <div className="campo">
+                <label htmlFor="medicamento">Medicamento iniciado</label>
+                <input id="medicamento" name="medicamento" maxLength={120} value={v.medicamento ?? ''} onChange={(e) => mudar('medicamento', e.target.value)} />
+              </div>
+              <div className="campo">
+                <label htmlFor="dose">Dose</label>
+                <input id="dose" name="dose" maxLength={80} value={v.dose ?? ''} onChange={(e) => mudar('dose', e.target.value)} />
+              </div>
+              <div className="campo">
+                <label htmlFor="frequencia">Frequência</label>
+                <input id="frequencia" name="frequencia" maxLength={80} value={v.frequencia ?? ''} onChange={(e) => mudar('frequencia', e.target.value)} />
+              </div>
+            </div>
+          </>
+        ) : (
+          <p className="ajuda">Exames e tratamentos são registrados depois, no prontuário, pela equipe clínica.</p>
+        )}
       </section>
 
       {duplicados && duplicados.length > 0 && (

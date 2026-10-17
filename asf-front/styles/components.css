@@ -270,3 +270,26 @@ p { margin: 0; }
   min-height: var(--toque); padding: 0 var(--e-2); border: 1.5px solid var(--divisoria);
   border-radius: var(--raio); background: var(--cartao); color: var(--texto); font: inherit;
 }
+
+/* Prontuário: ações de um item ficam abaixo do registro ------------------- */
+.linha-do-tempo form.linha { gap: var(--e-2); flex-wrap: wrap; }
+.linha-do-tempo .campo { min-width: 140px; }
+@media (max-width: 520px) { .linha-do-tempo li { grid-template-columns: 1fr; gap: var(--e-1); } }
+
+/* Ficha clínica para imprimir --------------------------------------------- */
+.impressao { max-width: 960px; margin: 0 auto; padding: var(--e-5) var(--e-4); }
+.dados-impressao { display: grid; grid-template-columns: max-content 1fr; gap: var(--e-1) var(--e-4); margin: 0; }
+.dados-impressao dt { font-weight: 800; color: var(--rotulo); }
+.dados-impressao dd { margin: 0; }
+.tabela-impressao { width: 100%; border-collapse: collapse; }
+.tabela-impressao th, .tabela-impressao td { text-align: left; vertical-align: top; padding: var(--e-2); border-bottom: 1px solid var(--divisoria); }
+.tabela-impressao td:first-child { white-space: nowrap; font-weight: 700; }
+@media (max-width: 640px) { .tabela-impressao { display: block; overflow-x: auto; } }
+@media print {
+  :root { color-scheme: light; }
+  body { background: var(--branco); color: var(--carvao); }
+  .nao-imprimir { display: none !important; }
+  .impressao { max-width: none; padding: 0; }
+  .tabela-impressao tr { break-inside: avoid; }
+  .tabela-impressao th, .tabela-impressao td { border-color: var(--cordao); }
+}
