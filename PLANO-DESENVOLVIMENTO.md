@@ -783,6 +783,8 @@ Funcionalidades: F-03, F-04, F-05, F-06.
 
 **Pronto quando:** a associação cadastra um animal com foto, ele recebe número, muda de sede para clínica e volta, e o histórico mostra as duas mudanças.
 
+**Situação (17/10/2026): fechada.** Conferido no sistema publicado: o animal 2026-0001 foi cadastrado com foto, foi da sede para a clínica e voltou, e o histórico mostrou as duas mudanças. Mudança em relação ao plano: a foto aceita WebP ou JPEG (o Safari não gera WebP); nos dois casos ela é refeita no aparelho, sem EXIF/GPS.
+
 ---
 
 ## Fase 2 — Vacinação, castração e vermifugação
