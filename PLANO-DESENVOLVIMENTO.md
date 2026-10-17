@@ -740,34 +740,34 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 Funcionalidades: F-03, F-04, F-05, F-06.
 
 **Banco**
-- [ ] Enums `especie`, `sexo`, `porte`, `origem`, `situacao`, `local_animal`
-- [ ] Tabelas `animais`, `numeracao`, `animal_fotos`, `movimentacoes`, `clinicas`
-- [ ] Trigger do número `AAAA-NNNN` por ano
-- [ ] `check constraint` da combinação situação, local e disponível
-- [ ] Função `mover_animal(animal, tipo, situacao, local, disponivel, data, motivo, origem)`: grava `animais` e `movimentacoes` juntos; `update` direto nas três colunas revogado; ao sair de `em_acolhimento`, cancela castração agendada (a tabela entra na Fase 2, e a função ganha esse passo lá)
-- [ ] Função `possiveis_duplicados(nome, especie, sexo)`
-- [ ] Balde privado `fotos-animais`, com política que exige usuário ativo
-- [ ] Provas pgTAP: voluntário cadastra e não exclui; dois cadastros simultâneos não repetem número; `update` direto em `situacao` é recusado
+- [x] Enums `especie`, `sexo` (com `nao_identificado`), `porte`, `origem`, `situacao`, `local_animal`
+- [x] Tabelas `animais`, `numeracao`, `animal_fotos`, `movimentacoes`, `clinicas`
+- [x] Trigger do número `AAAA-NNNN` por ano
+- [x] `check constraint` da combinação situação, local e disponível
+- [x] Função `mover_animal(animal, tipo, situacao, local, disponivel, data, motivo, origem)`: grava `animais` e `movimentacoes` juntos; `update` direto nas três colunas revogado; ao sair de `em_acolhimento`, cancela castração agendada (a tabela entra na Fase 2, e a função ganha esse passo lá)
+- [x] Função `possiveis_duplicados(nome, especie, sexo)`
+- [x] Balde privado `fotos-animais`, com política que exige usuário ativo (WebP, ou JPEG no Safari, que não gera WebP; a foto é sempre refeita no aparelho)
+- [x] Provas pgTAP: voluntário cadastra e não exclui; `update` direto em `situacao` é recusado; número sequencial por ano (31 provas). Cadastros simultâneos: garantido pelo upsert travado na linha do ano, que o pgTAP não consegue simular numa sessão só
 
 **Back**
-- [ ] `GET /animais` com filtros (espécie, sexo, porte, situação, local, disponível), busca por número ou nome e paginação
-- [ ] `GET /animais/:id`, `POST /animais`, `PATCH /animais/:id` (campo a campo)
-- [ ] `GET /animais/duplicados?nome=&especie=&sexo=`
-- [ ] `POST /animais/:id/movimentacoes` chamando `mover_animal`; recusa `adotado`, `transferido`, `devolvido_comunidade` e `lar_temporario` até a Fase 4
-- [ ] `POST /animais/:id/fotos/assinar`: confere tipo e tamanho, decide o caminho, devolve URL assinada; `POST /animais/:id/fotos` registra depois do envio
-- [ ] `DELETE /animais/:id` (exclusão lógica, só admin e coordenação)
-- [ ] `GET /clinicas`, `POST /clinicas`
+- [x] `GET /animais` com filtros (espécie, sexo, porte, situação, local, disponível), busca por número ou nome e paginação
+- [x] `GET /animais/:id`, `POST /animais`, `PATCH /animais/:id` (campo a campo)
+- [x] `GET /animais/duplicados?nome=&especie=&sexo=`
+- [x] `POST /animais/:id/movimentacoes` chamando `mover_animal`; recusa `adotado`, `transferido`, `devolvido_comunidade` e `lar_temporario` até a Fase 4 (a recusa mora em `mover_animal`, no banco)
+- [x] `POST /animais/:id/fotos/assinar`: confere tipo e tamanho, decide o caminho, devolve URL assinada; `POST /animais/:id/fotos` registra depois do envio
+- [x] `DELETE /animais/:id` (exclusão lógica, só admin e coordenação)
+- [x] `GET /clinicas`, `POST /clinicas`
 
 **Front**
-- [ ] Lista de animais com foto, número, nome, espécie, sexo, idade calculada e selo de situação
-- [ ] Filtros guardados na URL (dá para mandar o link de uma lista filtrada)
-- [ ] Formulário de cadastro: idade informada em anos ou meses e convertida em `nascimento_estimado`
-- [ ] `origem_detalhe` aparece e é obrigatório só quando a origem é "outra"
-- [ ] Aviso de possível duplicado antes de salvar
-- [ ] Envio de foto: redimensiona, recodifica em WebP (remove EXIF), envia direto ao Storage
-- [ ] Ficha do animal com abas: Dados · Situação · Saúde (em breve) · Prontuário (em breve) · Adoção (em breve)
-- [ ] Aba Situação: situação atual, histórico de movimentações e botão de reentrada para quem saiu
-- [ ] Campos salvam ao sair do campo, sem redesenhar a ficha
+- [x] Lista de animais com foto, número, nome, espécie, sexo, idade calculada e selo de situação
+- [x] Filtros guardados na URL (dá para mandar o link de uma lista filtrada)
+- [x] Formulário de cadastro: idade informada em anos ou meses e convertida em `nascimento_estimado`
+- [x] `origem_detalhe` aparece e é obrigatório só quando a origem é "outra"
+- [x] Aviso de possível duplicado antes de salvar
+- [x] Envio de foto: redimensiona, recodifica em WebP (remove EXIF), envia direto ao Storage
+- [x] Ficha do animal com abas: Dados · Situação · Saúde (em breve) · Prontuário (em breve) · Adoção (em breve)
+- [x] Aba Situação: situação atual, histórico de movimentações e botão de reentrada para quem saiu
+- [x] Campos salvam ao sair do campo, sem redesenhar a ficha
 
 **Casos de borda**
 - Animal sem nome: a lista mostra o número no lugar do nome.
