@@ -5,6 +5,8 @@
 export const VARIAVEIS = {
   supabaseUrl: 'SUPABASE_URL',
   supabaseChavePublica: 'SUPABASE_PUBLISHABLE_KEY',
+  // Endereço do front, para os links de recuperação de senha.
+  frontUrl: 'FRONT_URL',
 } as const;
 
 export type NomeConfiguracao = keyof typeof VARIAVEIS;
