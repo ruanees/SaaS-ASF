@@ -63,11 +63,13 @@ jobs:
         run: |
           npx wrangler dev --local --port 8788 > wrangler.log 2>&1 &
           for i in $(seq 1 60); do
-            curl -sf http://localhost:8788/entrar > entrar.html && break
+            curl -sf -D entrar.cab -o entrar.html http://localhost:8788/entrar && break
             sleep 2
           done
-          grep -q 'Entrar' entrar.html || { cat wrangler.log; exit 1; }
+          if [ ! -s entrar.html ]; then echo "Worker não respondeu:"; cat wrangler.log; exit 1; fi
+          grep -q 'Entrar' entrar.html
+          grep -qi "^content-security-policy: .*frame-ancestors 'none'" entrar.cab
+          grep -qi '^x-robots-tag: noindex' entrar.cab
           curl -s -o /dev/null -D cabecalhos.txt http://localhost:8788/configuracoes
           cat cabecalhos.txt
           grep -qi '^location: .*/entrar' cabecalhos.txt
-          grep -qi "^content-security-policy: .*frame-ancestors 'none'" cabecalhos.txt

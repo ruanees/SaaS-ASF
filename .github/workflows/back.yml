@@ -76,10 +76,11 @@ jobs:
         run: |
           npx wrangler dev --local --port 8787 > wrangler.log 2>&1 &
           for i in $(seq 1 60); do
-            curl -sf http://localhost:8787/saude > saude.json && break
+            curl -sf -o saude.json http://localhost:8787/saude && break
             sleep 2
           done
-          cat saude.json || { cat wrangler.log; exit 1; }
+          if [ ! -s saude.json ]; then echo "Worker não respondeu:"; cat wrangler.log; exit 1; fi
+          cat saude.json
           grep -q '"situacao":"ok"' saude.json
           curl -sf http://localhost:8787/openapi.json | grep -q '"/eu"'
           test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8787/eu)" = "401"
