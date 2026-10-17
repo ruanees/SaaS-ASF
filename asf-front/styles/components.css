@@ -257,3 +257,16 @@ p { margin: 0; }
 
 .dialogo { border: 0; max-width: 480px; width: calc(100% - 2 * var(--e-4)); color: var(--texto); }
 .dialogo::backdrop { background: rgb(43 31 23 / 0.5); }
+
+/* Pendências --------------------------------------------------------------- */
+.lista-pendencias { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e-3); }
+.cartao-pendencia {
+  display: grid; grid-template-columns: 92px 1fr auto; gap: var(--e-3); align-items: center;
+  text-decoration: none; color: inherit; padding: var(--e-4);
+}
+.cartao-pendencia .data { font-weight: 800; color: var(--rotulo); }
+@media (max-width: 520px) { .cartao-pendencia { grid-template-columns: 1fr; } }
+.tabela input.campo-tabela {
+  min-height: var(--toque); padding: 0 var(--e-2); border: 1.5px solid var(--divisoria);
+  border-radius: var(--raio); background: var(--cartao); color: var(--texto); font: inherit;
+}

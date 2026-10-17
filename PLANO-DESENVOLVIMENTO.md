@@ -792,24 +792,24 @@ Funcionalidades: F-03, F-04, F-05, F-06.
 Funcionalidades: F-07, F-08, F-09, F-10.
 
 **Banco**
-- [ ] Tabelas `atendimentos`, `vacinas_tipos`, `vacinacoes`, `vermifugacoes`, `castracoes`
-- [ ] Catálogo inicial de vacinas por espécie, com as vacinas que a associação informar
-- [ ] View `animal_saude` (`security_invoker`): `vacinado` (tem ao menos uma vacinação), `vacina_pendente` (alguma `proxima_dose` antes de `app.hoje()` sem aplicação posterior do mesmo tipo, ou nunca vacinado), `castracao_status` (`castrado`, `agendada`, `nao_castrado`), próxima vermifugação
-- [ ] Funções `registrar_vacina`, `registrar_vermifugacao`, `realizar_castracao`: atendimento e detalhe na mesma transação
-- [ ] Provas pgTAP para cada regra da view, incluindo a virada de dia em Fortaleza às 22h
+- [x] Tabelas `atendimentos`, `vacinas_tipos`, `vacinacoes`, `vermifugacoes`, `castracoes`
+- [ ] Catálogo inicial de vacinas por espécie, com as vacinas que a associação informar — **aguardando o questionário** (o catálogo já é editável em Configurações)
+- [x] View `animal_saude` (`security_invoker`): `vacinado` (tem ao menos uma vacinação), `vacina_pendente` (alguma `proxima_dose` antes de `app.hoje()` sem aplicação posterior do mesmo tipo, ou nunca vacinado), `castracao_status` (`castrado`, `agendada`, `nao_castrado`), próxima vermifugação
+- [x] Funções `registrar_vacina`, `registrar_vermifugacao`, `realizar_castracao`: atendimento e detalhe na mesma transação
+- [x] Provas pgTAP para cada regra da view, incluindo a virada de dia em Fortaleza às 22h
 
 **Back**
-- [ ] `POST /animais/:id/vacinas`, `POST /animais/:id/vermifugacoes`
-- [ ] `POST /animais/:id/castracoes` (agendar), `PATCH .../castracoes/:id` (realizar ou cancelar), opção "já chegou castrado"
-- [ ] `GET /pendencias`: vacinas vencidas e a vencer nos próximos 15 dias, castrações agendadas
-- [ ] Rotina diária de resumo por e-mail (desligada por padrão; liga em `configuracoes`)
+- [x] `POST /animais/:id/vacinas`, `POST /animais/:id/vermifugacoes`
+- [x] `POST /animais/:id/castracoes` (agendar), `PATCH .../castracoes/:id` (realizar ou cancelar), opção "já chegou castrado"
+- [x] `GET /pendencias`: vacinas vencidas e a vencer nos próximos 15 dias, castrações agendadas (também vermifugação; o prazo fica em `configuracoes.aviso_vacina_dias`)
+- [ ] Rotina diária de resumo por e-mail (desligada por padrão; liga em `configuracoes`) — **adiada**: depende do e-mail próprio (Resend) e da resposta da pergunta 9
 
 **Front**
-- [ ] Aba Saúde na ficha: cartão de vacinação, situação da castração, vermifugação
-- [ ] Ao escolher a vacina, a próxima dose é sugerida pelo `reforco_dias`; a pessoa pode alterar
-- [ ] Tela Pendências
-- [ ] Selos na lista de animais: vacinado, pendente, castrado, agendada
-- [ ] Cadastro do catálogo de vacinas (admin e coordenação)
+- [x] Aba Saúde na ficha: cartão de vacinação, situação da castração, vermifugação
+- [x] Ao escolher a vacina, a próxima dose é sugerida pelo `reforco_dias`; a pessoa pode alterar
+- [x] Tela Pendências
+- [x] Selos na lista de animais: vacinado, pendente, castrado, agendada
+- [x] Cadastro do catálogo de vacinas (admin e coordenação)
 
 **Casos de borda**
 - Vacina aplicada antes da entrada na associação (o animal chegou com carteirinha): aceita data anterior a `data_entrada`.

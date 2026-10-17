@@ -1,8 +1,8 @@
 'use client';
 
 import { useActionState } from 'react';
-import type { Usuario } from '@/lib/tipos';
-import { alterarUsuario, convidar, criarClinica, type EstadoAcao } from '../acoes';
+import type { Usuario, VacinaTipo } from '@/lib/tipos';
+import { alterarUsuario, alterarVacinaTipo, convidar, criarClinica, criarVacinaTipo, type EstadoAcao } from '../acoes';
 
 const PAPEIS = [
   ['voluntario', 'Voluntário(a)'],
@@ -145,5 +145,93 @@ export function FormClinica() {
         </button>
       </div>
     </form>
+  );
+}
+
+export function FormVacinaTipo() {
+  const [estado, acao, enviando] = useActionState<EstadoAcao, FormData>(criarVacinaTipo, {});
+  return (
+    <form action={acao} className="pilha" noValidate>
+      {estado.erro && (
+        <p className="aviso" data-tipo="erro" role="alert">
+          {estado.erro}
+        </p>
+      )}
+      {estado.ok && (
+        <p className="aviso" data-tipo="ok" role="status">
+          {estado.ok}
+        </p>
+      )}
+      <div className="grade" data-n="3">
+        <div className="campo">
+          <label htmlFor="vt-nome">Vacina</label>
+          <input id="vt-nome" name="nome" maxLength={60} placeholder="V10, Antirrábica, V4..." required autoComplete="off" />
+        </div>
+        <div className="campo">
+          <label htmlFor="vt-especie">Espécie</label>
+          <select id="vt-especie" name="especie" defaultValue="">
+            <option value="">Escolha</option>
+            <option value="cao">Cão</option>
+            <option value="gato">Gato</option>
+          </select>
+        </div>
+        <div className="campo">
+          <label htmlFor="vt-reforco">Reforço em dias</label>
+          <input id="vt-reforco" name="reforco_dias" type="number" inputMode="numeric" min={1} max={3650} placeholder="365" />
+        </div>
+      </div>
+      <div>
+        <button className="botao" type="submit" disabled={enviando}>
+          {enviando ? 'Cadastrando…' : 'Cadastrar vacina'}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+export function LinhaVacinaTipo({ vacina, especie }: { vacina: VacinaTipo; especie: string }) {
+  const [estado, acao, enviando] = useActionState<EstadoAcao, FormData>(alterarVacinaTipo, {});
+  return (
+    <tr>
+      <td>
+        <b>{vacina.nome}</b>
+        {estado.erro && (
+          <p className="aviso" data-tipo="erro" role="alert">
+            {estado.erro}
+          </p>
+        )}
+      </td>
+      <td>{especie}</td>
+      <td>
+        <form action={acao} className="linha">
+          <input type="hidden" name="id" value={vacina.id} />
+          <label htmlFor={`reforco-${vacina.id}`} className="visualmente-oculto">
+            Reforço de {vacina.nome} em dias
+          </label>
+          <input
+            id={`reforco-${vacina.id}`}
+            name="reforco_dias"
+            type="number"
+            min={1}
+            max={3650}
+            defaultValue={vacina.reforco_dias ?? ''}
+            style={{ width: 90 }}
+            className="campo-tabela"
+          />
+          <button className="botao" type="submit" disabled={enviando}>
+            Salvar
+          </button>
+        </form>
+      </td>
+      <td>
+        <form action={acao}>
+          <input type="hidden" name="id" value={vacina.id} />
+          <input type="hidden" name="ativo" value={vacina.ativo ? 'nao' : 'sim'} />
+          <button className="botao" data-tipo="texto" type="submit" disabled={enviando}>
+            {vacina.ativo ? 'Ativa · desativar' : 'Desativada · reativar'}
+          </button>
+        </form>
+      </td>
+    </tr>
   );
 }

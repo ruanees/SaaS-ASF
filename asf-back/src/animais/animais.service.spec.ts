@@ -1,4 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
+import type { SaudeAnimalService } from '../saude-animal/saude.service.js';
 import type { SupabaseService } from '../supabase/supabase.service.js';
 import { AnimaisService, limparBusca } from './animais.service.js';
 
@@ -72,7 +73,19 @@ function servico(opcoes: {
     },
   };
   const supabase = { para: vi.fn(() => cliente) } as unknown as SupabaseService;
-  return { service: new AnimaisService(supabase), cliente, consultas };
+  const saude = {
+    estados: vi.fn(() =>
+      Promise.resolve(
+        new Map([
+          [
+            ANIMAL,
+            { vacinacao_status: 'vencida', castracao_status: 'agendada' },
+          ],
+        ]),
+      ),
+    ),
+  } as unknown as SaudeAnimalService;
+  return { service: new AnimaisService(supabase, saude), cliente, consultas };
 }
 
 const linha = (extra: Record<string, unknown> = {}) => ({
@@ -118,6 +131,8 @@ describe('AnimaisService.listar', () => {
     expect(r.total).toBe(41);
     expect(r.itens[0].foto_url).toBe('https://assinada');
     expect(r.itens[0].nome).toBeNull(); // sem nome: a tela mostra o número
+    expect(r.itens[0].vacinacao_status).toBe('vencida'); // selo de saúde vem da view
+    expect(r.itens[0].castracao_status).toBe('agendada');
     const q = consultas[0];
     expect(q.eq).toHaveBeenCalledWith('especie', 'gato');
     expect(q.eq).toHaveBeenCalledWith('disponivel_adocao', false);

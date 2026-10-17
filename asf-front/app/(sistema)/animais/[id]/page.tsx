@@ -2,10 +2,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { SelosAnimal } from '@/components/selos-animal';
+import { SelosSaude } from '@/components/selos-saude';
 import { api, chamar, obterEu } from '@/lib/api';
 import { hojeIso, idade } from '@/lib/formato';
 import { ESPECIE, SEXO, nomeDoAnimal } from '@/lib/rotulos';
 import { AbaDados } from './aba-dados';
+import { AbaSaude } from './aba-saude';
 import { AbaSituacao } from './aba-situacao';
 import { EnvioFoto } from './envio-foto';
 
@@ -14,7 +16,7 @@ export const metadata: Metadata = { title: 'Ficha do animal' };
 const ABAS = [
   { chave: 'dados', rotulo: 'Dados' },
   { chave: 'situacao', rotulo: 'Situação' },
-  { chave: 'saude', rotulo: 'Saúde', emBreve: true },
+  { chave: 'saude', rotulo: 'Saúde' },
   { chave: 'prontuario', rotulo: 'Prontuário', emBreve: true },
   { chave: 'adocao', rotulo: 'Adoção', emBreve: true },
 ] as const;
@@ -22,7 +24,7 @@ const ABAS = [
 export default async function FichaAnimal({ params, searchParams }: PageProps<'/animais/[id]'>) {
   const { id } = await params;
   const sp = await searchParams;
-  const aba = sp.aba === 'situacao' ? 'situacao' : 'dados';
+  const aba = sp.aba === 'situacao' || sp.aba === 'saude' ? sp.aba : 'dados';
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const cliente = await api();
@@ -71,6 +73,9 @@ export default async function FichaAnimal({ params, searchParams }: PageProps<'/
               .join(' · ')}
           </p>
           <SelosAnimal situacao={a.situacao} local={a.local} disponivel={a.disponivel_adocao} />
+                    {a.situacao === 'em_acolhimento' && (
+                      <SelosSaude vacinacao={a.vacinacao_status} castracao={a.castracao_status} />
+                    )}
         </div>
       </header>
 
@@ -95,6 +100,8 @@ export default async function FichaAnimal({ params, searchParams }: PageProps<'/
 
       {aba === 'dados' ? (
         <AbaDados animal={a} hoje={hojeIso()} podeExcluir={podeExcluir} />
+      ) : aba === 'saude' ? (
+        <AbaSaude animal={a} hoje={hojeIso()} />
       ) : (
         <AbaSituacao animal={a} hoje={hojeIso()} />
       )}

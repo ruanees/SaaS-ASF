@@ -276,6 +276,134 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/vacinas-tipos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SaudeAnimalController_listarVacinas"];
+        put?: never;
+        post: operations["SaudeAnimalController_criarVacina"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/vacinas-tipos/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["SaudeAnimalController_alterarVacina"];
+        trace?: never;
+    };
+    "/animais/{id}/saude": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SaudeAnimalController_daAnimal"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/{id}/vacinas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SaudeAnimalController_registrarVacina"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/{id}/vermifugacoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SaudeAnimalController_registrarVermifugacao"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/{id}/castracoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SaudeAnimalController_novaCastracao"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/{id}/castracoes/{castracaoId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["SaudeAnimalController_alterarCastracao"];
+        trace?: never;
+    };
+    "/pendencias": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SaudeAnimalController_pendencias"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -376,6 +504,10 @@ export interface components {
             data_entrada: string;
             /** @description URL assinada da foto principal (vale 5 min) */
             foto_url: string | null;
+            /** @enum {string|null} */
+            vacinacao_status: "nao_vacinado" | "vencida" | "vence_em_breve" | "vacinado" | null;
+            /** @enum {string|null} */
+            castracao_status: "castrado" | "agendada" | "nao_castrado" | null;
         };
         ListaAnimaisDto: {
             itens: components["schemas"]["AnimalResumoDto"][];
@@ -450,6 +582,10 @@ export interface components {
             data_entrada: string;
             /** @description URL assinada da foto principal (vale 5 min) */
             foto_url: string | null;
+            /** @enum {string|null} */
+            vacinacao_status: "nao_vacinado" | "vencida" | "vence_em_breve" | "vacinado" | null;
+            /** @enum {string|null} */
+            castracao_status: "castrado" | "agendada" | "nao_castrado" | null;
             /** @enum {string} */
             origem: "resgate" | "castracao" | "comunitario" | "outra";
             origem_detalhe: string | null;
@@ -545,6 +681,160 @@ export interface components {
         };
         CriarClinicaDto: {
             nome: string;
+        };
+        VacinaTipoDto: {
+            /** Format: uuid */
+            id: string;
+            nome: string;
+            /** @enum {string} */
+            especie: "cao" | "gato";
+            /** @description Dias até o reforço (sugere a próxima dose) */
+            reforco_dias: number | null;
+            ativo: boolean;
+        };
+        CriarVacinaTipoDto: {
+            nome: string;
+            /** @enum {string} */
+            especie: "cao" | "gato";
+            reforco_dias?: number | null;
+        };
+        AlterarVacinaTipoDto: {
+            nome?: string;
+            reforco_dias?: number | null;
+            ativo?: boolean;
+        };
+        EstadoSaudeDto: {
+            /** @description Tem ao menos uma vacinação */
+            vacinado: boolean;
+            /** @description Nunca vacinado ou alguma dose vencida */
+            vacina_pendente: boolean;
+            /** @enum {string} */
+            vacinacao_status: "nao_vacinado" | "vencida" | "vence_em_breve" | "vacinado";
+            /** Format: date */
+            proxima_vacina: string | null;
+            /** @enum {string} */
+            castracao_status: "castrado" | "agendada" | "nao_castrado";
+            /** Format: date */
+            castracao_agendada_para: string | null;
+            /** Format: date */
+            ultima_vermifugacao: string | null;
+            /** Format: date */
+            proxima_vermifugacao: string | null;
+            vermifugacao_vencida: boolean;
+        };
+        VacinacaoDto: {
+            /** Format: uuid */
+            atendimento_id: string;
+            vacina: string;
+            /** Format: date */
+            data: string;
+            /** Format: date */
+            proxima_dose: string | null;
+            lote: string | null;
+            clinica: string | null;
+            veterinario: string | null;
+        };
+        VermifugacaoDto: {
+            /** Format: uuid */
+            atendimento_id: string;
+            produto: string;
+            /** Format: date */
+            data: string;
+            /** Format: date */
+            proxima_dose: string | null;
+        };
+        CastracaoDto: {
+            /** Format: uuid */
+            id: string;
+            /** @enum {string} */
+            status: "agendada" | "realizada" | "cancelada";
+            /** Format: date */
+            data_agendada: string | null;
+            /**
+             * Format: date
+             * @description Data da cirurgia
+             */
+            data_realizada: string | null;
+            /** @description Já chegou castrado */
+            anterior_a_entrada: boolean;
+            clinica: string | null;
+            motivo_cancelamento: string | null;
+        };
+        SaudeAnimalDto: {
+            estado: components["schemas"]["EstadoSaudeDto"];
+            vacinacoes: components["schemas"]["VacinacaoDto"][];
+            vermifugacoes: components["schemas"]["VermifugacaoDto"][];
+            castracoes: components["schemas"]["CastracaoDto"][];
+        };
+        NovaVacinacaoDto: {
+            /** Format: uuid */
+            clinica_id?: string;
+            /** @description Nome e CRMV */
+            veterinario?: string;
+            observacoes?: string;
+            /** Format: uuid */
+            vacina_tipo_id: string;
+            /** Format: date */
+            data: string;
+            /** Format: date */
+            proxima_dose?: string;
+            lote?: string;
+        };
+        NovaVermifugacaoDto: {
+            produto: string;
+            /** Format: date */
+            data: string;
+            /** Format: date */
+            proxima_dose?: string;
+            observacoes?: string;
+        };
+        NovaCastracaoDto: {
+            /** Format: uuid */
+            clinica_id?: string;
+            /** @description Nome e CRMV */
+            veterinario?: string;
+            observacoes?: string;
+            /**
+             * @description anterior = já chegou castrado
+             * @enum {string}
+             */
+            acao: "agendar" | "realizar" | "anterior";
+            /**
+             * Format: date
+             * @description Obrigatória para agendar e realizar
+             */
+            data?: string;
+        };
+        AlterarCastracaoDto: {
+            /** Format: uuid */
+            clinica_id?: string;
+            /** @description Nome e CRMV */
+            veterinario?: string;
+            observacoes?: string;
+            /** @enum {string} */
+            acao: "realizar" | "cancelar";
+            /**
+             * Format: date
+             * @description Obrigatória para realizar
+             */
+            data?: string;
+            motivo?: string;
+        };
+        PendenciaDto: {
+            /** @enum {string} */
+            tipo: "vacina" | "vermifugacao" | "castracao";
+            /** Format: uuid */
+            animal_id: string;
+            numero: string;
+            nome: string | null;
+            /** @enum {string} */
+            especie: "cao" | "gato";
+            /** @description Vacina, vermífugo ou "Castração agendada" */
+            descricao: string;
+            /** Format: date */
+            data: string;
+            /** @description Data já passou */
+            vencida: boolean;
         };
     };
     responses: never;
@@ -1042,6 +1332,218 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ClinicaDto"];
+                };
+            };
+        };
+    };
+    SaudeAnimalController_listarVacinas: {
+        parameters: {
+            query?: {
+                especie?: "cao" | "gato";
+                /** @description Inclui as desativadas */
+                todas?: "sim";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VacinaTipoDto"][];
+                };
+            };
+        };
+    };
+    SaudeAnimalController_criarVacina: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CriarVacinaTipoDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VacinaTipoDto"];
+                };
+            };
+        };
+    };
+    SaudeAnimalController_alterarVacina: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AlterarVacinaTipoDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VacinaTipoDto"];
+                };
+            };
+        };
+    };
+    SaudeAnimalController_daAnimal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SaudeAnimalDto"];
+                };
+            };
+        };
+    };
+    SaudeAnimalController_registrarVacina: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NovaVacinacaoDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SaudeAnimalDto"];
+                };
+            };
+        };
+    };
+    SaudeAnimalController_registrarVermifugacao: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NovaVermifugacaoDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SaudeAnimalDto"];
+                };
+            };
+        };
+    };
+    SaudeAnimalController_novaCastracao: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NovaCastracaoDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SaudeAnimalDto"];
+                };
+            };
+        };
+    };
+    SaudeAnimalController_alterarCastracao: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                castracaoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AlterarCastracaoDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SaudeAnimalDto"];
+                };
+            };
+        };
+    };
+    SaudeAnimalController_pendencias: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PendenciaDto"][];
                 };
             };
         };

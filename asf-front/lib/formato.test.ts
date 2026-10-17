@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fd, hojeIso, idade, nascimentoEstimado } from './formato';
+import { fd, fdCurta, hojeIso, idade, nascimentoEstimado, somarDias } from './formato';
 
 describe('fd', () => {
   it('data pura não sofre fuso', () => {
@@ -46,5 +46,18 @@ describe('nascimentoEstimado', () => {
   });
   it('ida e volta com idade()', () => {
     expect(idade(nascimentoEstimado(3, 'semanas', '2026-10-16'), 'aproximada', '2026-10-16')).toBe('3 semanas');
+  });
+});
+
+describe('somarDias e fdCurta', () => {
+  it('reforço de 365 dias sugere a mesma data no ano seguinte', () => {
+    expect(somarDias('2026-10-17', 365)).toBe('2027-10-17');
+  });
+  it('vira o mês e o ano', () => {
+    expect(somarDias('2026-12-20', 21)).toBe('2027-01-10');
+  });
+  it('fdCurta para a frase de confirmação', () => {
+    expect(fdCurta('2026-11-12')).toBe('12/11');
+    expect(fdCurta(null)).toBe('—');
   });
 });

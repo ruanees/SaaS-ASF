@@ -45,3 +45,20 @@ export const LOCAL: Record<Local, string> = {
 export function nomeDoAnimal(a: { nome: string | null; numero: string }): string {
   return a.nome?.trim() ? a.nome : a.numero;
 }
+
+// Saúde (brandbook, seção 03 · Status de saúde) ------------------------------
+export type StatusVacinacao = Esquemas['EstadoSaudeDto']['vacinacao_status'];
+export type StatusCastracao = Esquemas['EstadoSaudeDto']['castracao_status'];
+
+export const VACINACAO: Record<StatusVacinacao, { rotulo: string; cor?: string }> = {
+  vacinado: { rotulo: 'Vacinado', cor: 'verde' },
+  vence_em_breve: { rotulo: 'Vacina vence em breve', cor: 'amarelo' },
+  vencida: { rotulo: 'Vacina vencida', cor: 'vermelho' },
+  nao_vacinado: { rotulo: 'Não vacinado' },
+};
+
+export const CASTRACAO: Record<StatusCastracao, { rotulo: string; cor?: string }> = {
+  castrado: { rotulo: 'Castrado', cor: 'verde' },
+  agendada: { rotulo: 'Castração agendada', cor: 'azul' },
+  nao_castrado: { rotulo: 'Não castrado' },
+};

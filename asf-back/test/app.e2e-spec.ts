@@ -49,6 +49,11 @@ describe('asf-back (e2e)', () => {
     ['post', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/movimentacoes'],
     ['post', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/fotos/assinar'],
     ['get', '/clinicas'],
+    ['get', '/vacinas-tipos'],
+    ['get', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/saude'],
+    ['post', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/vacinas'],
+    ['post', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/castracoes'],
+    ['get', '/pendencias'],
   ] as const)('%s %s sem sessão responde 401', async (metodo, rota) => {
     const res = await request(app.getHttpServer())[metodo](rota).expect(401);
     expect(res.body.mensagem).toBe('Sessão ausente. Entre de novo.');
@@ -63,17 +68,23 @@ describe('asf-back (e2e)', () => {
     expect(res.body.mensagem).toContain('property admin should not exist');
   });
 
-  it('openapi lista as rotas das fases 0 e 1', async () => {
+  it('openapi lista as rotas das fases 0 a 2', async () => {
     const res = await request(app.getHttpServer()).get('/openapi.json');
     expect(Object.keys(res.body.paths).sort()).toEqual([
       '/animais',
       '/animais/duplicados',
       '/animais/{id}',
+      '/animais/{id}/castracoes',
+      '/animais/{id}/castracoes/{castracaoId}',
       '/animais/{id}/fotos',
       '/animais/{id}/fotos/assinar',
       '/animais/{id}/movimentacoes',
+      '/animais/{id}/saude',
+      '/animais/{id}/vacinas',
+      '/animais/{id}/vermifugacoes',
       '/clinicas',
       '/eu',
+      '/pendencias',
       '/saude',
       '/sessao/entrar',
       '/sessao/recuperar',
@@ -83,6 +94,8 @@ describe('asf-back (e2e)', () => {
       '/usuarios',
       '/usuarios/convites',
       '/usuarios/{id}',
+      '/vacinas-tipos',
+      '/vacinas-tipos/{id}',
     ]);
   });
 });
