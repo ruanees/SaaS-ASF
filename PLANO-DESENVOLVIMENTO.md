@@ -672,8 +672,8 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 
 **Infra**
 - [ ] Criar `asf-front` e `asf-back`, privados, `main` protegida
-- [ ] `.env.example` nos dois, `.env` no `.gitignore`
-- [ ] `CLAUDE.md` nos dois e os ADRs 0001 a 0008 em `docs/adr/`
+- [x] `.env.example` nos dois, `.env` no `.gitignore`
+- [x] `CLAUDE.md` nos dois e os ADRs 0001 a 0008 em `docs/adr/`
 - [x] CI por repo: typecheck, lint, testes e `npm run build` (o mesmo comando da Cloudflare)
 - [x] CI do back: `supabase db reset` + `supabase test db` (provas de RLS) + conferir que o `openapi.json` gera
 - [x] Dependabot ligado
