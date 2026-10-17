@@ -9,9 +9,13 @@
                     "typecheck":  "next typegen \u0026\u0026 tsc --noEmit",
                     "test":  "vitest run",
                     "tipos":  "node scripts/tipos.mjs",
-                    "dev":  "next dev"
+                    "dev":  "next dev",
+                    "build:worker":  "opennextjs-cloudflare build",
+                    "preview":  "opennextjs-cloudflare build \u0026\u0026 opennextjs-cloudflare preview",
+                    "deploy":  "opennextjs-cloudflare build \u0026\u0026 opennextjs-cloudflare deploy"
                 },
     "dependencies":  {
+                         "@opennextjs/cloudflare":  "^1.20.12",
                          "next":  "16.4.2",
                          "openapi-fetch":  "^0.17.0",
                          "react":  "19.3.0",
@@ -26,6 +30,7 @@
                             "eslint-config-next":  "16.4.2",
                             "openapi-typescript":  "^7.13.0",
                             "typescript":  "^5",
-                            "vitest":  "^4.1.12"
+                            "vitest":  "^4.1.12",
+                            "wrangler":  "^4.151.1"
                         }
 }

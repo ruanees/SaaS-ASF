@@ -678,8 +678,8 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 - [x] CI do back: `supabase db reset` + `supabase test db` (provas de RLS) + conferir que o `openapi.json` gera
 - [x] Dependabot ligado
 - [ ] Deploy contínuo dos dois pelo Workers Builds da Cloudflare (sem token no GitHub)
-- [ ] Back: `wrangler.toml` com `nodejs_compat`, a flag `enable_nodejs_http_server_modules` e os `alias` dos módulos que o Nest carrega por `require` dinâmico
-- [ ] Front: `open-next.config.ts` com `buildCommand` próprio
+- [x] Back: `wrangler.toml` com `nodejs_compat`, a flag `enable_nodejs_http_server_modules` e os `alias` dos módulos que o Nest carrega por `require` dinâmico
+- [x] Front: `open-next.config.ts` com `buildCommand` próprio
 - [ ] Sentry nos dois, com o filtro de dado pessoal (`beforeSend`) e um erro de teste conferido no painel
 
 **Banco**

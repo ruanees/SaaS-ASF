@@ -1,0 +1,40 @@
+# Worker do back (NestJS) — ADR 0008.
+# Configuração só aqui: o painel da Cloudflare é sobrescrito a cada deploy.
+
+name = "asf-back"
+main = "dist/worker.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = [
+  "nodejs_compat",
+  # servidor HTTP do Node (node:http) dentro do Worker, usado pelo Nest/Express
+  "enable_nodejs_http_server_modules",
+]
+workers_dev = true
+
+# Compila com tsc (metadados de decorators) antes de o wrangler empacotar.
+[build]
+command = "npm run build"
+
+# Módulos que o Nest e o class-transformer tentam carregar com require
+# dinâmico e que este projeto não usa. Sem estes alias o empacotamento falha.
+[alias]
+"@nestjs/microservices" = "./src/vazio.js"
+"@nestjs/microservices/microservices-module" = "./src/vazio.js"
+"@nestjs/microservices/microservices-module.js" = "./src/vazio.js"
+"@nestjs/websockets/socket-module" = "./src/vazio.js"
+"@nestjs/websockets/socket-module.js" = "./src/vazio.js"
+"@nestjs/websockets" = "./src/vazio.js"
+"class-transformer/storage" = "./src/vazio.js"
+"@fastify/static" = "./src/vazio.js"
+"@nestjs/platform-fastify" = "./src/vazio.js"
+
+[vars]
+# Públicas por definição (a RLS protege o dado). Segredos vão como Secret do
+# Worker (wrangler secret put), nunca aqui.
+SUPABASE_URL = "https://dfpaflwwqyphmpxxbsad.supabase.co"
+SUPABASE_PUBLISHABLE_KEY = "sb_publishable_NQsjvB8bQblTStOYpGrTNw_wk5dNGaE"
+# Trocar pelo domínio do front publicado.
+FRONT_URL = "http://localhost:3000"
+
+[observability]
+enabled = true
