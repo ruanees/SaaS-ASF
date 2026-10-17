@@ -55,6 +55,11 @@ export class ClinicaDto {
   @ApiProperty() ativo: boolean;
 }
 
+export class PessoaDaMovimentacaoDto {
+  @ApiProperty({ format: 'uuid' }) id: string;
+  @ApiProperty() nome: string;
+}
+
 export class AnimalResumoDto {
   @ApiProperty({ format: 'uuid' }) id: string;
   @ApiProperty({ example: '2026-0042' }) numero: string;
@@ -110,6 +115,12 @@ export class AnimalDto extends AnimalResumoDto {
   @ApiProperty({ type: String, nullable: true }) origem_detalhe: string | null;
   @ApiProperty({ type: String, nullable: true }) observacoes: string | null;
   @ApiProperty({ type: ClinicaDto, nullable: true }) clinica: ClinicaDto | null;
+  @ApiProperty({
+    type: PessoaDaMovimentacaoDto,
+    nullable: true,
+    description: 'Lar temporário onde o animal está agora',
+  })
+  responsavel: PessoaDaMovimentacaoDto | null;
   @ApiProperty({ type: String, nullable: true }) microchip: string | null;
   @ApiProperty({
     type: String,
@@ -125,8 +136,8 @@ export class AnimalDto extends AnimalResumoDto {
 
 export class MovimentacaoDto {
   @ApiProperty({ format: 'uuid' }) id: string;
-  @ApiProperty({ enum: ['entrada', 'mudanca', 'reentrada'] }) tipo:
-    'entrada' | 'mudanca' | 'reentrada';
+  @ApiProperty({ enum: ['entrada', 'mudanca', 'reentrada', 'devolucao'] })
+  tipo: 'entrada' | 'mudanca' | 'reentrada' | 'devolucao';
   @ApiProperty({ enum: ORIGENS, nullable: true }) origem: Origem | null;
   @ApiProperty({ enum: SITUACOES }) situacao: Situacao;
   @ApiProperty({ enum: LOCAIS, nullable: true }) local: Local | null;
@@ -134,6 +145,19 @@ export class MovimentacaoDto {
   @ApiProperty({ type: String, nullable: true }) clinica: string | null;
   @ApiProperty({ type: String, format: 'date' }) data: string;
   @ApiProperty({ type: String, nullable: true }) motivo: string | null;
+  @ApiProperty({
+    type: PessoaDaMovimentacaoDto,
+    nullable: true,
+    description: 'Lar temporário ou adotante',
+  })
+  pessoa: PessoaDaMovimentacaoDto | null;
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description:
+      'Entidade da transferência ou bairro da devolução à comunidade',
+  })
+  destino: string | null;
   @ApiProperty({
     type: String,
     nullable: true,
@@ -430,6 +454,25 @@ export class NovaMovimentacaoDto {
   @IsOptional()
   @IsUUID('all', { message: 'Clínica inválida.' })
   clinica_id?: string;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description: 'Pessoa do lar temporário (obrigatória no lar temporário)',
+  })
+  @IsOptional()
+  @IsUUID('all', { message: 'Escolha a pessoa do lar temporário.' })
+  pessoa_id?: string;
+
+  @ApiPropertyOptional({
+    maxLength: 200,
+    description:
+      'Entidade (transferência, obrigatória) ou bairro (devolução à comunidade)',
+  })
+  @IsOptional()
+  @Transform(aparar)
+  @IsString()
+  @MaxLength(200)
+  destino?: string;
 }
 
 export const FOTO_TAMANHO_MAXIMO = 5 * 1024 * 1024;
