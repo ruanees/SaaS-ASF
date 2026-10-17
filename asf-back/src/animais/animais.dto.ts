@@ -378,12 +378,17 @@ export class NovaMovimentacaoDto {
 
 export const FOTO_TAMANHO_MAXIMO = 5 * 1024 * 1024;
 
+// A foto é refeita no aparelho (canvas) antes do envio, o que remove o EXIF
+// com o GPS. WebP quando o navegador gera; JPEG no Safari, que não gera WebP.
+export const TIPOS_FOTO = ['image/webp', 'image/jpeg'] as const;
+export type TipoFoto = (typeof TIPOS_FOTO)[number];
+
 export class AssinarFotoDto {
-  @ApiProperty({ enum: ['image/webp'] })
-  @IsIn(['image/webp'], {
-    message: 'A foto precisa ser reprocessada em WebP antes do envio.',
+  @ApiProperty({ enum: TIPOS_FOTO })
+  @IsIn(TIPOS_FOTO, {
+    message: 'A foto precisa ser preparada no aparelho antes do envio.',
   })
-  tipo: 'image/webp';
+  tipo: TipoFoto;
 
   @ApiProperty({ description: 'Tamanho em bytes (até 5 MB)' })
   @IsInt()

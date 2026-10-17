@@ -16,6 +16,7 @@ import type {
   ListaAnimaisDto,
   MovimentacaoDto,
   NovaMovimentacaoDto,
+  TipoFoto,
 } from './animais.dto.js';
 
 export const BALDE_FOTOS = 'fotos-animais';
@@ -271,6 +272,7 @@ export class AnimaisService {
   async assinarFoto(
     usuario: UsuarioAutenticado,
     id: string,
+    tipo: TipoFoto,
   ): Promise<FotoAssinadaDto> {
     const sb = this.supabase.para(usuario);
     const animal = dados(
@@ -278,7 +280,8 @@ export class AnimaisService {
     );
     if (!animal) throw new NotFoundException('Animal não encontrado.');
 
-    const caminho = `${id}/${randomUUID()}.webp`;
+    const extensao = tipo === 'image/jpeg' ? 'jpg' : 'webp';
+    const caminho = `${id}/${randomUUID()}.${extensao}`;
     const assinada = um(
       await sb.storage.from(BALDE_FOTOS).createSignedUploadUrl(caminho),
     );

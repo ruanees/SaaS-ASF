@@ -151,11 +151,19 @@ describe('AnimaisService', () => {
     );
   });
 
+  it('JPEG (Safari) recebe extensão .jpg', async () => {
+    const { service } = servico({
+      from: [{ data: { id: ANIMAL }, error: null }],
+    });
+    const r = await service.assinarFoto(EU, ANIMAL, 'image/jpeg');
+    expect(r.caminho).toMatch(/.jpg$/);
+  });
+
   it('assinar foto decide o caminho no servidor, dentro da pasta do animal', async () => {
     const { service } = servico({
       from: [{ data: { id: ANIMAL }, error: null }],
     });
-    const r = await service.assinarFoto(EU, ANIMAL);
+    const r = await service.assinarFoto(EU, ANIMAL, 'image/webp');
     expect(r.caminho).toMatch(new RegExp(`^${ANIMAL}/[0-9a-f-]{36}\\.webp$`));
     expect(r.url).toContain(r.caminho);
   });

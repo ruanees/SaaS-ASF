@@ -127,9 +127,9 @@ export class AnimaisController {
     @Usuario() usuario: UsuarioAutenticado,
     @Id() id: string,
     // tipo e tamanho conferidos pelo DTO antes de assinar
-    @Body() _corpo: AssinarFotoDto,
+    @Body() corpo: AssinarFotoDto,
   ): Promise<FotoAssinadaDto> {
-    return this.animais.assinarFoto(usuario, id);
+    return this.animais.assinarFoto(usuario, id, corpo.tipo);
   }
 
   @Post(':id/fotos')

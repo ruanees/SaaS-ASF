@@ -73,8 +73,8 @@ create table public.numeracao (
 create table public.animal_fotos (
   id uuid primary key default gen_random_uuid(),
   animal_id uuid not null references public.animais(id),
-  -- '{animal_id}/{uuid}.webp', decidido pelo servidor
-  caminho text not null unique check (caminho ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}\.webp$'),
+  -- '{animal_id}/{uuid}.webp' ou '.jpg', decidido pelo servidor (foto refeita no aparelho, sem EXIF)
+  caminho text not null unique check (caminho ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}\.(webp|jpg)$'),
   principal boolean not null default false,
   criado_em timestamptz not null default now(),
   criado_por uuid,
@@ -442,9 +442,10 @@ grant select, update (nome, especie, sexo, nascimento_estimado, idade_precisao, 
 grant select on public.animal_fotos, public.movimentacoes to authenticated;
 
 -- Storage: balde privado de fotos --------------------------------------------
--- Até 5 MB, só imagem. O front envia WebP já reprocessado (sem EXIF/GPS).
+-- Até 5 MB. O front refaz a imagem no aparelho (WebP, ou JPEG no Safari, que não
+-- gera WebP) e isso remove o EXIF com o GPS.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('fotos-animais', 'fotos-animais', false, 5242880, array['image/webp'])
+values ('fotos-animais', 'fotos-animais', false, 5242880, array['image/webp', 'image/jpeg'])
 on conflict (id) do nothing;
 
 create policy fotos_animais_ler on storage.objects for select to authenticated
