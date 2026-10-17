@@ -54,6 +54,9 @@ describe('asf-back (e2e)', () => {
     ['post', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/vacinas'],
     ['post', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/castracoes'],
     ['get', '/pendencias'],
+    ['get', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/prontuario'],
+    ['post', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/atendimentos'],
+    ['get', '/atendimentos/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/laudo'],
     ['get', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/sugestao'],
     ['post', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/antiparasitarios'],
   ] as const)('%s %s sem sessão responde 401', async (metodo, rota) => {
@@ -70,22 +73,30 @@ describe('asf-back (e2e)', () => {
     expect(res.body.mensagem).toContain('property admin should not exist');
   });
 
-  it('openapi lista as rotas das fases 0 a 2 (com os ajustes do questionário)', async () => {
+  it('openapi lista as rotas das fases 0 a 3', async () => {
     const res = await request(app.getHttpServer()).get('/openapi.json');
     expect(Object.keys(res.body.paths).sort()).toEqual([
       '/animais',
       '/animais/duplicados',
       '/animais/{id}',
       '/animais/{id}/antiparasitarios',
+      '/animais/{id}/atendimentos',
       '/animais/{id}/castracoes',
       '/animais/{id}/castracoes/{castracaoId}',
       '/animais/{id}/fotos',
       '/animais/{id}/fotos/assinar',
       '/animais/{id}/movimentacoes',
+      '/animais/{id}/prontuario',
       '/animais/{id}/saude',
+      '/animais/{id}/saude-entrada',
       '/animais/{id}/sugestao',
       '/animais/{id}/vacinas',
       '/animais/{id}/vermifugacoes',
+      '/atendimentos/{atendimentoId}/alta',
+      '/atendimentos/{atendimentoId}/fim-tratamento',
+      '/atendimentos/{atendimentoId}/laudo',
+      '/atendimentos/{atendimentoId}/laudo/assinar',
+      '/atendimentos/{atendimentoId}/resultado',
       '/clinicas',
       '/eu',
       '/pendencias',

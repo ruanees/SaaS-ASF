@@ -28,7 +28,11 @@ const CAMPOS_RESUMO =
 
 type LinhaAnimal = Omit<
   AnimalResumoDto,
-  'foto_url' | 'vacinacao_status' | 'castracao_status'
+  | 'foto_url'
+  | 'vacinacao_status'
+  | 'castracao_status'
+  | 'em_tratamento'
+  | 'leishmaniose_reagente'
 > & {
   animal_fotos?: { caminho: string }[];
 };
@@ -109,7 +113,7 @@ export class AnimaisService {
       await sb
         .from('animais')
         .select(
-          `${CAMPOS_RESUMO}, origem, origem_detalhe, observacoes, microchip, microchip_data, criado_em, atualizado_em, clinica:clinicas(id, nome, ativo), animal_fotos(caminho)`,
+          `${CAMPOS_RESUMO}, origem, origem_detalhe, observacoes, microchip, microchip_data, condicao_entrada, criado_em, atualizado_em, clinica:clinicas(id, nome, ativo), animal_fotos(caminho)`,
         )
         .eq('id', id)
         .eq('animal_fotos.principal', true)
@@ -121,6 +125,7 @@ export class AnimaisService {
           observacoes: string | null;
           microchip: string | null;
           microchip_data: string | null;
+          condicao_entrada: string | null;
           criado_em: string;
           atualizado_em: string;
           clinica: AnimalDto['clinica'];
@@ -139,6 +144,7 @@ export class AnimaisService {
       observacoes: linha.observacoes,
       microchip: linha.microchip,
       microchip_data: linha.microchip_data,
+      condicao_entrada: linha.condicao_entrada,
       clinica: linha.clinica,
       criado_em: linha.criado_em,
       atualizado_em: linha.atualizado_em,
@@ -348,7 +354,13 @@ type Resumo = { [K in keyof AnimalResumoDto]: AnimalResumoDto[K] };
 function paraResumo(
   l: LinhaAnimal,
   url: string | null,
-  estado?: Pick<AnimalResumoDto, 'vacinacao_status' | 'castracao_status'>,
+  estado?: Pick<
+    AnimalResumoDto,
+    | 'vacinacao_status'
+    | 'castracao_status'
+    | 'em_tratamento'
+    | 'leishmaniose_reagente'
+  >,
 ): Resumo {
   return {
     id: l.id,
@@ -366,5 +378,7 @@ function paraResumo(
     foto_url: url,
     vacinacao_status: estado?.vacinacao_status ?? null,
     castracao_status: estado?.castracao_status ?? null,
+    em_tratamento: estado?.em_tratamento ?? null,
+    leishmaniose_reagente: estado?.leishmaniose_reagente ?? null,
   };
 }

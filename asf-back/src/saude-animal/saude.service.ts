@@ -58,8 +58,16 @@ type LinhaCastracao = Omit<CastracaoDto, 'clinica' | 'data_realizada'> & {
   atendimento: { data: string } | { data: string }[] | null;
 };
 
+export type EstadoLista = Pick<
+  EstadoSaudeDto,
+  | 'vacinacao_status'
+  | 'castracao_status'
+  | 'em_tratamento'
+  | 'leishmaniose_reagente'
+>;
+
 const CAMPOS_ESTADO =
-  'vacinado, vacina_pendente, vacinacao_status, proxima_vacina, castracao_status, castracao_agendada_para, ultima_vermifugacao, proxima_vermifugacao, vermifugacao_vencida, proximo_antiparasitario, antiparasitario_vencido';
+  'vacinado, vacina_pendente, vacinacao_status, proxima_vacina, castracao_status, castracao_agendada_para, ultima_vermifugacao, proxima_vermifugacao, vermifugacao_vencida, proximo_antiparasitario, antiparasitario_vencido, em_tratamento, internado, leishmaniose_reagente, exames_aguardando';
 
 @Injectable()
 export class SaudeAnimalService {
@@ -222,31 +230,19 @@ export class SaudeAnimalService {
   async estados(
     sb: SupabaseClient,
     ids: string[],
-  ): Promise<
-    Map<string, Pick<EstadoSaudeDto, 'vacinacao_status' | 'castracao_status'>>
-  > {
+  ): Promise<Map<string, EstadoLista>> {
     if (ids.length === 0) return new Map();
     const { data, error } = await sb
       .from('animal_saude')
-      .select('animal_id, vacinacao_status, castracao_status')
+      .select(
+        'animal_id, vacinacao_status, castracao_status, em_tratamento, leishmaniose_reagente',
+      )
       .in('animal_id', ids);
     if (error || !data) return new Map(); // sem selo de saúde, a lista continua
     return new Map(
-      (
-        data as {
-          animal_id: string;
-          vacinacao_status: string;
-          castracao_status: string;
-        }[]
-      ).map((d) => [
-        d.animal_id,
-        {
-          vacinacao_status:
-            d.vacinacao_status as EstadoSaudeDto['vacinacao_status'],
-          castracao_status:
-            d.castracao_status as EstadoSaudeDto['castracao_status'],
-        },
-      ]),
+      (data as (EstadoLista & { animal_id: string })[]).map(
+        ({ animal_id, ...e }) => [animal_id, e],
+      ),
     );
   }
 
