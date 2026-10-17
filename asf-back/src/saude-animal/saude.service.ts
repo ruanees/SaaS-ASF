@@ -5,6 +5,10 @@ import { dados, um } from '../supabase/resultado.js';
 import { SupabaseService } from '../supabase/supabase.service.js';
 import type {
   AlterarCastracaoDto,
+  AntiparasitarioDto,
+  NovoAntiparasitarioDto,
+  SugestaoDto,
+  SugestaoQueryDto,
   AlterarVacinaTipoDto,
   CastracaoDto,
   CriarVacinaTipoDto,
@@ -27,7 +31,7 @@ function primeiro<T>(valor: T | T[] | null | undefined): T | null {
 
 type LinhaAtendimento = {
   id: string;
-  tipo: 'vacina' | 'vermifugacao';
+  tipo: 'vacina' | 'vermifugacao' | 'antiparasitario';
   data: string;
   veterinario: string | null;
   clinica: { nome: string } | null;
@@ -43,11 +47,11 @@ type LinhaAtendimento = {
         vacina: { nome: string } | null;
       }[]
     | null;
-  vermifugacoes:
-    | { produto: string; proxima_dose: string | null }
-    | { produto: string; proxima_dose: string | null }[]
-    | null;
+  vermifugacoes: ProdutoDose | ProdutoDose[] | null;
+  antiparasitarios: ProdutoDose | ProdutoDose[] | null;
 };
+
+type ProdutoDose = { produto: string; proxima_dose: string | null };
 
 type LinhaCastracao = Omit<CastracaoDto, 'clinica' | 'data_realizada'> & {
   clinica: { nome: string } | null;
@@ -55,7 +59,7 @@ type LinhaCastracao = Omit<CastracaoDto, 'clinica' | 'data_realizada'> & {
 };
 
 const CAMPOS_ESTADO =
-  'vacinado, vacina_pendente, vacinacao_status, proxima_vacina, castracao_status, castracao_agendada_para, ultima_vermifugacao, proxima_vermifugacao, vermifugacao_vencida';
+  'vacinado, vacina_pendente, vacinacao_status, proxima_vacina, castracao_status, castracao_agendada_para, ultima_vermifugacao, proxima_vermifugacao, vermifugacao_vencida, proximo_antiparasitario, antiparasitario_vencido';
 
 @Injectable()
 export class SaudeAnimalService {
@@ -71,7 +75,9 @@ export class SaudeAnimalService {
     let q = this.supabase
       .para(usuario)
       .from('vacinas_tipos')
-      .select('id, nome, especie, reforco_dias, ativo');
+      .select(
+        'id, nome, especie, reforco_dias, doses_iniciais, intervalo_inicial_dias, ativo',
+      );
     if (especie) q = q.eq('especie', especie);
     if (!todas) q = q.eq('ativo', true);
     const linhas = dados(await q.order('especie').order('nome'));
@@ -90,8 +96,12 @@ export class SaudeAnimalService {
           nome: corpo.nome,
           especie: corpo.especie,
           reforco_dias: corpo.reforco_dias ?? null,
+          doses_iniciais: corpo.doses_iniciais ?? 1,
+          intervalo_inicial_dias: corpo.intervalo_inicial_dias ?? null,
         })
-        .select('id, nome, especie, reforco_dias, ativo')
+        .select(
+          'id, nome, especie, reforco_dias, doses_iniciais, intervalo_inicial_dias, ativo',
+        )
         .single<VacinaTipoDto>(),
     );
   }
@@ -110,7 +120,9 @@ export class SaudeAnimalService {
         .from('vacinas_tipos')
         .update(campos)
         .eq('id', id)
-        .select('id, nome, especie, reforco_dias, ativo')
+        .select(
+          'id, nome, especie, reforco_dias, doses_iniciais, intervalo_inicial_dias, ativo',
+        )
         .maybeSingle<VacinaTipoDto>(),
     );
     if (!linha) throw new NotFoundException('Vacina não encontrada.');
@@ -133,10 +145,10 @@ export class SaudeAnimalService {
       sb
         .from('atendimentos')
         .select(
-          'id, tipo, data, veterinario, clinica:clinicas(nome), vacinacoes(lote, proxima_dose, vacina:vacinas_tipos(nome)), vermifugacoes(produto, proxima_dose)',
+          'id, tipo, data, veterinario, clinica:clinicas(nome), vacinacoes(lote, proxima_dose, vacina:vacinas_tipos(nome)), vermifugacoes(produto, proxima_dose), antiparasitarios(produto, proxima_dose)',
         )
         .eq('animal_id', id)
-        .in('tipo', ['vacina', 'vermifugacao'])
+        .in('tipo', ['vacina', 'vermifugacao', 'antiparasitario'])
         .order('data', { ascending: false })
         .order('criado_em', { ascending: false }),
       sb
@@ -153,6 +165,7 @@ export class SaudeAnimalService {
     const linhas = (dados(atendimentos) ?? []) as unknown as LinhaAtendimento[];
     const vacinacoes: VacinacaoDto[] = [];
     const vermifugacoes: VermifugacaoDto[] = [];
+    const antiparasitarios: AntiparasitarioDto[] = [];
     for (const l of linhas) {
       if (l.tipo === 'vacina') {
         const v = primeiro(l.vacinacoes);
@@ -165,6 +178,15 @@ export class SaudeAnimalService {
           lote: v.lote,
           clinica: l.clinica?.nome ?? null,
           veterinario: l.veterinario,
+        });
+      } else if (l.tipo === 'antiparasitario') {
+        const v = primeiro(l.antiparasitarios);
+        if (!v) continue;
+        antiparasitarios.push({
+          atendimento_id: l.id,
+          produto: v.produto,
+          data: l.data,
+          proxima_dose: v.proxima_dose,
         });
       } else {
         const v = primeiro(l.vermifugacoes);
@@ -183,6 +205,7 @@ export class SaudeAnimalService {
       estado: e,
       vacinacoes,
       vermifugacoes,
+      antiparasitarios,
       castracoes: cast.map((c) => ({
         id: c.id,
         status: c.status,
@@ -317,6 +340,7 @@ export class SaudeAnimalService {
       clinica_id?: string;
       veterinario?: string;
       observacoes?: string;
+      microchip?: string;
     },
   ): Promise<void> {
     dados(
@@ -326,8 +350,53 @@ export class SaudeAnimalService {
         p_clinica_id: c.clinica_id ?? null,
         p_veterinario: c.veterinario ?? null,
         p_observacoes: c.observacoes ?? null,
+        p_microchip: c.microchip ?? null,
       }),
     );
+  }
+
+  async registrarAntiparasitario(
+    usuario: UsuarioAutenticado,
+    id: string,
+    c: NovoAntiparasitarioDto,
+  ): Promise<SaudeAnimalDto> {
+    dados(
+      await this.supabase.para(usuario).rpc('registrar_antiparasitario', {
+        p_animal: id,
+        p_produto: c.produto,
+        p_data: c.data,
+        p_proxima_dose: c.proxima_dose ?? null,
+        p_observacoes: c.observacoes ?? null,
+      }),
+    );
+    return this.daAnimal(usuario, id);
+  }
+
+  // Sugestão da próxima dose: a regra (protocolo, filhote, produto) mora no banco.
+  async sugestao(
+    usuario: UsuarioAutenticado,
+    id: string,
+    q: SugestaoQueryDto,
+  ): Promise<SugestaoDto> {
+    const sb = this.supabase.para(usuario);
+    const r =
+      q.tipo === 'vacina'
+        ? await sb.rpc('sugerir_proxima_dose', {
+            p_animal: id,
+            p_vacina_tipo: q.vacina_tipo_id,
+            p_data: q.data,
+          })
+        : q.tipo === 'vermifugacao'
+          ? await sb.rpc('sugerir_proxima_vermifugacao', {
+              p_animal: id,
+              p_data: q.data,
+            })
+          : await sb.rpc('sugerir_proximo_antiparasitario', {
+              p_produto: q.produto ?? '',
+              p_data: q.data,
+            });
+    const data = dados(r) as unknown;
+    return { proxima_dose: typeof data === 'string' ? data : null };
   }
 
   // Pendências: a regra (o que vence, em quantos dias, quem entra) mora no banco.

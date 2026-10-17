@@ -18,6 +18,9 @@ import {
   NovaCastracaoDto,
   NovaVacinacaoDto,
   NovaVermifugacaoDto,
+  NovoAntiparasitarioDto,
+  SugestaoDto,
+  SugestaoQueryDto,
   PendenciaDto,
   SaudeAnimalDto,
   VacinaTipoDto,
@@ -87,6 +90,26 @@ export class SaudeAnimalController {
     @Body() corpo: NovaVermifugacaoDto,
   ): Promise<SaudeAnimalDto> {
     return this.saude.registrarVermifugacao(usuario, id, corpo);
+  }
+
+  @Post('animais/:id/antiparasitarios')
+  @ApiCreatedResponse({ type: SaudeAnimalDto })
+  registrarAntiparasitario(
+    @Usuario() usuario: UsuarioAutenticado,
+    @Uuid('id') id: string,
+    @Body() corpo: NovoAntiparasitarioDto,
+  ): Promise<SaudeAnimalDto> {
+    return this.saude.registrarAntiparasitario(usuario, id, corpo);
+  }
+
+  @Get('animais/:id/sugestao')
+  @ApiOkResponse({ type: SugestaoDto })
+  sugestao(
+    @Usuario() usuario: UsuarioAutenticado,
+    @Uuid('id') id: string,
+    @Query() q: SugestaoQueryDto,
+  ): Promise<SugestaoDto> {
+    return this.saude.sugestao(usuario, id, q);
   }
 
   @Post('animais/:id/castracoes')

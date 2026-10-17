@@ -34,6 +34,14 @@ export const STATUS_CASTRACAO = [
 export type StatusVacinacao = (typeof STATUS_VACINACAO)[number];
 export type StatusCastracao = (typeof STATUS_CASTRACAO)[number];
 
+export const TIPOS_PENDENCIA = [
+  'vacina',
+  'vermifugacao',
+  'antiparasitario',
+  'castracao',
+  'castracao_prioridade',
+] as const;
+
 // Respostas -------------------------------------------------------------------
 
 export class VacinaTipoDto {
@@ -46,6 +54,14 @@ export class VacinaTipoDto {
     description: 'Dias até o reforço (sugere a próxima dose)',
   })
   reforco_dias: number | null;
+  @ApiProperty({ description: 'Doses da primeira vacinação (ex.: 3)' })
+  doses_iniciais: number;
+  @ApiProperty({
+    type: Number,
+    nullable: true,
+    description: 'Dias entre as doses iniciais (ex.: 21)',
+  })
+  intervalo_inicial_dias: number | null;
   @ApiProperty() ativo: boolean;
 }
 
@@ -64,6 +80,9 @@ export class EstadoSaudeDto {
   @ApiProperty({ type: String, format: 'date', nullable: true })
   proxima_vermifugacao: string | null;
   @ApiProperty() vermifugacao_vencida: boolean;
+  @ApiProperty({ type: String, format: 'date', nullable: true })
+  proximo_antiparasitario: string | null;
+  @ApiProperty() antiparasitario_vencido: boolean;
 }
 
 export class VacinacaoDto {
@@ -83,6 +102,24 @@ export class VermifugacaoDto {
   @ApiProperty({ type: String, format: 'date' }) data: string;
   @ApiProperty({ type: String, format: 'date', nullable: true }) proxima_dose:
     string | null;
+}
+
+export class AntiparasitarioDto {
+  @ApiProperty({ format: 'uuid' }) atendimento_id: string;
+  @ApiProperty() produto: string;
+  @ApiProperty({ type: String, format: 'date' }) data: string;
+  @ApiProperty({ type: String, format: 'date', nullable: true }) proxima_dose:
+    string | null;
+}
+
+export class SugestaoDto {
+  @ApiProperty({
+    type: String,
+    format: 'date',
+    nullable: true,
+    description: 'Próxima dose sugerida (pode ser alterada)',
+  })
+  proxima_dose: string | null;
 }
 
 export class CastracaoDto {
@@ -109,12 +146,14 @@ export class SaudeAnimalDto {
   @ApiProperty({ type: EstadoSaudeDto }) estado: EstadoSaudeDto;
   @ApiProperty({ type: [VacinacaoDto] }) vacinacoes: VacinacaoDto[];
   @ApiProperty({ type: [VermifugacaoDto] }) vermifugacoes: VermifugacaoDto[];
+  @ApiProperty({ type: [AntiparasitarioDto] })
+  antiparasitarios: AntiparasitarioDto[];
   @ApiProperty({ type: [CastracaoDto] }) castracoes: CastracaoDto[];
 }
 
 export class PendenciaDto {
-  @ApiProperty({ enum: ['vacina', 'vermifugacao', 'castracao'] }) tipo:
-    'vacina' | 'vermifugacao' | 'castracao';
+  @ApiProperty({ enum: TIPOS_PENDENCIA })
+  tipo: (typeof TIPOS_PENDENCIA)[number];
   @ApiProperty({ format: 'uuid' }) animal_id: string;
   @ApiProperty() numero: string;
   @ApiProperty({ type: String, nullable: true }) nome: string | null;
@@ -156,6 +195,27 @@ export class CriarVacinaTipoDto {
   @Min(1)
   @Max(3650)
   reforco_dias?: number | null;
+
+  @ApiPropertyOptional({
+    default: 1,
+    description: 'Doses da primeira vacinação',
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(6)
+  doses_iniciais?: number;
+
+  @ApiPropertyOptional({
+    type: Number,
+    nullable: true,
+    description: 'Dias entre as doses iniciais',
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(365)
+  intervalo_inicial_dias?: number | null;
 }
 
 export class AlterarVacinaTipoDto {
@@ -172,6 +232,20 @@ export class AlterarVacinaTipoDto {
   @Min(1)
   @Max(3650)
   reforco_dias?: number | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(6)
+  doses_iniciais?: number;
+
+  @ApiPropertyOptional({ type: Number, nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(365)
+  intervalo_inicial_dias?: number | null;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -259,6 +333,15 @@ export class NovaCastracaoDto extends ComAtendimento {
   @ValidateIf((o: NovaCastracaoDto) => o.acao !== 'anterior')
   @IsISO8601(DATA, { message: 'Informe a data.' })
   data?: string;
+
+  @ApiPropertyOptional({
+    maxLength: 30,
+    description: 'Microchip aplicado na cirurgia',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(30)
+  microchip?: string;
 }
 
 export class AlterarCastracaoDto extends ComAtendimento {
@@ -280,4 +363,63 @@ export class AlterarCastracaoDto extends ComAtendimento {
   @IsString()
   @MaxLength(300)
   motivo?: string;
+
+  @ApiPropertyOptional({
+    maxLength: 30,
+    description: 'Microchip aplicado na cirurgia',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(30)
+  microchip?: string;
+}
+
+export class NovoAntiparasitarioDto {
+  @ApiProperty({ maxLength: 80, example: 'Simparic' })
+  @Transform(aparar)
+  @IsString()
+  @Length(1, 80, { message: 'Informe o produto usado.' })
+  produto: string;
+
+  @ApiProperty({ format: 'date' })
+  @IsISO8601(DATA, { message: 'Informe a data.' })
+  data: string;
+
+  @ApiPropertyOptional({ format: 'date' })
+  @IsOptional()
+  @IsISO8601(DATA, { message: 'Data da próxima dose inválida.' })
+  proxima_dose?: string;
+
+  @ApiPropertyOptional({ maxLength: 2000 })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  observacoes?: string;
+}
+
+export class SugestaoQueryDto {
+  @ApiProperty({ enum: ['vacina', 'vermifugacao', 'antiparasitario'] })
+  @IsIn(['vacina', 'vermifugacao', 'antiparasitario'])
+  tipo: 'vacina' | 'vermifugacao' | 'antiparasitario';
+
+  @ApiProperty({ format: 'date', description: 'Data da aplicação' })
+  @IsISO8601(DATA, { message: 'Data inválida.' })
+  data: string;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description: 'Obrigatório para vacina',
+  })
+  @ValidateIf((o: SugestaoQueryDto) => o.tipo === 'vacina')
+  @IsUUID('all', { message: 'Escolha a vacina.' })
+  vacina_tipo_id?: string;
+
+  @ApiPropertyOptional({
+    maxLength: 80,
+    description: 'Produto (antiparasitário)',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(80)
+  produto?: string;
 }

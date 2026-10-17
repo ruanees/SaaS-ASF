@@ -137,7 +137,7 @@ describe('AnimaisService.listar', () => {
     expect(q.eq).toHaveBeenCalledWith('especie', 'gato');
     expect(q.eq).toHaveBeenCalledWith('disponivel_adocao', false);
     expect(q.or).toHaveBeenCalledWith(
-      'numero.ilike.%2026-00%,nome.ilike.%2026-00%',
+      'numero.ilike.%2026-00%,nome.ilike.%2026-00%,microchip.ilike.%2026-00%',
     );
     expect(q.range).toHaveBeenCalledWith(40, 59);
   });
