@@ -164,6 +164,118 @@ export interface paths {
         patch: operations["UsuariosController_alterar"];
         trace?: never;
     };
+    "/animais": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AnimaisController_listar"];
+        put?: never;
+        post: operations["AnimaisController_criar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/duplicados": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AnimaisController_duplicados"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AnimaisController_buscar"];
+        put?: never;
+        post?: never;
+        delete: operations["AnimaisController_excluir"];
+        options?: never;
+        head?: never;
+        patch: operations["AnimaisController_alterar"];
+        trace?: never;
+    };
+    "/animais/{id}/movimentacoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AnimaisController_movimentacoes"];
+        put?: never;
+        post: operations["AnimaisController_mover"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/{id}/fotos/assinar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AnimaisController_assinarFoto"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/{id}/fotos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AnimaisController_registrarFoto"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/clinicas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ClinicasController_listar"];
+        put?: never;
+        post: operations["ClinicasController_criar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -238,6 +350,201 @@ export interface components {
             papel?: "admin" | "coordenacao" | "veterinario" | "voluntario";
             /** @description false desativa: corta os dados e bloqueia o login */
             ativo?: boolean;
+        };
+        AnimalResumoDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example 2026-0042 */
+            numero: string;
+            nome: string | null;
+            /** @enum {string} */
+            especie: "cao" | "gato";
+            /** @enum {string} */
+            sexo: "macho" | "femea" | "nao_identificado";
+            /** Format: date */
+            nascimento_estimado: string | null;
+            /** @enum {string|null} */
+            idade_precisao: "exata" | "aproximada" | null;
+            /** @enum {string|null} */
+            porte: "pequeno" | "medio" | "grande" | null;
+            /** @enum {string} */
+            situacao: "em_acolhimento" | "adotado" | "devolvido_comunidade" | "transferido" | "obito";
+            /** @enum {string|null} */
+            local: "sede" | "lar_temporario" | "clinica" | null;
+            disponivel_adocao: boolean;
+            /** Format: date */
+            data_entrada: string;
+            /** @description URL assinada da foto principal (vale 5 min) */
+            foto_url: string | null;
+        };
+        ListaAnimaisDto: {
+            itens: components["schemas"]["AnimalResumoDto"][];
+            total: number;
+            pagina: number;
+            por_pagina: number;
+        };
+        DuplicadoDto: {
+            /** Format: uuid */
+            id: string;
+            numero: string;
+            nome: string | null;
+            /** @enum {string} */
+            sexo: "macho" | "femea" | "nao_identificado";
+            /** @enum {string} */
+            situacao: "em_acolhimento" | "adotado" | "devolvido_comunidade" | "transferido" | "obito";
+            /** Format: date */
+            data_entrada: string;
+        };
+        CriarAnimalDto: {
+            nome?: string;
+            /** @enum {string} */
+            especie: "cao" | "gato";
+            /** @enum {string} */
+            sexo: "macho" | "femea" | "nao_identificado";
+            /** Format: date */
+            nascimento_estimado?: string;
+            /** @enum {string} */
+            idade_precisao?: "exata" | "aproximada";
+            /** @enum {string} */
+            porte?: "pequeno" | "medio" | "grande";
+            /** Format: date */
+            data_entrada: string;
+            /** @enum {string} */
+            origem: "resgate" | "castracao" | "comunitario" | "outra";
+            origem_detalhe?: string;
+            /** @enum {string} */
+            local: "sede" | "lar_temporario" | "clinica";
+            disponivel_adocao?: boolean;
+            /** Format: uuid */
+            clinica_id?: string;
+            observacoes?: string;
+        };
+        ClinicaDto: {
+            /** Format: uuid */
+            id: string;
+            nome: string;
+            ativo: boolean;
+        };
+        AnimalDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example 2026-0042 */
+            numero: string;
+            nome: string | null;
+            /** @enum {string} */
+            especie: "cao" | "gato";
+            /** @enum {string} */
+            sexo: "macho" | "femea" | "nao_identificado";
+            /** Format: date */
+            nascimento_estimado: string | null;
+            /** @enum {string|null} */
+            idade_precisao: "exata" | "aproximada" | null;
+            /** @enum {string|null} */
+            porte: "pequeno" | "medio" | "grande" | null;
+            /** @enum {string} */
+            situacao: "em_acolhimento" | "adotado" | "devolvido_comunidade" | "transferido" | "obito";
+            /** @enum {string|null} */
+            local: "sede" | "lar_temporario" | "clinica" | null;
+            disponivel_adocao: boolean;
+            /** Format: date */
+            data_entrada: string;
+            /** @description URL assinada da foto principal (vale 5 min) */
+            foto_url: string | null;
+            /** @enum {string} */
+            origem: "resgate" | "castracao" | "comunitario" | "outra";
+            origem_detalhe: string | null;
+            observacoes: string | null;
+            clinica: components["schemas"]["ClinicaDto"] | null;
+            /** Format: date-time */
+            criado_em: string;
+            /** Format: date-time */
+            atualizado_em: string;
+        };
+        AlterarAnimalDto: {
+            nome?: string | null;
+            /** @enum {string} */
+            especie?: "cao" | "gato";
+            /** @enum {string} */
+            sexo?: "macho" | "femea" | "nao_identificado";
+            /** Format: date */
+            nascimento_estimado?: string | null;
+            /** @enum {string|null} */
+            idade_precisao?: "exata" | "aproximada" | null;
+            /** @enum {string|null} */
+            porte?: "pequeno" | "medio" | "grande" | null;
+            /** Format: date */
+            data_entrada?: string;
+            /** @enum {string} */
+            origem?: "resgate" | "castracao" | "comunitario" | "outra";
+            origem_detalhe?: string | null;
+            observacoes?: string | null;
+        };
+        MovimentacaoDto: {
+            /** Format: uuid */
+            id: string;
+            /** @enum {string} */
+            tipo: "entrada" | "mudanca" | "reentrada";
+            /** @enum {string|null} */
+            origem: "resgate" | "castracao" | "comunitario" | "outra" | null;
+            /** @enum {string} */
+            situacao: "em_acolhimento" | "adotado" | "devolvido_comunidade" | "transferido" | "obito";
+            /** @enum {string|null} */
+            local: "sede" | "lar_temporario" | "clinica" | null;
+            disponivel_adocao: boolean;
+            clinica: string | null;
+            /** Format: date */
+            data: string;
+            motivo: string | null;
+            /** @description Nome de quem registrou */
+            autor: string | null;
+            /** Format: date-time */
+            criado_em: string;
+        };
+        NovaMovimentacaoDto: {
+            /** @enum {string} */
+            situacao: "em_acolhimento" | "adotado" | "devolvido_comunidade" | "transferido" | "obito";
+            /** @enum {string} */
+            local?: "sede" | "lar_temporario" | "clinica";
+            disponivel_adocao: boolean;
+            /** Format: date */
+            data: string;
+            motivo?: string;
+            /**
+             * @default mudanca
+             * @enum {string}
+             */
+            tipo: "mudanca" | "reentrada";
+            /**
+             * @description Obrigatória na reentrada
+             * @enum {string}
+             */
+            origem?: "resgate" | "castracao" | "comunitario" | "outra";
+            /** Format: uuid */
+            clinica_id?: string;
+        };
+        AssinarFotoDto: {
+            /** @enum {string} */
+            tipo: "image/webp" | "image/jpeg";
+            /** @description Tamanho em bytes (até 5 MB) */
+            tamanho: number;
+        };
+        FotoAssinadaDto: {
+            /** @description Caminho decidido pelo servidor */
+            caminho: string;
+            /** @description URL assinada para o envio (PUT com o arquivo) */
+            url: string;
+        };
+        RegistrarFotoDto: {
+            caminho: string;
+        };
+        FotoDto: {
+            /** Format: uuid */
+            id: string;
+            caminho: string;
+            url: string | null;
+        };
+        CriarClinicaDto: {
+            nome: string;
         };
     };
     responses: never;
@@ -455,6 +762,286 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UsuarioDto"];
+                };
+            };
+        };
+    };
+    AnimaisController_listar: {
+        parameters: {
+            query?: {
+                especie?: "cao" | "gato";
+                sexo?: "macho" | "femea" | "nao_identificado";
+                porte?: "pequeno" | "medio" | "grande";
+                situacao?: "em_acolhimento" | "adotado" | "devolvido_comunidade" | "transferido" | "obito";
+                local?: "sede" | "lar_temporario" | "clinica";
+                disponivel?: "sim" | "nao";
+                /** @description Número ou nome */
+                q?: string;
+                pagina?: number;
+                por_pagina?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListaAnimaisDto"];
+                };
+            };
+        };
+    };
+    AnimaisController_criar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CriarAnimalDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnimalDto"];
+                };
+            };
+        };
+    };
+    AnimaisController_duplicados: {
+        parameters: {
+            query: {
+                nome: string;
+                especie: "cao" | "gato";
+                sexo: "macho" | "femea" | "nao_identificado";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DuplicadoDto"][];
+                };
+            };
+        };
+    };
+    AnimaisController_buscar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnimalDto"];
+                };
+            };
+        };
+    };
+    AnimaisController_excluir: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Exclusão lógica (admin e coordenação) */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AnimaisController_alterar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AlterarAnimalDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnimalDto"];
+                };
+            };
+        };
+    };
+    AnimaisController_movimentacoes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MovimentacaoDto"][];
+                };
+            };
+        };
+    };
+    AnimaisController_mover: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NovaMovimentacaoDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MovimentacaoDto"];
+                };
+            };
+        };
+    };
+    AnimaisController_assinarFoto: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssinarFotoDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FotoAssinadaDto"];
+                };
+            };
+        };
+    };
+    AnimaisController_registrarFoto: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegistrarFotoDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FotoDto"];
+                };
+            };
+        };
+    };
+    ClinicasController_listar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClinicaDto"][];
+                };
+            };
+        };
+    };
+    ClinicasController_criar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CriarClinicaDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClinicaDto"];
                 };
             };
         };

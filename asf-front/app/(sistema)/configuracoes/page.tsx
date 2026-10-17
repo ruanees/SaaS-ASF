@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { api, chamar, obterEu } from '@/lib/api';
 import { fd, nomePapel } from '@/lib/formato';
-import { FormConvite, LinhaUsuario } from './formularios';
+import { FormClinica, FormConvite, LinhaUsuario } from './formularios';
 
 export const metadata: Metadata = { title: 'Configurações' };
 
@@ -21,7 +21,10 @@ export default async function Configuracoes() {
   }
 
   const cliente = await api();
-  const usuarios = await chamar(cliente.GET('/usuarios'));
+  const [usuarios, clinicas] = await Promise.all([
+    chamar(cliente.GET('/usuarios')),
+    chamar(cliente.GET('/clinicas')),
+  ]);
 
   return (
     <div className="pilha" data-e="5">
@@ -78,6 +81,24 @@ export default async function Configuracoes() {
             </table>
           </div>
         )}
+      </section>
+      <section className="cartao pilha" aria-labelledby="titulo-clinicas">
+        <h2 id="titulo-clinicas">Clínicas</h2>
+        <p className="ajuda">Aparecem na escolha do local quando o animal vai para a clínica.</p>
+        {!clinicas.ok ? (
+          <p className="aviso" data-tipo="erro" role="alert">
+            {clinicas.falha.mensagem}
+          </p>
+        ) : clinicas.dados.length === 0 ? (
+          <p>Nenhuma clínica cadastrada.</p>
+        ) : (
+          <ul className="pilha" data-e="2" style={{ margin: 0, paddingLeft: 'var(--e-4)' }}>
+            {clinicas.dados.map((c) => (
+              <li key={c.id}>{c.nome}</li>
+            ))}
+          </ul>
+        )}
+        <FormClinica />
       </section>
     </div>
   );
