@@ -6,6 +6,8 @@ select plan(35);
 delete from public.usuarios;
 delete from public.numeracao;
 update public.configuracoes set fuso = 'America/Fortaleza', aviso_vacina_dias = 15;
+-- O catálogo inicial (migração 008) sai: a prova cria o seu.
+delete from public.vacinas_tipos;
 
 insert into auth.users (id, email, aud, role) values
   ('f0000000-0000-4000-8000-000000000001', 'coord@exemplo.test', 'authenticated', 'authenticated'),
