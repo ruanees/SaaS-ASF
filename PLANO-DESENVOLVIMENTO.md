@@ -793,7 +793,7 @@ Funcionalidades: F-07, F-08, F-09, F-10.
 
 **Banco**
 - [x] Tabelas `atendimentos`, `vacinas_tipos`, `vacinacoes`, `vermifugacoes`, `castracoes`
-- [ ] Catálogo inicial de vacinas por espécie, com as vacinas que a associação informar — **aguardando o questionário** (o catálogo já é editável em Configurações)
+- [x] Catálogo inicial de vacinas por espécie: cães V8, V10 e antirrábica; gatos, antirrábica (as outras vacinas de gato ainda serão informadas)
 - [x] View `animal_saude` (`security_invoker`): `vacinado` (tem ao menos uma vacinação), `vacina_pendente` (alguma `proxima_dose` antes de `app.hoje()` sem aplicação posterior do mesmo tipo, ou nunca vacinado), `castracao_status` (`castrado`, `agendada`, `nao_castrado`), próxima vermifugação
 - [x] Funções `registrar_vacina`, `registrar_vermifugacao`, `realizar_castracao`: atendimento e detalhe na mesma transação
 - [x] Provas pgTAP para cada regra da view, incluindo a virada de dia em Fortaleza às 22h
@@ -822,6 +822,16 @@ Funcionalidades: F-07, F-08, F-09, F-10.
 - Não guardar "vacinado" como campo do animal.
 
 **Pronto quando:** registrar a V10 de um cão sugere o reforço, o animal sai de "não vacinado", e quando a data passa ele aparece em Pendências sem ninguém mexer em nada.
+
+**Ajustes pelas respostas da associação (17/10/2026)** — migrações 007 e 008:
+- [x] Protocolo de vacina: na primeira vez, 3 doses com 21 dias de intervalo; depois, reforço anual (cães e gatos). O catálogo guarda doses iniciais e intervalo, e `sugerir_proxima_dose` conta as doses já tomadas.
+- [x] Vermífugo: filhote na primeira vez faz a série de 3 dias e repete em 15 dias; adulto a cada 6 meses (`sugerir_proxima_vermifugacao`).
+- [x] Antiparasitário externo (antipulgas e carrapatos): Simparic semestral nos abrigados e na admissão de novo resgatado; Bravecto só em cadela parida, sem repetição. Registro próprio, estado e Pendências.
+- [x] Castração agendada pela associação também com o adotante: animal adotado pode ter castração agendada e realizada; só óbito e transferência cancelam o agendamento.
+- [x] Microchip no animal (a associação vai começar a microchipar), informado também ao registrar a castração.
+- [x] Prioridade de castração para fêmeas: seção própria em Pendências.
+- [x] Clínica Mundo Animal cadastrada.
+- [ ] Vacinas de gato além da antirrábica: aguardando a associação.
 
 ---
 
@@ -1018,7 +1028,7 @@ Decisões que precisam da Associação São Francisco antes da fase indicada:
 - **Fase 0:** ligar o Cloudflare Access como camada extra de entrada? Protege mais, mas pede uma verificação por e-mail a mais ao entrar.
 - **Fase 1:** o número de identificação no formato `AAAA-NNNN` atende, ou a associação já usa outro? Animais já cadastrados em papel mantêm o número antigo?
 - ~~**Fase 1:** filhote sem sexo identificado precisa de uma terceira opção?~~ **Decidido (17/10/2026): sim.** O enum `sexo` ganha `nao_identificado`; os indicadores de machos e fêmeas mostram essa terceira contagem.
-- **Fase 2:** quais vacinas e intervalos de reforço a associação usa?
+- ~~**Fase 2:** quais vacinas e intervalos de reforço a associação usa?~~ **Respondido (17/10/2026):** cães V8 (às vezes V10) e antirrábica; gatos ainda a confirmar; 3 doses com 21 dias na primeira vez e reforço anual.
 - **Fase 2:** a coordenação quer o resumo diário de pendências por e-mail?
 - **Fase 4:** o termo de adoção atual da associação (para alinhar campos e base legal).
 - **Fase 4:** por quanto tempo guardar os dados do adotante depois da adoção.

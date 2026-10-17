@@ -10,8 +10,12 @@ export const metadata: Metadata = { title: 'Pendências' };
 const TIPO: Record<Pendencia['tipo'], string> = {
   vacina: 'Vacina',
   vermifugacao: 'Vermifugação',
+  antiparasitario: 'Antipulgas e carrapatos',
   castracao: 'Castração',
+  castracao_prioridade: 'Castração',
 };
+
+const EH_CASTRACAO = (p: Pendencia) => p.tipo === 'castracao' || p.tipo === 'castracao_prioridade';
 
 function Lista({ itens }: { itens: Pendencia[] }) {
   return (
@@ -26,11 +30,22 @@ function Lista({ itens }: { itens: Pendencia[] }) {
               </span>
               <span>
                 {TIPO[p.tipo]}
-                {p.tipo !== 'castracao' && `: ${p.descricao}`}
+                {`: ${p.descricao}`}
               </span>
             </span>
-            <span className="selo" data-cor={p.vencida ? 'vermelho' : p.tipo === 'castracao' ? 'azul' : 'amarelo'}>
-              {p.vencida ? (p.tipo === 'castracao' ? 'Data passou' : 'Vencida') : p.tipo === 'castracao' ? 'Agendada' : 'Vence em breve'}
+            <span
+              className="selo"
+              data-cor={p.tipo === 'castracao_prioridade' ? undefined : p.vencida ? 'vermelho' : p.tipo === 'castracao' ? 'azul' : 'amarelo'}
+            >
+              {p.tipo === 'castracao_prioridade'
+                ? 'Sem castração'
+                : p.vencida
+                  ? p.tipo === 'castracao'
+                    ? 'Data passou'
+                    : 'Vencida'
+                  : p.tipo === 'castracao'
+                    ? 'Agendada'
+                    : 'Vence em breve'}
             </span>
           </Link>
         </li>
@@ -62,14 +77,18 @@ export default async function Pendencias() {
   }
 
   const vencidas = r.dados.filter((p) => p.vencida);
-  const proximas = r.dados.filter((p) => !p.vencida && p.tipo !== 'castracao');
+  const proximas = r.dados.filter((p) => !p.vencida && !EH_CASTRACAO(p));
   const castracoes = r.dados.filter((p) => !p.vencida && p.tipo === 'castracao');
+  const prioridade = r.dados.filter((p) => p.tipo === 'castracao_prioridade');
 
   return (
     <div className="pilha" data-e="5">
       <div className="pilha" data-e="2">
         <h1>Pendências</h1>
-        <p className="ajuda">Vacinas e vermífugos vencidos ou a vencer, e castrações agendadas, dos animais em acolhimento.</p>
+        <p className="ajuda">
+          Vacinas, vermífugos e antipulgas vencidos ou a vencer, castrações agendadas (inclusive com adotantes) e as fêmeas
+          ainda sem castração.
+        </p>
       </div>
 
       {r.dados.length === 0 ? (
@@ -89,6 +108,13 @@ export default async function Pendencias() {
             <section className="pilha" aria-labelledby="p-proximas">
               <h2 id="p-proximas">A vencer ({proximas.length})</h2>
               <Lista itens={proximas} />
+            </section>
+          )}
+          {prioridade.length > 0 && (
+            <section className="pilha" aria-labelledby="p-prioridade">
+              <h2 id="p-prioridade">Prioridade de castração: fêmeas ({prioridade.length})</h2>
+              <p className="ajuda">Gatas e cadelas em acolhimento sem castração realizada nem agendada. A data é a da entrada.</p>
+              <Lista itens={prioridade} />
             </section>
           )}
           {castracoes.length > 0 && (

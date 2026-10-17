@@ -177,7 +177,17 @@ export function FormVacinaTipo() {
         </div>
         <div className="campo">
           <label htmlFor="vt-reforco">Reforço em dias</label>
-          <input id="vt-reforco" name="reforco_dias" type="number" inputMode="numeric" min={1} max={3650} placeholder="365" />
+          <input id="vt-reforco" name="reforco_dias" type="number" inputMode="numeric" min={1} max={3650} defaultValue={365} />
+        </div>
+      </div>
+      <div className="grade" data-n="3">
+        <div className="campo">
+          <label htmlFor="vt-doses">Doses na primeira vez</label>
+          <input id="vt-doses" name="doses_iniciais" type="number" inputMode="numeric" min={1} max={6} defaultValue={3} />
+        </div>
+        <div className="campo">
+          <label htmlFor="vt-intervalo">Dias entre essas doses</label>
+          <input id="vt-intervalo" name="intervalo_inicial_dias" type="number" inputMode="numeric" min={1} max={365} defaultValue={21} />
         </div>
       </div>
       <div>
@@ -202,6 +212,7 @@ export function LinhaVacinaTipo({ vacina, especie }: { vacina: VacinaTipo; espec
         )}
       </td>
       <td>{especie}</td>
+      <td>{vacina.doses_iniciais > 1 ? `${vacina.doses_iniciais} doses a cada ${vacina.intervalo_inicial_dias} dias` : '1 dose'}</td>
       <td>
         <form action={acao} className="linha">
           <input type="hidden" name="id" value={vacina.id} />

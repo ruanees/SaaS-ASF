@@ -20,6 +20,8 @@ const ROTULO_CAMPO: Record<string, string> = {
   origem: 'origem',
   origem_detalhe: 'detalhe da origem',
   observacoes: 'observações',
+  microchip: 'microchip',
+  microchip_data: 'data do microchip',
 };
 
 // Cada campo salva ao sair dele, sem redesenhar a ficha. O selo de gravação
@@ -129,6 +131,35 @@ export function AbaDados({ animal, hoje, podeExcluir }: { animal: Animal; hoje: 
             </select>
           </div>
         </div>
+      </section>
+
+      <section className="cartao pilha">
+        <h2>Microchip</h2>
+        <div className="grade" data-n="2">
+          <div className="campo">
+            <label htmlFor="d-chip">Número do microchip</label>
+            <input
+              id="d-chip"
+              inputMode="numeric"
+              maxLength={30}
+              defaultValue={animal.microchip ?? ''}
+              placeholder="985 112 000 123 456"
+              autoComplete="off"
+              onBlur={(e) => salvar({ microchip: e.target.value.replace(/\s/g, '') || null })}
+            />
+          </div>
+          <div className="campo">
+            <label htmlFor="d-chip-data">Data da aplicação</label>
+            <input
+              id="d-chip-data"
+              type="date"
+              max={hoje}
+              defaultValue={animal.microchip_data ?? ''}
+              onBlur={(e) => salvar({ microchip_data: e.target.value || null })}
+            />
+          </div>
+        </div>
+        <p className="ajuda">Também dá para informar o microchip ao registrar a castração, na aba Saúde.</p>
       </section>
 
       <section className="cartao pilha">
