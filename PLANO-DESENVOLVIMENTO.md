@@ -691,14 +691,14 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 - [ ] SMTP próprio configurado no Supabase Auth
 
 **Back**
-- [ ] `AuthModule` com guard global e `@Publico()`
-- [ ] `SupabaseService`: cliente por requisição com o JWT de quem chamou
-- [ ] Filtro de erro global: separa erro do banco (4xx com frase em português) de falha de rede (503)
+- [x] `AuthModule` com guard global e `@Publico()`
+- [x] `SupabaseService`: cliente por requisição com o JWT de quem chamou
+- [x] Filtro de erro global: separa erro do banco (4xx com frase em português) de falha de rede (503)
 - [ ] `POST /sessao/entrar | renovar | recuperar | senha`
 - [ ] `GET /eu` (nome e papel de quem entrou)
 - [ ] `GET /usuarios`, `POST /usuarios/convites`, `PATCH /usuarios/:id` (papel, ativar, desativar), pela Edge Function admin
-- [ ] `GET /saude`: responde se cada configuração existe e de onde veio, nunca o valor
-- [ ] `@nestjs/swagger` gerando `/openapi.json` público, sem a Swagger UI
+- [x] `GET /saude`: responde se cada configuração existe e de onde veio, nunca o valor
+- [x] `@nestjs/swagger` gerando `/openapi.json` público, sem a Swagger UI
 
 **Front**
 - [ ] `tokens.css` e `components.css`: cores, tipografia, espaçamento, temas claro e escuro
