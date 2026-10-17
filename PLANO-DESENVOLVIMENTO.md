@@ -671,16 +671,16 @@ Ficam em `asf-back/docs/adr/`. Mudar uma decisão é escrever um ADR novo que su
 Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão usar. Funcionalidades: F-01, F-02.
 
 **Infra**
-- [ ] Criar `asf-front` e `asf-back`, privados, `main` protegida
+- [x] Criar `asf-front` e `asf-back` (pastas no repositório `SaaS-ASF`, ADR 0009) — **falta proteger a `main`** no GitHub (exigir PR e CI verde)
 - [x] `.env.example` nos dois, `.env` no `.gitignore`
 - [x] `CLAUDE.md` nos dois e os ADRs 0001 a 0008 em `docs/adr/`
 - [x] CI por repo: typecheck, lint, testes e `npm run build` (o mesmo comando da Cloudflare)
 - [x] CI do back: `supabase db reset` + `supabase test db` (provas de RLS) + conferir que o `openapi.json` gera
 - [x] Dependabot ligado
-- [ ] Deploy contínuo dos dois pelo Workers Builds da Cloudflare (sem token no GitHub)
+- [x] Deploy contínuo dos dois pelo Workers Builds da Cloudflare (sem token no GitHub) — `asf-back.balbuquerc.workers.dev` e `asf-front.balbuquerc.workers.dev`
 - [x] Back: `wrangler.toml` com `nodejs_compat`, a flag `enable_nodejs_http_server_modules` e os `alias` dos módulos que o Nest carrega por `require` dinâmico
 - [x] Front: `open-next.config.ts` com `buildCommand` próprio
-- [ ] Sentry nos dois, com o filtro de dado pessoal (`beforeSend`) e um erro de teste conferido no painel
+- [ ] Sentry nos dois, com o filtro de dado pessoal (`beforeSend`) e um erro de teste conferido no painel — **adiado** (depende de conta)
 
 **Banco**
 - [x] Projeto Supabase na região São Paulo, com cadastro público desligado
@@ -703,9 +703,9 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 **Front**
 - [x] `tokens.css` e `components.css`: cores, tipografia, espaçamento, temas claro e escuro
 - [x] Script de tema antes da primeira pintura
-- [ ] Login, recuperação de senha e nova senha (com repetição da senha), com Turnstile
+- [x] Login, recuperação de senha e nova senha (com repetição da senha) — **Turnstile adiado** (depende de chave da Cloudflare)
 - [x] `lib/menu.ts` com todos os módulos previstos; os que não existem aparecem com "em breve"
-- [ ] `lib/api.ts`: cliente único, tipado pelo OpenAPI; o selo de gravação só aparece quando uma escrita falha
+- [x] `lib/api.ts`: cliente único, tipado pelo OpenAPI — o selo de gravação entra na Fase 1, com os campos que salvam ao sair
 - [x] `lib/formato.ts`: `fd(iso)`, `fdDe(Date)`, idade a partir de `nascimento_estimado`
 - [x] Script de codegen (`openapi-typescript`)
 - [x] Tela de usuários (admin): convidar, mudar papel, desativar
@@ -713,8 +713,8 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 
 **LGPD e segurança**
 - [ ] ~~MFA obrigatório para `admin` e `coordenacao`~~ — **adiado para a Fase 6** (decisão de 17/10/2026; código pronto no PR #15, em rascunho)
-- [ ] Política de privacidade e registro das operações de tratamento (rascunho, para revisão jurídica)
-- [ ] Acordo entre a associação e quem mantém o sistema, se for de fora (rascunho)
+- [x] Política de privacidade e registro das operações de tratamento (rascunho, para revisão jurídica) — `docs/lgpd/`
+- [x] Acordo entre a associação e quem mantém o sistema, se for de fora (rascunho) — `docs/lgpd/`
 
 **Casos de borda**
 - Usuário desativado com sessão aberta: a próxima requisição dele já não lê nada, porque a RLS confere `ativo` a cada consulta.
@@ -730,6 +730,8 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 - Não deixar o adaptador do OpenNext chamar `npm run build` apontando para ele mesmo: o build entra em recursão e nunca termina, sem erro.
 
 **Pronto quando:** um usuário convidado entra, vê o menu com tudo "em breve", e a CI prova que uma conta sem convite não lê nada.
+
+**Situação (17/10/2026): fechada.** O critério foi cumprido no local e no sistema publicado. Ficaram adiados, por dependerem de contas externas ou de decisão da associação: SMTP próprio (Resend), Sentry, Turnstile e proteção da `main`. O MFA foi para a Fase 6.
 
 ---
 
