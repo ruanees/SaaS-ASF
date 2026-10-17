@@ -75,6 +75,19 @@ export class AnimalResumoDto {
     description: 'URL assinada da foto principal (vale 5 min)',
   })
   foto_url: string | null;
+
+  // Estado de saúde calculado no banco (view animal_saude), para os selos.
+  @ApiProperty({
+    enum: ['nao_vacinado', 'vencida', 'vence_em_breve', 'vacinado'],
+    nullable: true,
+  })
+  vacinacao_status:
+    'nao_vacinado' | 'vencida' | 'vence_em_breve' | 'vacinado' | null;
+  @ApiProperty({
+    enum: ['castrado', 'agendada', 'nao_castrado'],
+    nullable: true,
+  })
+  castracao_status: 'castrado' | 'agendada' | 'nao_castrado' | null;
 }
 
 export class ListaAnimaisDto {

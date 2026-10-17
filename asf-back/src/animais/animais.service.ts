@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { UsuarioAutenticado } from '../auth/usuario.js';
 import { dados, um } from '../supabase/resultado.js';
+import { SaudeAnimalService } from '../saude-animal/saude.service.js';
 import { SupabaseService } from '../supabase/supabase.service.js';
 import type {
   AlterarAnimalDto,
@@ -25,7 +26,10 @@ const VALIDADE_URL_SEGUNDOS = 300; // 5 min (plano, seção 05)
 const CAMPOS_RESUMO =
   'id, numero, nome, especie, sexo, nascimento_estimado, idade_precisao, porte, situacao, local, disponivel_adocao, data_entrada';
 
-type LinhaAnimal = Omit<AnimalResumoDto, 'foto_url'> & {
+type LinhaAnimal = Omit<
+  AnimalResumoDto,
+  'foto_url' | 'vacinacao_status' | 'castracao_status'
+> & {
   animal_fotos?: { caminho: string }[];
 };
 
@@ -42,7 +46,10 @@ export function limparBusca(texto: string | undefined): string | undefined {
 
 @Injectable()
 export class AnimaisService {
-  constructor(private readonly supabase: SupabaseService) {}
+  constructor(
+    private readonly supabase: SupabaseService,
+    private readonly saude: SaudeAnimalService,
+  ) {}
 
   async listar(
     usuario: UsuarioAutenticado,
@@ -76,12 +83,18 @@ export class AnimaisService {
     if (error) throw error;
 
     const linhas = (data ?? []) as unknown as LinhaAnimal[];
-    const urls = await this.urlsAssinadas(
-      sb,
-      linhas.map((l) => l.animal_fotos?.[0]?.caminho),
-    );
+    const [urls, estados] = await Promise.all([
+      this.urlsAssinadas(
+        sb,
+        linhas.map((l) => l.animal_fotos?.[0]?.caminho),
+      ),
+      this.saude.estados(
+        sb,
+        linhas.map((l) => l.id),
+      ),
+    ]);
     return {
-      itens: linhas.map((l, i) => paraResumo(l, urls[i])),
+      itens: linhas.map((l, i) => paraResumo(l, urls[i], estados.get(l.id))),
       total: count ?? 0,
       pagina,
       por_pagina: porPagina,
@@ -111,11 +124,12 @@ export class AnimaisService {
       | null;
     if (!linha) throw new NotFoundException('Animal não encontrado.');
 
-    const [url] = await this.urlsAssinadas(sb, [
-      linha.animal_fotos?.[0]?.caminho,
+    const [[url], estados] = await Promise.all([
+      this.urlsAssinadas(sb, [linha.animal_fotos?.[0]?.caminho]),
+      this.saude.estados(sb, [linha.id]),
     ]);
     return {
-      ...paraResumo(linha, url),
+      ...paraResumo(linha, url, estados.get(linha.id)),
       origem: linha.origem,
       origem_detalhe: linha.origem_detalhe,
       observacoes: linha.observacoes,
@@ -325,7 +339,11 @@ export class AnimaisService {
 // Objeto simples (não instância de classe): pode ser espalhado com segurança.
 type Resumo = { [K in keyof AnimalResumoDto]: AnimalResumoDto[K] };
 
-function paraResumo(l: LinhaAnimal, url: string | null): Resumo {
+function paraResumo(
+  l: LinhaAnimal,
+  url: string | null,
+  estado?: Pick<AnimalResumoDto, 'vacinacao_status' | 'castracao_status'>,
+): Resumo {
   return {
     id: l.id,
     numero: l.numero,
@@ -340,5 +358,7 @@ function paraResumo(l: LinhaAnimal, url: string | null): Resumo {
     disponivel_adocao: l.disponivel_adocao,
     data_entrada: l.data_entrada,
     foto_url: url,
+    vacinacao_status: estado?.vacinacao_status ?? null,
+    castracao_status: estado?.castracao_status ?? null,
   };
 }
