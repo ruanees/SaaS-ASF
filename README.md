@@ -17,3 +17,5 @@ As duas pastas são projetos independentes dentro do mesmo repositório ([ADR 00
 
 - [Plano de desenvolvimento](PLANO-DESENVOLVIMENTO.md): fases, banco, LGPD, segurança e regras do projeto
 - [Registros de decisão (ADR)](asf-back/docs/adr/README.md)
+- [LGPD: rascunhos para revisão jurídica](docs/lgpd/README.md)
+- [Brandbook (identidade visual)](asf-front/docs/brandbook.pdf)
