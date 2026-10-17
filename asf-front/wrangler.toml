@@ -12,9 +12,8 @@ directory = ".open-next/assets"
 binding = "ASSETS"
 
 [vars]
-# Endereço do back publicado. Trocar pelo endereço real quando o asf-back
-# estiver na Cloudflare (ou pelo domínio próprio).
-API_URL = "https://asf-back.SEU-SUBDOMINIO.workers.dev"
+# Endereço do back publicado (trocar quando houver domínio próprio).
+API_URL = "https://asf-back.balbuquerc.workers.dev"
 # Usado também no build, para a CSP: configurar igual nas variáveis de build
 # do Workers Builds.
 SUPABASE_URL = "https://dfpaflwwqyphmpxxbsad.supabase.co"
