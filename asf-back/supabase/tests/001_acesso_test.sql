@@ -5,6 +5,10 @@ create extension if not exists pgtap with schema extensions;
 select plan(24);
 
 -- Dados fictícios -------------------------------------------------------------
+-- A prova não depende do seed: começa sem nenhum usuário (o rollback desfaz).
+delete from public.usuarios;
+delete from public.auditoria;
+
 insert into auth.users (id, email, aud, role) values
   ('a0000000-0000-4000-8000-000000000001', 'admin@exemplo.test', 'authenticated', 'authenticated'),
   ('a0000000-0000-4000-8000-000000000002', 'voluntario@exemplo.test', 'authenticated', 'authenticated'),
