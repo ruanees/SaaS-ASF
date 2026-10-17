@@ -69,6 +69,11 @@ describe('asf-back (e2e)', () => {
     ['post', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/adocao'],
     ['post', '/adocoes/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/devolucao'],
     ['get', '/adocoes/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/termo'],
+    ['get', '/indicadores'],
+    ['get', '/indicadores/mensal'],
+    ['get', '/relatorios/animais'],
+    ['get', '/relatorios/animais/csv'],
+    ['post', '/relatorios/animais/impressao'],
   ] as const)('%s %s sem sessão responde 401', async (metodo, rota) => {
     const res = await request(app.getHttpServer())[metodo](rota).expect(401);
     expect(res.body.mensagem).toBe('Sessão ausente. Entre de novo.');
@@ -83,7 +88,7 @@ describe('asf-back (e2e)', () => {
     expect(res.body.mensagem).toContain('property admin should not exist');
   });
 
-  it('openapi lista as rotas das fases 0 a 4', async () => {
+  it('openapi lista as rotas das fases 0 a 5', async () => {
     const res = await request(app.getHttpServer()).get('/openapi.json');
     expect(Object.keys(res.body.paths).sort()).toEqual([
       '/adocoes',
@@ -115,6 +120,8 @@ describe('asf-back (e2e)', () => {
       '/atendimentos/{atendimentoId}/resultado',
       '/clinicas',
       '/eu',
+      '/indicadores',
+      '/indicadores/mensal',
       '/lares-temporarios',
       '/pendencias',
       '/pessoas',
@@ -122,6 +129,9 @@ describe('asf-back (e2e)', () => {
       '/pessoas/{id}/anonimizar',
       '/pessoas/{id}/contato',
       '/pessoas/{id}/dados',
+      '/relatorios/{secao}',
+      '/relatorios/{secao}/csv',
+      '/relatorios/{secao}/impressao',
       '/saude',
       '/sessao/entrar',
       '/sessao/recuperar',

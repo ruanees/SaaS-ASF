@@ -228,6 +228,25 @@ export class FiltroAnimaisDto {
   @MaxLength(60)
   q?: string;
 
+  // Filtros de saúde: os mesmos recortes dos indicadores (Fase 5).
+  @ApiPropertyOptional({
+    enum: ['em_dia', 'pendente'],
+    description: 'Pendente = nunca vacinado ou com vacina vencida',
+  })
+  @IsOptional()
+  @IsIn(['em_dia', 'pendente'])
+  vacinacao?: 'em_dia' | 'pendente';
+
+  @ApiPropertyOptional({ enum: ['castrado', 'nao_castrado', 'agendada'] })
+  @IsOptional()
+  @IsIn(['castrado', 'nao_castrado', 'agendada'])
+  castracao?: 'castrado' | 'nao_castrado' | 'agendada';
+
+  @ApiPropertyOptional({ enum: ['sim'], description: 'Só em tratamento' })
+  @IsOptional()
+  @IsIn(['sim'])
+  tratamento?: 'sim';
+
   @ApiPropertyOptional({ default: 1 })
   @IsOptional()
   @Type(() => Number)

@@ -308,3 +308,36 @@ a.selo:hover, button.selo:hover { text-decoration: underline; }
 select[size] { padding: var(--e-1); min-height: auto; }
 select[size] option { padding: var(--e-2); border-radius: var(--raio); }
 details > summary { cursor: pointer; font-weight: 700; color: var(--acao); min-height: var(--toque); display: flex; align-items: center; }
+
+/* Painel: indicadores ------------------------------------------------------- */
+.grade-indicadores { display: grid; gap: var(--e-3); grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+.indicador { display: flex; flex-direction: column; gap: var(--e-1); padding: var(--e-4); }
+.indicador-link { display: flex; flex-direction: column; gap: var(--e-1); text-decoration: none; color: inherit; }
+.indicador-link:hover .indicador-rotulo { text-decoration: underline; }
+.indicador-valor { font-family: var(--fonte-titulo); font-size: var(--t-indicador); font-weight: 600; line-height: 1; color: var(--titulo); }
+.indicador-rotulo { font-weight: 700; color: var(--texto-2); }
+.indicador[data-pequeno] .indicador-valor { font-size: var(--t-nome); }
+
+/* Gráficos (cores pelos tokens: o tema redesenha) ---------------------------- */
+.grafico { margin: 0; display: grid; gap: var(--e-3); }
+.grafico figcaption { font-weight: 800; color: var(--titulo); }
+.barras { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e-2); }
+.barras li { display: grid; grid-template-columns: 80px 1fr 40px; gap: var(--e-2); align-items: center; }
+.barras-trilho { background: var(--divisoria); border-radius: var(--raio-pilula); height: 14px; overflow: hidden; }
+.barras-barra { display: block; height: 100%; border-radius: var(--raio-pilula); min-width: 2px; }
+.barras-valor { font-weight: 800; text-align: right; }
+.legenda { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--e-3); font-size: var(--t-rotulo); font-weight: 700; }
+.legenda li { display: inline-flex; align-items: center; gap: var(--e-1); }
+.legenda-cor { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.colunas { width: 100%; height: auto; }
+.colunas .guia { stroke: var(--divisoria); stroke-width: 1; }
+.colunas .eixo { fill: var(--texto-2); font-size: 11px; font-family: var(--fonte); }
+
+/* Relatórios ------------------------------------------------------------------ */
+.rolagem-tabela { overflow-x: auto; }
+@media print {
+  .menu-lateral, .barra-celular, .cabecalho-celular, .folha { display: none !important; }
+  .conteudo { padding: 0; max-width: none; }
+  .relatorio { box-shadow: none; border: 0; padding: 0; }
+  .rolagem-tabela { overflow: visible; }
+}

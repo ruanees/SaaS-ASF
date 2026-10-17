@@ -63,10 +63,11 @@ export class AnimaisService {
     const pagina = filtro.pagina ?? 1;
     const porPagina = filtro.por_pagina ?? 20;
 
+    // Mesma fonte dos indicadores (view animais_lista): o número do painel e a
+    // lista que ele abre usam a mesma regra.
     let consulta = sb
-      .from('animais')
-      .select(`${CAMPOS_RESUMO}, animal_fotos(caminho)`, { count: 'exact' })
-      .eq('animal_fotos.principal', true);
+      .from('animais_lista')
+      .select(CAMPOS_RESUMO, { count: 'exact' });
 
     if (filtro.especie) consulta = consulta.eq('especie', filtro.especie);
     if (filtro.sexo) consulta = consulta.eq('sexo', filtro.sexo);
@@ -76,6 +77,16 @@ export class AnimaisService {
     if (filtro.disponivel) {
       consulta = consulta.eq('disponivel_adocao', filtro.disponivel === 'sim');
     }
+    if (filtro.vacinacao) {
+      consulta = consulta.eq(
+        'vacina_pendente',
+        filtro.vacinacao === 'pendente',
+      );
+    }
+    if (filtro.castracao) {
+      consulta = consulta.eq('castracao_status', filtro.castracao);
+    }
+    if (filtro.tratamento) consulta = consulta.eq('em_tratamento', true);
     const busca = limparBusca(filtro.q);
     if (busca) {
       consulta = consulta.or(
@@ -89,10 +100,14 @@ export class AnimaisService {
     if (error) throw error;
 
     const linhas = (data ?? []) as unknown as LinhaAnimal[];
+    const fotos = await this.fotosPrincipais(
+      sb,
+      linhas.map((l) => l.id),
+    );
     const [urls, estados] = await Promise.all([
       this.urlsAssinadas(
         sb,
-        linhas.map((l) => l.animal_fotos?.[0]?.caminho),
+        linhas.map((l) => fotos.get(l.id)),
       ),
       this.saude.estados(
         sb,
@@ -334,6 +349,25 @@ export class AnimaisService {
   }
 
   // URLs de leitura de curta duração, uma chamada para a página inteira.
+  private async fotosPrincipais(
+    sb: SupabaseClient,
+    ids: string[],
+  ): Promise<Map<string, string>> {
+    if (ids.length === 0) return new Map();
+    const { data } = await sb
+      .from('animal_fotos')
+      .select('animal_id, caminho')
+      .in('animal_id', ids)
+      .eq('principal', true);
+    // Sem foto a lista continua funcionando.
+    return new Map(
+      ((data ?? []) as { animal_id: string; caminho: string }[]).map((f) => [
+        f.animal_id,
+        f.caminho,
+      ]),
+    );
+  }
+
   private async urlsAssinadas(
     sb: SupabaseClient,
     caminhos: (string | undefined)[],

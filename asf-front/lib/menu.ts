@@ -21,7 +21,7 @@ export const MENU: ItemMenu[] = [
   { rotulo: 'Pendências', rota: '/pendencias', fase: 2, celular: true },
   { rotulo: 'Pessoas', rota: '/pessoas', fase: 4 },
   { rotulo: 'Adoções', rota: '/adocoes', fase: 4 },
-  { rotulo: 'Relatórios', rota: '/relatorios', fase: 5, emBreve: true },
+  { rotulo: 'Relatórios', rota: '/relatorios', fase: 5 },
   { rotulo: 'Configurações', rota: '/configuracoes', fase: 0, papeis: ['admin', 'coordenacao'] },
   { rotulo: 'Auditoria', rota: '/auditoria', fase: 6, emBreve: true, papeis: ['admin'] },
 ];

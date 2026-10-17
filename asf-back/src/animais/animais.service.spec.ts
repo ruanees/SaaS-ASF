@@ -26,6 +26,7 @@ function consulta(resultado: Record<string, unknown>) {
   for (const m of [
     'select',
     'eq',
+    'in',
     'or',
     'order',
     'range',
@@ -108,13 +109,10 @@ const linha = (extra: Record<string, unknown> = {}) => ({
 describe('AnimaisService.listar', () => {
   it('aplica filtros, pagina e junta a URL assinada da foto principal', async () => {
     const caminho = `${ANIMAL}/foto.webp`;
-    const { service, consultas } = servico({
+    const { service, cliente, consultas } = servico({
       from: [
-        {
-          data: [linha({ animal_fotos: [{ caminho }] })],
-          error: null,
-          count: 41,
-        },
+        { data: [linha()], error: null, count: 41 },
+        { data: [{ animal_id: ANIMAL, caminho }], error: null },
       ],
       urls: {
         data: [{ path: caminho, signedUrl: 'https://assinada', error: null }],
@@ -140,16 +138,33 @@ describe('AnimaisService.listar', () => {
       'numero.ilike.%2026-00%,nome.ilike.%2026-00%,microchip.ilike.%2026-00%',
     );
     expect(q.range).toHaveBeenCalledWith(40, 59);
+    // A lista lê a mesma view dos indicadores.
+    expect(cliente.from).toHaveBeenNthCalledWith(1, 'animais_lista');
+    expect(cliente.from).toHaveBeenNthCalledWith(2, 'animal_fotos');
+  });
+
+  it('filtros de saúde usam as mesmas colunas dos indicadores', async () => {
+    const { service, consultas } = servico({
+      from: [{ data: [], error: null, count: 0 }],
+    });
+    await service.listar(EU, {
+      situacao: 'em_acolhimento',
+      vacinacao: 'pendente',
+      castracao: 'nao_castrado',
+      tratamento: 'sim',
+    });
+    const q = consultas[0];
+    expect(q.eq).toHaveBeenCalledWith('situacao', 'em_acolhimento');
+    expect(q.eq).toHaveBeenCalledWith('vacina_pendente', true);
+    expect(q.eq).toHaveBeenCalledWith('castracao_status', 'nao_castrado');
+    expect(q.eq).toHaveBeenCalledWith('em_tratamento', true);
   });
 
   it('falha ao assinar fotos não derruba a lista', async () => {
     const { service } = servico({
       from: [
-        {
-          data: [linha({ animal_fotos: [{ caminho: 'x' }] })],
-          error: null,
-          count: 1,
-        },
+        { data: [linha()], error: null, count: 1 },
+        { data: [{ animal_id: ANIMAL, caminho: 'x' }], error: null },
       ],
       urls: { data: null, error: { message: 'fora do ar' } },
     });

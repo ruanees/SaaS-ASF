@@ -756,6 +756,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/indicadores": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["IndicadoresController_painel"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/indicadores/mensal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["IndicadoresController_mensal"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/relatorios/{secao}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RelatoriosController_ver"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/relatorios/{secao}/csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RelatoriosController_csv"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/relatorios/{secao}/impressao": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RelatoriosController_impressao"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1574,6 +1654,74 @@ export interface components {
             /** @description URL assinada de leitura (5 min) */
             url: string;
         };
+        IndicadoresDto: {
+            /** Format: date */
+            de: string;
+            /** Format: date */
+            ate: string;
+            /** @description Todos os animais não excluídos, desde sempre */
+            total: number;
+            /** @description Em acolhimento agora */
+            sob_cuidado: number;
+            caes: number;
+            caes_sob_cuidado: number;
+            gatos: number;
+            gatos_sob_cuidado: number;
+            machos: number;
+            machos_sob_cuidado: number;
+            femeas: number;
+            femeas_sob_cuidado: number;
+            /** @description Sob cuidado, vacina em dia */
+            vacinados: number;
+            /** @description Sob cuidado, nunca vacinado ou vencida */
+            vacinacao_pendente: number;
+            castrados: number;
+            nao_castrados: number;
+            castracao_agendada: number;
+            disponiveis: number;
+            na_sede: number;
+            em_lar_temporario: number;
+            em_tratamento: number;
+            /** @description Adoções no período */
+            adocoes: number;
+            /** @description Devoluções de adoção no período */
+            devolucoes: number;
+            /** @description Devolvidos à comunidade no período */
+            devolvidos_comunidade: number;
+        };
+        PontoMensalDto: {
+            /**
+             * Format: date
+             * @description Primeiro dia do mês
+             */
+            mes: string;
+            entradas: number;
+            adocoes: number;
+            devolvidos_comunidade: number;
+        };
+        QuadroDto: {
+            rotulo: string;
+            valor: number;
+        };
+        ColunaDto: {
+            chave: string;
+            rotulo: string;
+        };
+        RelatorioDto: {
+            /** @enum {string} */
+            secao: "animais" | "vacinacao" | "castracao" | "adocoes" | "movimentacoes";
+            titulo: string;
+            descricao: string;
+            /** Format: date */
+            de: string | null;
+            /** Format: date */
+            ate: string | null;
+            quadros: components["schemas"]["QuadroDto"][];
+            colunas: components["schemas"]["ColunaDto"][];
+            linhas: {
+                [key: string]: string | null;
+            }[];
+        };
     };
     responses: never;
     parameters: never;
@@ -1805,6 +1953,11 @@ export interface operations {
                 disponivel?: "sim" | "nao";
                 /** @description Número ou nome */
                 q?: string;
+                /** @description Pendente = nunca vacinado ou com vacina vencida */
+                vacinacao?: "em_dia" | "pendente";
+                castracao?: "castrado" | "nao_castrado" | "agendada";
+                /** @description Só em tratamento */
+                tratamento?: "sim";
                 pagina?: number;
                 por_pagina?: number;
             };
@@ -2929,6 +3082,135 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["AdocaoDto"];
                 };
+            };
+        };
+    };
+    IndicadoresController_painel: {
+        parameters: {
+            query?: {
+                /** @description Início (padrão: 1º de janeiro) */
+                de?: string;
+                /** @description Fim (padrão: hoje) */
+                ate?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IndicadoresDto"];
+                };
+            };
+        };
+    };
+    IndicadoresController_mensal: {
+        parameters: {
+            query?: {
+                /** @description Início (padrão: 1º de janeiro) */
+                de?: string;
+                /** @description Fim (padrão: hoje) */
+                ate?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PontoMensalDto"][];
+                };
+            };
+        };
+    };
+    RelatoriosController_ver: {
+        parameters: {
+            query?: {
+                /** @description Início (padrão: 1º de janeiro) */
+                de?: string;
+                /** @description Fim (padrão: hoje) */
+                ate?: string;
+                /** @description Animais e movimentações */
+                situacao?: "em_acolhimento" | "adotado" | "devolvido_comunidade" | "transferido" | "obito";
+                /** @description Adoções: conta pela data da adoção ou da devolução */
+                evento?: "adocao" | "devolucao";
+            };
+            header?: never;
+            path: {
+                secao: "animais" | "vacinacao" | "castracao" | "adocoes" | "movimentacoes";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RelatorioDto"];
+                };
+            };
+        };
+    };
+    RelatoriosController_csv: {
+        parameters: {
+            query?: {
+                /** @description Início (padrão: 1º de janeiro) */
+                de?: string;
+                /** @description Fim (padrão: hoje) */
+                ate?: string;
+                /** @description Animais e movimentações */
+                situacao?: "em_acolhimento" | "adotado" | "devolvido_comunidade" | "transferido" | "obito";
+                /** @description Adoções: conta pela data da adoção ou da devolução */
+                evento?: "adocao" | "devolucao";
+            };
+            header?: never;
+            path: {
+                secao: "animais" | "vacinacao" | "castracao" | "adocoes" | "movimentacoes";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CSV (;) com BOM */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+        };
+    };
+    RelatoriosController_impressao: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                secao: "animais" | "vacinacao" | "castracao" | "adocoes" | "movimentacoes";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Impressão registrada na auditoria */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
