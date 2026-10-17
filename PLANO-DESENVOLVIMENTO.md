@@ -674,9 +674,9 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 - [ ] Criar `asf-front` e `asf-back`, privados, `main` protegida
 - [ ] `.env.example` nos dois, `.env` no `.gitignore`
 - [ ] `CLAUDE.md` nos dois e os ADRs 0001 a 0008 em `docs/adr/`
-- [ ] CI por repo: typecheck, lint, testes e `npm run build` (o mesmo comando da Cloudflare)
+- [x] CI por repo: typecheck, lint, testes e `npm run build` (o mesmo comando da Cloudflare)
 - [x] CI do back: `supabase db reset` + `supabase test db` (provas de RLS) + conferir que o `openapi.json` gera
-- [ ] Dependabot ligado
+- [x] Dependabot ligado
 - [ ] Deploy contínuo dos dois pelo Workers Builds da Cloudflare (sem token no GitHub)
 - [ ] Back: `wrangler.toml` com `nodejs_compat`, a flag `enable_nodejs_http_server_modules` e os `alias` dos módulos que o Nest carrega por `require` dinâmico
 - [ ] Front: `open-next.config.ts` com `buildCommand` próprio
@@ -694,22 +694,22 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 - [x] `AuthModule` com guard global e `@Publico()`
 - [x] `SupabaseService`: cliente por requisição com o JWT de quem chamou
 - [x] Filtro de erro global: separa erro do banco (4xx com frase em português) de falha de rede (503)
-- [ ] `POST /sessao/entrar | renovar | recuperar | senha`
-- [ ] `GET /eu` (nome e papel de quem entrou)
-- [ ] `GET /usuarios`, `POST /usuarios/convites`, `PATCH /usuarios/:id` (papel, ativar, desativar), pela Edge Function admin
+- [x] `POST /sessao/entrar | renovar | recuperar | senha`
+- [x] `GET /eu` (nome e papel de quem entrou)
+- [x] `GET /usuarios`, `POST /usuarios/convites`, `PATCH /usuarios/:id` (papel, ativar, desativar), pela Edge Function admin
 - [x] `GET /saude`: responde se cada configuração existe e de onde veio, nunca o valor
 - [x] `@nestjs/swagger` gerando `/openapi.json` público, sem a Swagger UI
 
 **Front**
-- [ ] `tokens.css` e `components.css`: cores, tipografia, espaçamento, temas claro e escuro
-- [ ] Script de tema antes da primeira pintura
+- [x] `tokens.css` e `components.css`: cores, tipografia, espaçamento, temas claro e escuro
+- [x] Script de tema antes da primeira pintura
 - [ ] Login, recuperação de senha e nova senha (com repetição da senha), com Turnstile
-- [ ] `lib/menu.ts` com todos os módulos previstos; os que não existem aparecem com "em breve"
+- [x] `lib/menu.ts` com todos os módulos previstos; os que não existem aparecem com "em breve"
 - [ ] `lib/api.ts`: cliente único, tipado pelo OpenAPI; o selo de gravação só aparece quando uma escrita falha
-- [ ] `lib/formato.ts`: `fd(iso)`, `fdDe(Date)`, idade a partir de `nascimento_estimado`
-- [ ] Script de codegen (`openapi-typescript`)
-- [ ] Tela de usuários (admin): convidar, mudar papel, desativar
-- [ ] CSP, HSTS, `frame-ancestors` e `noindex`
+- [x] `lib/formato.ts`: `fd(iso)`, `fdDe(Date)`, idade a partir de `nascimento_estimado`
+- [x] Script de codegen (`openapi-typescript`)
+- [x] Tela de usuários (admin): convidar, mudar papel, desativar
+- [x] CSP, HSTS, `frame-ancestors` e `noindex`
 
 **LGPD e segurança**
 - [ ] MFA obrigatório para `admin` e `coordenacao`

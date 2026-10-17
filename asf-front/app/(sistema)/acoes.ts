@@ -1,0 +1,61 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import { api, chamar } from '@/lib/api';
+import { limparSessao } from '@/lib/sessao';
+import type { Papel } from '@/lib/tipos';
+
+export interface EstadoAcao {
+  erro?: string;
+  ok?: string;
+}
+
+export async function sair(): Promise<void> {
+  const cliente = await api();
+  // Mesmo se o back não responder, a sessão local sai.
+  await chamar(cliente.POST('/sessao/sair'));
+  await limparSessao();
+  redirect('/entrar?motivo=saiu');
+}
+
+const PAPEIS: Papel[] = ['admin', 'coordenacao', 'veterinario', 'voluntario'];
+const texto = (form: FormData, nome: string) => {
+  const v = form.get(nome);
+  return typeof v === 'string' ? v.trim() : '';
+};
+
+export async function convidar(_: EstadoAcao, form: FormData): Promise<EstadoAcao> {
+  const email = texto(form, 'email');
+  const nome = texto(form, 'nome');
+  const papel = texto(form, 'papel') as Papel;
+  if (!email || !nome) return { erro: 'Informe nome e e-mail.' };
+  if (!PAPEIS.includes(papel)) return { erro: 'Escolha o papel.' };
+
+  const cliente = await api();
+  const r = await chamar(cliente.POST('/usuarios/convites', { body: { email, nome, papel } }));
+  if (!r.ok) return { erro: r.falha.mensagem };
+  revalidatePath('/configuracoes');
+  return { ok: `Convite enviado para ${nome}.` };
+}
+
+export async function alterarUsuario(_: EstadoAcao, form: FormData): Promise<EstadoAcao> {
+  const id = texto(form, 'id');
+  const papel = texto(form, 'papel');
+  const ativo = texto(form, 'ativo');
+
+  const corpo: { papel?: Papel; ativo?: boolean } = {};
+  if (papel) {
+    if (!PAPEIS.includes(papel as Papel)) return { erro: 'Papel inválido.' };
+    corpo.papel = papel as Papel;
+  }
+  if (ativo === 'sim' || ativo === 'nao') corpo.ativo = ativo === 'sim';
+
+  const cliente = await api();
+  const r = await chamar(
+    cliente.PATCH('/usuarios/{id}', { params: { path: { id } }, body: corpo }),
+  );
+  if (!r.ok) return { erro: r.falha.mensagem };
+  revalidatePath('/configuracoes');
+  return { ok: 'Alteração salva.' };
+}

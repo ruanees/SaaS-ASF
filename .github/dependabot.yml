@@ -13,3 +13,12 @@ updates:
     directory: /
     schedule:
       interval: monthly
+
+  - package-ecosystem: npm
+    directory: /asf-front
+    schedule:
+      interval: weekly
+    groups:
+      next:
+        patterns: ['next', 'eslint-config-next', 'react', 'react-dom']
+    open-pull-requests-limit: 5

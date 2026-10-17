@@ -1,0 +1,39 @@
+name: asf-front
+
+on:
+  push:
+    branches: [main]
+    paths: ['asf-front/**', '.github/workflows/front.yml']
+  pull_request:
+    paths: ['asf-front/**', '.github/workflows/front.yml']
+
+concurrency:
+  group: front-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: asf-front
+
+jobs:
+  app:
+    name: Next (tipos, lint, testes, build)
+    runs-on: ubuntu-latest
+    env:
+      # Valores de exemplo: o build não chama o back.
+      API_URL: http://localhost:3001
+      SUPABASE_URL: https://exemplo.supabase.co
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: asf-front/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      # O mesmo comando que a Cloudflare roda na publicação.
+      - run: npm run build
+      - run: npm audit --omit=dev --audit-level=high

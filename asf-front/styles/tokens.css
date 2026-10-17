@@ -1,0 +1,94 @@
+/* Tokens de design. Toda cor, espaço e tipo da interface sai daqui.
+   Tema: claro por padrão, escuro pelo sistema, e a escolha da pessoa
+   (data-tema no <html>, aplicado antes da primeira pintura) vence os dois. */
+
+:root {
+  --fonte: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fonte-mono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas, monospace;
+
+  --t-1: 0.8125rem;  /* 13px: rótulos pequenos */
+  --t-2: 0.9375rem;  /* 15px: texto */
+  --t-3: 1.0625rem;  /* 17px: destaque */
+  --t-4: 1.375rem;   /* 22px: título de tela */
+  --t-5: 1.75rem;    /* 28px: número de indicador */
+
+  --e-1: 4px;
+  --e-2: 8px;
+  --e-3: 12px;
+  --e-4: 16px;
+  --e-5: 24px;
+  --e-6: 32px;
+  --e-7: 48px;
+
+  --raio: 10px;
+  --raio-p: 6px;
+  --toque: 44px;     /* alvo mínimo de toque no celular */
+  --largura-menu: 232px;
+  --barra-celular: 60px;
+
+  color-scheme: light;
+  --fundo: #f6f5f2;
+  --superficie: #ffffff;
+  --superficie-2: #efede8;
+  --borda: #dcd8d0;
+  --texto: #1f2421;
+  --texto-2: #5b625d;
+  --texto-apagado: #8a908b;
+  --marca: #2f6b4f;          /* verde da associação */
+  --marca-texto: #ffffff;
+  --marca-suave: #e3efe8;
+  --foco: #1f5fbf;
+  --erro: #b3261e;
+  --erro-suave: #fbe9e7;
+  --aviso: #8a5a00;
+  --aviso-suave: #fff3d6;
+  --ok: #2f6b4f;
+  --ok-suave: #e3efe8;
+  --sombra: 0 1px 2px rgb(0 0 0 / 0.06), 0 2px 8px rgb(0 0 0 / 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    color-scheme: dark;
+    --fundo: #141716;
+    --superficie: #1c201e;
+    --superficie-2: #252a27;
+    --borda: #343a36;
+    --texto: #e7ebe8;
+    --texto-2: #a9b1ab;
+    --texto-apagado: #737b75;
+    --marca: #6fbf97;
+    --marca-texto: #0f1a14;
+    --marca-suave: #1f3329;
+    --foco: #7fb0ff;
+    --erro: #ff8a80;
+    --erro-suave: #3a1f1d;
+    --aviso: #f2c26b;
+    --aviso-suave: #362b14;
+    --ok: #6fbf97;
+    --ok-suave: #1f3329;
+    --sombra: 0 1px 2px rgb(0 0 0 / 0.4);
+  }
+}
+
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+  --fundo: #141716;
+  --superficie: #1c201e;
+  --superficie-2: #252a27;
+  --borda: #343a36;
+  --texto: #e7ebe8;
+  --texto-2: #a9b1ab;
+  --texto-apagado: #737b75;
+  --marca: #6fbf97;
+  --marca-texto: #0f1a14;
+  --marca-suave: #1f3329;
+  --foco: #7fb0ff;
+  --erro: #ff8a80;
+  --erro-suave: #3a1f1d;
+  --aviso: #f2c26b;
+  --aviso-suave: #362b14;
+  --ok: #6fbf97;
+  --ok-suave: #1f3329;
+  --sombra: 0 1px 2px rgb(0 0 0 / 0.4);
+}
