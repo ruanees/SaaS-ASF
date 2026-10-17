@@ -129,3 +129,88 @@ describe('SessaoService', () => {
     vi.unstubAllGlobals();
   });
 });
+
+describe('SessaoService MFA', () => {
+  const EU = { id: 'u', token: 'jwt-aal1' };
+
+  beforeEach(() => {
+    process.env.SUPABASE_URL = 'https://exemplo.supabase.co';
+    process.env.SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_teste';
+  });
+  afterEach(() => vi.unstubAllGlobals());
+
+  const json = (corpo: unknown, status = 200) =>
+    new Response(JSON.stringify(corpo), { status });
+
+  it('inscrever apaga inscrição abandonada antes de criar outra', async () => {
+    const chamadas: string[] = [];
+    vi.stubGlobal(
+      'fetch',
+      vi.fn((url: string, init: RequestInit) => {
+        chamadas.push(
+          `${init.method} ${url.replace('https://exemplo.supabase.co/auth/v1', '')}`,
+        );
+        if (init.method === 'GET') {
+          return Promise.resolve(
+            json({
+              factors: [
+                { id: 'velho', factor_type: 'totp', status: 'unverified' },
+              ],
+            }),
+          );
+        }
+        if (init.method === 'DELETE') return Promise.resolve(json({}));
+        return Promise.resolve(
+          json({
+            id: 'novo',
+            totp: { qr_code: 'data:image/svg+xml;utf-8,<svg/>', secret: 'ABC' },
+          }),
+        );
+      }),
+    );
+    await expect(servico({}).inscreverMfa(EU)).resolves.toEqual({
+      fator_id: 'novo',
+      qr_code: 'data:image/svg+xml;utf-8,<svg/>',
+      segredo: 'ABC',
+    });
+    expect(chamadas).toEqual([
+      'GET /user',
+      'DELETE /factors/velho',
+      'POST /factors',
+    ]);
+  });
+
+  it('verificar devolve a sessão nova (aal2)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce(json({ id: 'desafio' }))
+        .mockResolvedValueOnce(json(SESSAO)),
+    );
+    await expect(
+      servico({}).verificarMfa(EU, 'fator', '123456'),
+    ).resolves.toEqual({
+      access_token: 'a',
+      refresh_token: 'r',
+      expires_at: 1800000000,
+    });
+  });
+
+  it('código errado vira 422 com orientação', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce(json({ id: 'desafio' }))
+        .mockResolvedValueOnce(
+          json({ error_code: 'mfa_verification_failed' }, 422),
+        ),
+    );
+    const erro = (await servico({})
+      .verificarMfa(EU, 'fator', '000000')
+      .catch((e: unknown) => e)) as HttpException;
+    expect(erro.getStatus()).toBe(422);
+    expect(erro.message).toContain('Código incorreto');
+  });
+});

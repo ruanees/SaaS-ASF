@@ -9,6 +9,7 @@ export default async function LayoutSistema({ children }: { children: React.Reac
   const eu = await obterEu();
 
   if (!eu.ok && eu.falha.status === 401) redirect('/entrar?motivo=expirou');
+  if (!eu.ok && eu.falha.codigo === 'mfa_obrigatorio') redirect('/mfa');
 
   if (!eu.ok && eu.falha.status === 403) {
     return (

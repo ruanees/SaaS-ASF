@@ -42,6 +42,9 @@ describe('asf-back (e2e)', () => {
     ['patch', '/usuarios/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d'],
     ['post', '/sessao/senha'],
     ['post', '/sessao/sair'],
+    ['get', '/sessao/mfa/fatores'],
+    ['post', '/sessao/mfa/inscrever'],
+    ['post', '/sessao/mfa/verificar'],
   ] as const)('%s %s sem sessão responde 401', async (metodo, rota) => {
     const res = await request(app.getHttpServer())[metodo](rota).expect(401);
     expect(res.body.mensagem).toBe('Sessão ausente. Entre de novo.');
@@ -62,6 +65,9 @@ describe('asf-back (e2e)', () => {
       '/eu',
       '/saude',
       '/sessao/entrar',
+      '/sessao/mfa/fatores',
+      '/sessao/mfa/inscrever',
+      '/sessao/mfa/verificar',
       '/sessao/recuperar',
       '/sessao/renovar',
       '/sessao/sair',

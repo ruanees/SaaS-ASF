@@ -712,7 +712,7 @@ Nenhuma tela de negócio ainda. Esta fase constrói o que todas as outras vão u
 - [x] CSP, HSTS, `frame-ancestors` e `noindex`
 
 **LGPD e segurança**
-- [ ] MFA obrigatório para `admin` e `coordenacao`
+- [x] MFA obrigatório para `admin` e `coordenacao`
 - [ ] Política de privacidade e registro das operações de tratamento (rascunho, para revisão jurídica)
 - [ ] Acordo entre a associação e quem mantém o sistema, se for de fora (rascunho)
 
