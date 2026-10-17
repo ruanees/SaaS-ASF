@@ -137,8 +137,11 @@ export async function registrarMovimentacao(
     tipo: (opcional(texto(form, 'tipo')) as NovaMovimentacao['tipo']) ?? 'mudanca',
     origem: opcional(texto(form, 'origem')) as NovaMovimentacao['origem'],
     clinica_id: opcional(texto(form, 'clinica_id')),
+    pessoa_id: opcional(texto(form, 'pessoa_id')),
+    destino: opcional(texto(form, 'destino')),
   };
   if (!corpo.data) return { erro: 'Informe a data.' };
+  if (corpo.local === 'lar_temporario' && !corpo.pessoa_id) return { erro: 'Escolha a pessoa do lar temporário.' };
 
   const cliente = await api();
   const r = await chamar(
@@ -147,7 +150,13 @@ export async function registrarMovimentacao(
   if (!r.ok) return { erro: r.falha.mensagem };
   revalidatePath(`/animais/${id}`);
   revalidatePath('/animais');
-  return { ok: situacao === 'obito' ? 'Óbito registrado.' : 'Mudança registrada.' };
+  revalidatePath('/pessoas', 'layout');
+  const mensagens: Partial<Record<typeof situacao, string>> = {
+    obito: 'Óbito registrado.',
+    transferido: 'Transferência registrada.',
+    devolvido_comunidade: 'Devolução à comunidade registrada.',
+  };
+  return { ok: mensagens[situacao] ?? (corpo.tipo === 'reentrada' ? 'Reentrada registrada.' : 'Mudança registrada.') };
 }
 
 // Foto ------------------------------------------------------------------------------

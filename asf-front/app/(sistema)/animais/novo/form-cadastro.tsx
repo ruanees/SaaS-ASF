@@ -182,9 +182,7 @@ export function FormCadastro({ hoje, clinicas, clinico }: { hoje: string; clinic
                 {l === 'sede' ? 'Sede' : 'Clínica'}
               </label>
             ))}
-            <span className="opcao" aria-disabled="true" data-em-breve>
-              Lar temporário <span className="selo">em breve</span>
-            </span>
+            <span className="ajuda">Lar temporário: cadastre na sede e registre a mudança na aba Situação.</span>
           </div>
         </fieldset>
         {v.local === 'clinica' && (

@@ -113,7 +113,7 @@ export class AnimaisService {
       await sb
         .from('animais')
         .select(
-          `${CAMPOS_RESUMO}, origem, origem_detalhe, observacoes, microchip, microchip_data, condicao_entrada, criado_em, atualizado_em, clinica:clinicas(id, nome, ativo), animal_fotos(caminho)`,
+          `${CAMPOS_RESUMO}, origem, origem_detalhe, observacoes, microchip, microchip_data, condicao_entrada, criado_em, atualizado_em, clinica:clinicas(id, nome, ativo), responsavel:pessoas!animais_pessoa_fk(id, nome), animal_fotos(caminho)`,
         )
         .eq('id', id)
         .eq('animal_fotos.principal', true)
@@ -129,6 +129,7 @@ export class AnimaisService {
           criado_em: string;
           atualizado_em: string;
           clinica: AnimalDto['clinica'];
+          responsavel: AnimalDto['responsavel'];
         })
       | null;
     if (!linha) throw new NotFoundException('Animal não encontrado.');
@@ -146,6 +147,7 @@ export class AnimaisService {
       microchip_data: linha.microchip_data,
       condicao_entrada: linha.condicao_entrada,
       clinica: linha.clinica,
+      responsavel: linha.responsavel,
       criado_em: linha.criado_em,
       atualizado_em: linha.atualizado_em,
     };
@@ -238,7 +240,7 @@ export class AnimaisService {
   }
 
   // Situação, local e disponibilidade só mudam pela função no banco, que
-  // também decide o que ainda não é permitido (lar temporário, adoção...).
+  // também decide o que cada situação exige (pessoa, destino, castração).
   async mover(
     usuario: UsuarioAutenticado,
     id: string,
@@ -257,6 +259,8 @@ export class AnimaisService {
           p_tipo: corpo.tipo ?? 'mudanca',
           p_origem: corpo.origem ?? null,
           p_clinica_id: corpo.clinica_id ?? null,
+          p_pessoa_id: corpo.pessoa_id ?? null,
+          p_destino: corpo.destino ?? null,
         })
         .single<{ id: string }>(),
     );
@@ -275,7 +279,7 @@ export class AnimaisService {
         .para(usuario)
         .from('movimentacoes')
         .select(
-          'id, tipo, origem, situacao, local, disponivel_adocao, data, motivo, criado_em, clinica:clinicas(nome), autor:usuarios(nome)',
+          'id, tipo, origem, situacao, local, disponivel_adocao, data, motivo, destino, criado_em, clinica:clinicas(nome), autor:usuarios(nome), pessoa:pessoas(id, nome)',
         )
         .eq('animal_id', id)
         .order('data', { ascending: false })

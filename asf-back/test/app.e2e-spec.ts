@@ -59,6 +59,16 @@ describe('asf-back (e2e)', () => {
     ['get', '/atendimentos/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/laudo'],
     ['get', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/sugestao'],
     ['post', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/antiparasitarios'],
+    ['get', '/pessoas'],
+    ['post', '/pessoas'],
+    ['get', '/pessoas/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/contato'],
+    ['get', '/pessoas/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/dados'],
+    ['post', '/pessoas/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/anonimizar'],
+    ['get', '/lares-temporarios'],
+    ['get', '/adocoes'],
+    ['post', '/animais/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/adocao'],
+    ['post', '/adocoes/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/devolucao'],
+    ['get', '/adocoes/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/termo'],
   ] as const)('%s %s sem sessão responde 401', async (metodo, rota) => {
     const res = await request(app.getHttpServer())[metodo](rota).expect(401);
     expect(res.body.mensagem).toBe('Sessão ausente. Entre de novo.');
@@ -73,12 +83,18 @@ describe('asf-back (e2e)', () => {
     expect(res.body.mensagem).toContain('property admin should not exist');
   });
 
-  it('openapi lista as rotas das fases 0 a 3', async () => {
+  it('openapi lista as rotas das fases 0 a 4', async () => {
     const res = await request(app.getHttpServer()).get('/openapi.json');
     expect(Object.keys(res.body.paths).sort()).toEqual([
+      '/adocoes',
+      '/adocoes/{adocaoId}/devolucao',
+      '/adocoes/{adocaoId}/termo',
+      '/adocoes/{adocaoId}/termo/assinar',
       '/animais',
       '/animais/duplicados',
       '/animais/{id}',
+      '/animais/{id}/adocao',
+      '/animais/{id}/adocoes',
       '/animais/{id}/antiparasitarios',
       '/animais/{id}/atendimentos',
       '/animais/{id}/castracoes',
@@ -99,7 +115,13 @@ describe('asf-back (e2e)', () => {
       '/atendimentos/{atendimentoId}/resultado',
       '/clinicas',
       '/eu',
+      '/lares-temporarios',
       '/pendencias',
+      '/pessoas',
+      '/pessoas/{id}',
+      '/pessoas/{id}/anonimizar',
+      '/pessoas/{id}/contato',
+      '/pessoas/{id}/dados',
       '/saude',
       '/sessao/entrar',
       '/sessao/recuperar',

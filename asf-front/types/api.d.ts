@@ -564,6 +564,198 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/pessoas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PessoasController_listar"];
+        put?: never;
+        post: operations["PessoasController_criar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pessoas/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PessoasController_buscar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["PessoasController_alterar"];
+        trace?: never;
+    };
+    "/pessoas/{id}/contato": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PessoasController_contato"];
+        put: operations["PessoasController_alterarContato"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pessoas/{id}/dados": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PessoasController_dados"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pessoas/{id}/anonimizar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PessoasController_anonimizar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/lares-temporarios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PessoasController_lares"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/adocoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdocoesController_listar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/{id}/adocoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdocoesController_doAnimal"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/{id}/adocao": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AdocoesController_registrar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/adocoes/{adocaoId}/devolucao": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AdocoesController_devolver"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/adocoes/{adocaoId}/termo/assinar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AdocoesController_assinarTermo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/adocoes/{adocaoId}/termo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdocoesController_urlTermo"];
+        put?: never;
+        post: operations["AdocoesController_registrarTermo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -720,6 +912,11 @@ export interface components {
             nome: string;
             ativo: boolean;
         };
+        PessoaDaMovimentacaoDto: {
+            /** Format: uuid */
+            id: string;
+            nome: string;
+        };
         AnimalDto: {
             /** Format: uuid */
             id: string;
@@ -757,6 +954,8 @@ export interface components {
             origem_detalhe: string | null;
             observacoes: string | null;
             clinica: components["schemas"]["ClinicaDto"] | null;
+            /** @description Lar temporário onde o animal está agora */
+            responsavel: components["schemas"]["PessoaDaMovimentacaoDto"] | null;
             microchip: string | null;
             /** @description Condição de saúde na entrada */
             condicao_entrada: string | null;
@@ -795,7 +994,7 @@ export interface components {
             /** Format: uuid */
             id: string;
             /** @enum {string} */
-            tipo: "entrada" | "mudanca" | "reentrada";
+            tipo: "entrada" | "mudanca" | "reentrada" | "devolucao";
             /** @enum {string|null} */
             origem: "resgate" | "castracao" | "comunitario" | "outra" | null;
             /** @enum {string} */
@@ -807,6 +1006,10 @@ export interface components {
             /** Format: date */
             data: string;
             motivo: string | null;
+            /** @description Lar temporário ou adotante */
+            pessoa: components["schemas"]["PessoaDaMovimentacaoDto"] | null;
+            /** @description Entidade da transferência ou bairro da devolução à comunidade */
+            destino: string | null;
             /** @description Nome de quem registrou */
             autor: string | null;
             /** Format: date-time */
@@ -833,6 +1036,13 @@ export interface components {
             origem?: "resgate" | "castracao" | "comunitario" | "outra";
             /** Format: uuid */
             clinica_id?: string;
+            /**
+             * Format: uuid
+             * @description Pessoa do lar temporário (obrigatória no lar temporário)
+             */
+            pessoa_id?: string;
+            /** @description Entidade (transferência, obrigatória) ou bairro (devolução à comunidade) */
+            destino?: string;
         };
         AssinarFotoDto: {
             /** @enum {string} */
@@ -1210,6 +1420,157 @@ export interface components {
             caminho: string;
         };
         LaudoUrlDto: {
+            /** @description URL assinada de leitura (5 min) */
+            url: string;
+        };
+        PessoaResumoDto: {
+            /** Format: uuid */
+            id: string;
+            nome: string;
+            vinculos: ("adotante" | "lar_temporario")[];
+            /** @enum {string} */
+            base_legal: "execucao_contrato" | "acordo_voluntariado" | "consentimento" | "legitimo_interesse";
+            /** Format: date-time */
+            anonimizado_em: string | null;
+            /** Format: date-time */
+            criado_em: string;
+        };
+        ListaPessoasDto: {
+            itens: components["schemas"]["PessoaResumoDto"][];
+            total: number;
+            pagina: number;
+            por_pagina: number;
+        };
+        NovaPessoaDto: {
+            nome: string;
+            /** @enum {string} */
+            base_legal: "execucao_contrato" | "acordo_voluntariado" | "consentimento" | "legitimo_interesse";
+            vinculos: ("adotante" | "lar_temporario")[];
+            /** @example (88) 90000-0000 */
+            telefone?: string;
+            email?: string;
+            endereco?: string;
+        };
+        AnimalLigadoDto: {
+            /** Format: uuid */
+            id: string;
+            numero: string;
+            nome: string | null;
+            /** @enum {string} */
+            especie: "cao" | "gato";
+        };
+        AdocaoDaPessoaDto: {
+            /** Format: uuid */
+            id: string;
+            animal: components["schemas"]["AnimalLigadoDto"];
+            /** Format: date */
+            data_adocao: string;
+            /** Format: date */
+            data_devolucao: string | null;
+            motivo_devolucao: string | null;
+        };
+        PassagemLarDto: {
+            animal: components["schemas"]["AnimalLigadoDto"];
+            /**
+             * Format: date
+             * @description Entrada no lar
+             */
+            data: string;
+        };
+        PessoaDto: {
+            /** Format: uuid */
+            id: string;
+            nome: string;
+            vinculos: ("adotante" | "lar_temporario")[];
+            /** @enum {string} */
+            base_legal: "execucao_contrato" | "acordo_voluntariado" | "consentimento" | "legitimo_interesse";
+            /** Format: date-time */
+            anonimizado_em: string | null;
+            /** Format: date-time */
+            criado_em: string;
+            adocoes: components["schemas"]["AdocaoDaPessoaDto"][];
+            /** @description Animais no lar desta pessoa agora */
+            lar_atual: components["schemas"]["AnimalLigadoDto"][];
+            lar_historico: components["schemas"]["PassagemLarDto"][];
+        };
+        AlterarPessoaDto: {
+            nome: string;
+            /** @enum {string} */
+            base_legal: "execucao_contrato" | "acordo_voluntariado" | "consentimento" | "legitimo_interesse";
+            vinculos: ("adotante" | "lar_temporario")[];
+        };
+        ContatoDto: {
+            telefone: string | null;
+            email: string | null;
+            endereco: string | null;
+        };
+        ContatoEntradaDto: {
+            /** @example (88) 90000-0000 */
+            telefone?: string;
+            email?: string;
+            /** @description Só para adotante e lar temporário */
+            endereco?: string;
+        };
+        AnonimizacaoDto: {
+            /** @description Preenchido quando algum termo não saiu do Storage */
+            aviso: string | null;
+        };
+        LarTemporarioDto: {
+            /** Format: uuid */
+            id: string;
+            nome: string;
+            animais: components["schemas"]["AnimalLigadoDto"][];
+        };
+        PessoaLigadaDto: {
+            /** Format: uuid */
+            id: string;
+            nome: string;
+        };
+        AdocaoDto: {
+            /** Format: uuid */
+            id: string;
+            animal: components["schemas"]["AnimalLigadoDto"];
+            pessoa: components["schemas"]["PessoaLigadaDto"];
+            /** Format: date */
+            data_adocao: string;
+            /** Format: date */
+            data_devolucao: string | null;
+            motivo_devolucao: string | null;
+            /** @description Termo assinado anexado */
+            tem_termo: boolean;
+        };
+        ListaAdocoesDto: {
+            itens: components["schemas"]["AdocaoDto"][];
+            total: number;
+            pagina: number;
+            por_pagina: number;
+        };
+        NovaAdocaoDto: {
+            /** Format: uuid */
+            pessoa_id: string;
+            /** Format: date */
+            data: string;
+        };
+        DevolucaoDto: {
+            /** Format: date */
+            data: string;
+            motivo: string;
+        };
+        AssinarTermoDto: {
+            /** @enum {string} */
+            tipo: "application/pdf" | "image/jpeg" | "image/png" | "image/webp";
+            /** @description Tamanho em bytes (até 10 MB) */
+            tamanho: number;
+        };
+        TermoAssinadoDto: {
+            caminho: string;
+            /** @description URL assinada para o envio (PUT com o arquivo) */
+            url: string;
+        };
+        RegistrarTermoDto: {
+            caminho: string;
+        };
+        TermoUrlDto: {
             /** @description URL assinada de leitura (5 min) */
             url: string;
         };
@@ -2195,6 +2556,378 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AtendimentoDto"];
+                };
+            };
+        };
+    };
+    PessoasController_listar: {
+        parameters: {
+            query?: {
+                /** @description Parte do nome */
+                busca?: string;
+                vinculo?: "adotante" | "lar_temporario";
+                /** @description Inclui as anonimizadas */
+                anonimizadas?: boolean;
+                pagina?: number;
+                por_pagina?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListaPessoasDto"];
+                };
+            };
+        };
+    };
+    PessoasController_criar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NovaPessoaDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PessoaDto"];
+                };
+            };
+        };
+    };
+    PessoasController_buscar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PessoaDto"];
+                };
+            };
+        };
+    };
+    PessoasController_alterar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AlterarPessoaDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PessoaDto"];
+                };
+            };
+        };
+    };
+    PessoasController_contato: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Cada leitura fica registrada na auditoria */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContatoDto"];
+                };
+            };
+        };
+    };
+    PessoasController_alterarContato: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ContatoEntradaDto"];
+            };
+        };
+        responses: {
+            /** @description Contato corrigido */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PessoasController_dados: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tudo o que existe sobre a pessoa (LGPD, art. 18) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
+    PessoasController_anonimizar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnonimizacaoDto"];
+                };
+            };
+        };
+    };
+    PessoasController_lares: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LarTemporarioDto"][];
+                };
+            };
+        };
+    };
+    AdocoesController_listar: {
+        parameters: {
+            query?: {
+                /** @description Só as adoções sem devolução */
+                ativas?: boolean;
+                pagina?: number;
+                por_pagina?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListaAdocoesDto"];
+                };
+            };
+        };
+    };
+    AdocoesController_doAnimal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdocaoDto"][];
+                };
+            };
+        };
+    };
+    AdocoesController_registrar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NovaAdocaoDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdocaoDto"];
+                };
+            };
+        };
+    };
+    AdocoesController_devolver: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                adocaoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DevolucaoDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdocaoDto"];
+                };
+            };
+        };
+    };
+    AdocoesController_assinarTermo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                adocaoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssinarTermoDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TermoAssinadoDto"];
+                };
+            };
+        };
+    };
+    AdocoesController_urlTermo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                adocaoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TermoUrlDto"];
+                };
+            };
+        };
+    };
+    AdocoesController_registrarTermo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                adocaoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegistrarTermoDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdocaoDto"];
                 };
             };
         };

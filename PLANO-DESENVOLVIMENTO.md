@@ -882,33 +882,33 @@ Funcionalidades: F-11, F-12, F-13.
 
 ## Fase 4 — Pessoas, lar temporário, adoções e devoluções
 
-Antes de abrir esta fase, a seção 04 (LGPD) precisa estar revisada pela associação. Funcionalidades: F-14, F-15, F-16, F-17.
+Antes de abrir esta fase, a seção 04 (LGPD) precisa estar revisada pela associação. **Mudou pelo ADR 0010 (17/10/2026):** a fase foi construída antes da revisão, com padrões provisórios; nenhuma pessoa real é cadastrada antes de a associação revisar o aviso de privacidade e as bases legais. Funcionalidades: F-14, F-15, F-16, F-17.
 
 **Banco**
-- [ ] Tabelas `pessoas`, `pessoas_contato` e `adocoes`; `movimentacoes.pessoa_id` passa a ter chave estrangeira
-- [ ] RLS de `pessoas_contato`: só admin e coordenação leem e gravam
-- [ ] Função `registrar_adocao`: cria a adoção e chama `mover_animal` para `adotado`, na mesma transação
-- [ ] Função `registrar_devolucao`: grava a devolução e volta o animal para `em_acolhimento` na sede
-- [ ] Função `anonimizar_pessoa`: apaga o contato, troca o nome, grava `anonimizado_em`, registra na auditoria
-- [ ] Função `ler_contato(pessoa)` que registra a leitura na auditoria; a tela só lê contato por ela
-- [ ] Provas pgTAP: voluntário e veterinário não leem `pessoas_contato`; anonimizar mantém a adoção contando; não existem duas adoções ativas para o mesmo animal
+- [x] Tabelas `pessoas`, `pessoas_contato` e `adocoes`; `movimentacoes.pessoa_id` passa a ter chave estrangeira
+- [x] RLS de `pessoas_contato`: só admin e coordenação leem e gravam
+- [x] Função `registrar_adocao`: cria a adoção e chama `mover_animal` para `adotado`, na mesma transação
+- [x] Função `registrar_devolucao`: grava a devolução e volta o animal para `em_acolhimento` na sede
+- [x] Função `anonimizar_pessoa`: apaga o contato, troca o nome, grava `anonimizado_em`, registra na auditoria
+- [x] Função `ler_contato(pessoa)` que registra a leitura na auditoria; a tela só lê contato por ela
+- [x] Provas pgTAP: voluntário e veterinário não leem `pessoas_contato`; anonimizar mantém a adoção contando; não existem duas adoções ativas para o mesmo animal
 
 **Back**
-- [ ] CRUD de pessoas com `base_legal` obrigatória
-- [ ] `POST /animais/:id/adocao`, `POST /adocoes/:id/devolucao`
-- [ ] `POST /animais/:id/movimentacoes` passa a aceitar `lar_temporario` (exige pessoa), `transferido` (exige destino) e `devolvido_comunidade` (exige castração realizada)
-- [ ] `GET /pessoas/:id/dados` (exportação para o titular), `POST /pessoas/:id/anonimizar`
-- [ ] Envio do termo de adoção assinado (balde privado `termos`)
+- [x] CRUD de pessoas com `base_legal` obrigatória
+- [x] `POST /animais/:id/adocao`, `POST /adocoes/:id/devolucao`
+- [x] `POST /animais/:id/movimentacoes` passa a aceitar `lar_temporario` (exige pessoa), `transferido` (exige destino) e `devolvido_comunidade` (exige castração realizada)
+- [x] `GET /pessoas/:id/dados` (exportação para o titular), `POST /pessoas/:id/anonimizar`
+- [x] Envio do termo de adoção assinado (balde privado `termos`)
 
 **Front**
-- [ ] Cadastro de pessoa com aviso de privacidade e escolha da base legal
-- [ ] Endereço aparece só quando o tipo de vínculo exige (lar temporário e adoção)
-- [ ] Fluxo de adoção na ficha do animal: escolhe ou cadastra o adotante, data, termo
-- [ ] Fluxo de devolução com motivo
-- [ ] As quatro situações da Fase 1 deixam de ser "em breve"
-- [ ] Lista de lares temporários com os animais em cada um
-- [ ] Tela da pessoa: animais ligados, exportar dados, anonimizar (com confirmação)
-- [ ] Formulários de pessoa e adoção sem rascunho no navegador
+- [x] Cadastro de pessoa com aviso de privacidade e escolha da base legal
+- [x] Endereço aparece só quando o tipo de vínculo exige (lar temporário e adoção)
+- [x] Fluxo de adoção na ficha do animal: escolhe ou cadastra o adotante, data, termo
+- [x] Fluxo de devolução com motivo
+- [x] As quatro situações da Fase 1 deixam de ser "em breve"
+- [x] Lista de lares temporários com os animais em cada um
+- [x] Tela da pessoa: animais ligados, exportar dados, anonimizar (com confirmação)
+- [x] Formulários de pessoa e adoção sem rascunho no navegador
 
 **Casos de borda**
 - Adotante que devolve e adota outro animal: é a mesma pessoa, com duas adoções.
