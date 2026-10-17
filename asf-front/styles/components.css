@@ -1,4 +1,4 @@
-/* Componentes genéricos. Cores e espaços só por tokens. */
+/* Componentes genéricos — brandbook v1.0, seção 06. Cores e espaços só por tokens. */
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -9,22 +9,34 @@ body {
   background: var(--fundo);
   color: var(--texto);
   font-family: var(--fonte);
-  font-size: var(--t-2);
+  font-size: var(--t-texto);
   line-height: 1.5;
+  /* Número e data sempre em algarismos tabulares (seção 04). */
+  font-variant-numeric: tabular-nums;
 }
 
-a { color: var(--marca); }
-h1, h2, h3 { line-height: 1.25; margin: 0; }
-h1 { font-size: var(--t-4); }
-h2 { font-size: var(--t-3); }
+a { color: var(--link); text-underline-offset: 2px; }
+h1, h2, h3 { font-family: var(--fonte-titulo); color: var(--titulo); line-height: 1.2; margin: 0; }
+h1 { font-size: var(--t-titulo); font-weight: 600; }
+h2 { font-size: 1.25rem; font-weight: 600; }
+h3 { font-size: 1.0625rem; font-weight: 600; }
 p { margin: 0; }
 
-:focus-visible { outline: 2px solid var(--foco); outline-offset: 2px; }
+/* Foco: anel de 3 px em Auréola (seção 06). */
+:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
 
 .visualmente-oculto {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
+
+.rotulo {
+  font-size: var(--t-rotulo); font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--rotulo);
+}
+.ajuda { font-size: var(--t-rotulo); color: var(--texto-2); }
+.indicador { font-family: var(--fonte-titulo); font-size: var(--t-indicador); font-weight: 600; color: var(--titulo); line-height: 1; }
+.nome-animal { font-family: var(--fonte-titulo); font-size: var(--t-nome); font-weight: 600; color: var(--titulo); }
 
 /* Pilha vertical e grade ------------------------------------------------- */
 .pilha { display: flex; flex-direction: column; gap: var(--e-4); }
@@ -36,93 +48,104 @@ p { margin: 0; }
 /* Grade por atributo data-n, nunca style com repeat(N,1fr) */
 .grade { display: grid; gap: var(--e-4); grid-template-columns: 1fr; }
 @media (min-width: 640px) {
-  .grade[data-n="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .grade[data-n="3"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .grade[data-n="4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grade[data-n="2"], .grade[data-n="3"], .grade[data-n="4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (min-width: 1024px) {
   .grade[data-n="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .grade[data-n="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
-/* Cartão ----------------------------------------------------------------- */
+/* Cartão: branco, sem borda, sombra em Hábito a 6%, raio 24 px ------------ */
 .cartao {
-  background: var(--superficie);
-  border: 1px solid var(--borda);
-  border-radius: var(--raio);
+  background: var(--cartao);
+  border-radius: var(--raio-cartao);
   padding: var(--e-5);
   box-shadow: var(--sombra);
 }
-.cartao[data-apagado] { box-shadow: none; background: var(--superficie-2); color: var(--texto-2); }
+.cartao[data-apagado] { box-shadow: none; background: transparent; border: 1px dashed var(--divisoria); color: var(--texto-2); }
 
-/* Botões ----------------------------------------------------------------- */
+/* Botões: um sólido por tela; o resto em contorno ou texto ---------------- */
 .botao {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--e-2);
   min-height: var(--toque); padding: 0 var(--e-5);
-  border-radius: var(--raio-p); border: 1px solid var(--borda);
-  background: var(--superficie); color: var(--texto);
-  font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+  border-radius: var(--raio); border: 1.5px solid var(--acao);
+  background: transparent; color: var(--acao);
+  font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
 }
-.botao:hover { background: var(--superficie-2); }
-.botao[data-tipo="principal"] { background: var(--marca); border-color: var(--marca); color: var(--marca-texto); }
-.botao[data-tipo="principal"]:hover { filter: brightness(1.05); }
-.botao[data-tipo="perigo"] { color: var(--erro); }
-.botao[data-tipo="texto"] { border-color: transparent; background: transparent; padding: 0 var(--e-2); }
-.botao:disabled, .botao[aria-disabled="true"] { opacity: 0.6; cursor: not-allowed; }
+.botao:hover { border-color: var(--acao-hover); color: var(--acao-hover); }
+.botao[data-tipo="principal"] { background: var(--acao); border-color: var(--acao); color: var(--acao-texto); }
+.botao[data-tipo="principal"]:hover { background: var(--acao-hover); border-color: var(--acao-hover); color: var(--acao-texto); }
+.botao[data-tipo="perigo"] { border-color: var(--erro); color: var(--erro); }
+.botao[data-tipo="texto"] { border-color: transparent; padding: 0 var(--e-2); }
+.botao:disabled, .botao[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
 .botao[data-largo] { width: 100%; }
 
-/* Formulário ------------------------------------------------------------- */
+/* Formulário: campos com raio 12 px --------------------------------------- */
 .campo { display: flex; flex-direction: column; gap: var(--e-1); }
-.campo label { font-weight: 600; font-size: var(--t-1); color: var(--texto-2); }
-.campo input, .campo select {
+.campo label { font-weight: 700; font-size: var(--t-rotulo); color: var(--texto-2); }
+.campo input, .campo select, .tabela select {
   min-height: var(--toque); padding: 0 var(--e-3);
-  border: 1px solid var(--borda); border-radius: var(--raio-p);
-  background: var(--superficie); color: var(--texto); font: inherit;
+  border: 1.5px solid var(--divisoria); border-radius: var(--raio);
+  background: var(--cartao); color: var(--texto); font: inherit;
 }
+.campo input:hover, .campo select:hover { border-color: var(--cordao); }
 .campo input[aria-invalid="true"] { border-color: var(--erro); }
-.campo .ajuda { font-size: var(--t-1); color: var(--texto-2); }
-.campo .erro-campo { font-size: var(--t-1); color: var(--erro); }
+.campo .erro-campo { font-size: var(--t-rotulo); color: var(--erro); }
 
 /* Avisos ----------------------------------------------------------------- */
-.aviso {
-  padding: var(--e-3) var(--e-4); border-radius: var(--raio-p);
-  border: 1px solid transparent; font-size: var(--t-2);
-}
-.aviso[data-tipo="erro"] { background: var(--erro-suave); color: var(--erro); border-color: color-mix(in srgb, var(--erro) 30%, transparent); }
-.aviso[data-tipo="ok"] { background: var(--ok-suave); color: var(--ok); }
-.aviso[data-tipo="info"] { background: var(--aviso-suave); color: var(--aviso); }
+.aviso { padding: var(--e-3) var(--e-4); border-radius: var(--raio); font-size: var(--t-texto); }
+.aviso[data-tipo="erro"] { background: var(--erro-fundo); color: var(--erro); }
+.aviso[data-tipo="ok"] { background: var(--ok-fundo); color: var(--ok); }
+.aviso[data-tipo="info"] { background: var(--aviso-fundo); color: var(--aviso); }
 
-/* Selo ------------------------------------------------------------------- */
+/* Selos: pílula. Preenchido = situação/saúde; contorno = local ------------ */
 .selo {
-  display: inline-flex; align-items: center; padding: 2px var(--e-2);
-  border-radius: 999px; font-size: var(--t-1); font-weight: 600;
-  background: var(--superficie-2); color: var(--texto-2);
+  display: inline-flex; align-items: center; gap: var(--e-1);
+  padding: 2px var(--e-3); border-radius: var(--raio-pilula);
+  font-size: var(--t-rotulo); font-weight: 800; white-space: nowrap;
+  background: var(--selo-neutro-fundo); color: var(--selo-neutro-texto);
 }
-.selo[data-tipo="marca"] { background: var(--marca-suave); color: var(--marca); }
+.selo[data-cor="verde"] { background: var(--selo-verde-fundo); color: var(--selo-verde-texto); }
+.selo[data-cor="azul"] { background: var(--selo-azul-fundo); color: var(--selo-azul-texto); }
+.selo[data-cor="laranja"] { background: var(--selo-laranja-fundo); color: var(--selo-laranja-texto); }
+.selo[data-cor="cinza"] { background: var(--selo-cinza-fundo); color: var(--selo-cinza-texto); }
+.selo[data-cor="amarelo"] { background: var(--selo-amarelo-fundo); color: var(--selo-amarelo-texto); }
+.selo[data-cor="vermelho"] { background: var(--selo-vermelho-fundo); color: var(--selo-vermelho-texto); }
+.selo[data-contorno] { background: transparent; border: 1.5px solid var(--selo-contorno); color: var(--texto); }
+/* Leishmaniose reagente: o único selo com ícone e borda (seção 03). */
+.selo[data-alerta] { background: var(--selo-vermelho-fundo); color: var(--selo-vermelho-texto); border: 1.5px solid var(--selo-vermelho-texto); }
 
 /* Tabela ----------------------------------------------------------------- */
 .tabela { width: 100%; border-collapse: collapse; }
-.tabela th, .tabela td { text-align: left; padding: var(--e-3); border-bottom: 1px solid var(--borda); vertical-align: middle; }
-.tabela th { font-size: var(--t-1); color: var(--texto-2); font-weight: 600; }
+.tabela th, .tabela td { text-align: left; padding: var(--e-3); border-bottom: 1px solid var(--divisoria); vertical-align: middle; }
+.tabela th { font-size: var(--t-rotulo); color: var(--rotulo); font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
 .tabela-rolagem { overflow-x: auto; }
 
 /* Esqueleto (carregando) ------------------------------------------------- */
 .esqueleto {
-  background: linear-gradient(90deg, var(--superficie-2), var(--borda), var(--superficie-2));
+  background: linear-gradient(90deg, var(--superficie), var(--divisoria), var(--superficie));
   background-size: 200% 100%;
   animation: esqueleto 1.2s ease-in-out infinite;
-  border-radius: var(--raio-p);
+  border-radius: var(--raio);
   min-height: 1em;
+  opacity: 0.6;
 }
 @keyframes esqueleto { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 @media (prefers-reduced-motion: reduce) { .esqueleto { animation: none; } }
 
-/* Telas de acesso -------------------------------------------------------- */
-.acesso {
-  min-height: 100dvh; display: grid; place-items: center; padding: var(--e-4);
-}
-.acesso .cartao { width: 100%; max-width: 400px; }
-.acesso .marca-nome { color: var(--marca); font-weight: 700; font-size: var(--t-1); letter-spacing: 0.04em; text-transform: uppercase; }
+/* Telas de acesso: selo completo sobre Creme ----------------------------- */
+.acesso { min-height: 100dvh; display: grid; place-items: center; padding: var(--e-4); }
+.acesso .cartao { width: 100%; max-width: 420px; }
+.acesso-cabecalho { display: flex; flex-direction: column; align-items: center; gap: var(--e-2); text-align: center; }
+.acesso-cabecalho .selo-completo { width: 120px; height: 120px; }
+.acesso-cabecalho .lema { font-family: var(--fonte-titulo); color: var(--cordao); font-size: var(--t-texto); }
+
+/* Assinatura horizontal (menu) ------------------------------------------- */
+.link-assinatura { display: block; text-decoration: none; border-radius: var(--raio); }
+.assinatura { display: flex; align-items: center; gap: var(--e-3); }
+.assinatura img { width: 40px; height: 40px; flex-shrink: 0; }
+.assinatura strong { display: block; font-family: var(--fonte-titulo); font-weight: 600; font-size: 1.125rem; line-height: 1.1; color: var(--menu-texto); }
+.assinatura span { display: block; font-size: 0.75rem; font-weight: 700; color: var(--menu-texto-2); }
 
 /* Estrutura do sistema --------------------------------------------------- */
 .estrutura { min-height: 100dvh; }
@@ -132,53 +155,61 @@ p { margin: 0; }
   .conteudo { padding: var(--e-6); width: 100%; }
 }
 
+/* Cabeçalho do celular: selo reduzido + nome */
+.cabecalho-celular {
+  display: flex; align-items: center; gap: var(--e-3);
+  padding: var(--e-3) var(--e-4); background: var(--menu);
+}
+.cabecalho-celular .assinatura img { width: 32px; height: 32px; }
+@media (min-width: 900px) { .cabecalho-celular { display: none; } }
+
+/* Menu lateral em Hábito, texto Creme, item ativo em Cordão (seção 06) ---- */
 .menu-lateral { display: none; }
 @media (min-width: 900px) {
   .menu-lateral {
     display: flex; flex-direction: column; gap: var(--e-1);
     position: sticky; top: 0; height: 100dvh; overflow-y: auto;
-    padding: var(--e-5) var(--e-3);
-    border-right: 1px solid var(--borda); background: var(--superficie);
+    padding: var(--e-5) var(--e-3); background: var(--menu); color: var(--menu-texto);
   }
+  .menu-lateral .link-assinatura { padding: 0 var(--e-2) var(--e-5); }
 }
-.menu-lateral .marca-nome { padding: 0 var(--e-3) var(--e-4); font-weight: 700; color: var(--marca); }
 
 .item-menu {
   display: flex; align-items: center; justify-content: space-between; gap: var(--e-2);
-  min-height: var(--toque); padding: 0 var(--e-3); border-radius: var(--raio-p);
-  color: var(--texto); text-decoration: none; font-weight: 500;
+  min-height: var(--toque); padding: 0 var(--e-3); border-radius: var(--raio);
+  color: var(--menu-texto); text-decoration: none; font-weight: 600;
 }
-.item-menu:hover { background: var(--superficie-2); }
-.item-menu[aria-current="page"] { background: var(--marca-suave); color: var(--marca); font-weight: 600; }
-.item-menu[data-em-breve] { color: var(--texto-apagado); cursor: default; }
+.item-menu:hover { background: rgb(255 255 255 / 0.08); }
+.item-menu[aria-current="page"] { background: var(--menu-ativo); font-weight: 800; }
+.item-menu[data-em-breve] { color: var(--menu-texto-2); opacity: 0.7; cursor: default; }
 .item-menu[data-em-breve]:hover { background: transparent; }
+.item-menu .selo { background: rgb(255 255 255 / 0.1); color: var(--menu-texto-2); font-weight: 700; }
 
-.rodape-menu { margin-top: auto; padding-top: var(--e-4); border-top: 1px solid var(--borda); }
+.rodape-menu { margin-top: auto; padding-top: var(--e-4); border-top: 1px solid rgb(255 255 255 / 0.12); }
+.rodape-menu .ajuda { color: var(--menu-texto-2); padding: 0 var(--e-3); }
+.rodape-menu .botao { color: var(--menu-texto); }
 
 /* Barra do celular ------------------------------------------------------- */
 .barra-celular {
-  position: fixed; inset: auto 0 0 0; height: var(--barra-celular);
+  position: fixed; inset: auto 0 0 0; height: calc(var(--barra-celular) + env(safe-area-inset-bottom));
   display: grid; grid-template-columns: repeat(4, 1fr);
-  background: var(--superficie); border-top: 1px solid var(--borda); z-index: 10;
+  background: var(--cartao); box-shadow: 0 -2px 10px rgb(74 46 27 / 0.08); z-index: 10;
   padding-bottom: env(safe-area-inset-bottom);
 }
 @media (min-width: 900px) { .barra-celular { display: none; } }
 .barra-celular a, .barra-celular button, .barra-celular span {
   display: flex; align-items: center; justify-content: center; text-align: center;
-  font: inherit; font-size: var(--t-1); font-weight: 600; color: var(--texto-2);
+  font: inherit; font-size: var(--t-rotulo); font-weight: 700; color: var(--texto-2);
   background: none; border: 0; text-decoration: none; cursor: pointer; padding: 0 var(--e-1);
 }
-.barra-celular [aria-current="page"] { color: var(--marca); }
+.barra-celular [aria-current="page"] { color: var(--titulo); font-weight: 800; box-shadow: inset 0 3px 0 var(--cordao); }
 .barra-celular [data-em-breve] { color: var(--texto-apagado); cursor: default; }
 
 /* Folha do celular ("Mais") */
-.folha { border: 0; padding: 0; margin: auto 0 0; width: 100%; max-width: none; background: var(--superficie); color: var(--texto); border-radius: var(--raio) var(--raio) 0 0; }
-.folha::backdrop { background: rgb(0 0 0 / 0.4); }
+.folha { border: 0; padding: 0; margin: auto 0 0; width: 100%; max-width: none; background: var(--menu); color: var(--menu-texto); border-radius: var(--raio-cartao) var(--raio-cartao) 0 0; }
+.folha::backdrop { background: rgb(43 31 23 / 0.5); }
 .folha .pilha { padding: var(--e-4) var(--e-3) calc(var(--e-5) + env(safe-area-inset-bottom)); }
+.folha .botao { color: var(--menu-texto); }
 
-.tabela select {
-  min-height: var(--toque); padding: 0 var(--e-2);
-  border: 1px solid var(--borda); border-radius: var(--raio-p);
-  background: var(--superficie); color: var(--texto); font: inherit;
-}
-
+/* Grafismo: auréola — só em capas e telas vazias (seção 06) --------------- */
+.aureola { display: block; width: 96px; height: 24px; border: 3px solid var(--aureola); border-radius: 50%; }

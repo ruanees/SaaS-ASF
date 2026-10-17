@@ -14,7 +14,7 @@ export default async function Painel() {
       <div className="pilha" data-e="2">
         <h1>Olá, {eu.dados.nome.split(' ')[0]}</h1>
         <p className="ajuda">
-          Você entrou como <span className="selo" data-tipo="marca">{nomePapel(eu.dados.papel)}</span>
+          Você entrou como <span className="selo">{nomePapel(eu.dados.papel)}</span>
         </p>
       </div>
       <section className="pilha" aria-labelledby="em-breve">

@@ -98,7 +98,7 @@ export function LinhaUsuario({
         </form>
       </td>
       <td>
-        <span className="selo" data-tipo={usuario.ativo ? 'marca' : undefined}>
+        <span className="selo" data-cor={usuario.ativo ? 'verde' : 'cinza'}>
           {usuario.ativo ? 'Ativo' : 'Desativado'}
         </span>
       </td>

@@ -1,16 +1,30 @@
-/* Tokens de design. Toda cor, espaço e tipo da interface sai daqui.
+/* Tokens de design — brandbook v1.0 (docs/brandbook.pdf), seções 03 e 06.
+   Toda cor, espaço e tipo da interface sai daqui.
    Tema: claro por padrão, escuro pelo sistema, e a escolha da pessoa
    (data-tema no <html>, aplicado antes da primeira pintura) vence os dois. */
 
 :root {
-  --fonte: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --fonte-mono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas, monospace;
+  /* Paleta da marca (seção 03). Usar pelos tokens de papel abaixo, não direto. */
+  --habito: #4a2e1b;
+  --cordao: #8b6035;
+  --palha: #edd3b8;
+  --creme: #fbf6ee;
+  --capim: #a8d70b;
+  --aureola: #f4cf1d;
+  --caramelo: #e8812f;
+  --carvao: #2b1f17;
+  --branco: #ffffff;
 
-  --t-1: 0.8125rem;  /* 13px: rótulos pequenos */
-  --t-2: 0.9375rem;  /* 15px: texto */
-  --t-3: 1.0625rem;  /* 17px: destaque */
-  --t-4: 1.375rem;   /* 22px: título de tela */
-  --t-5: 1.75rem;    /* 28px: número de indicador */
+  /* Tipografia (seção 04). As famílias vêm do next/font no layout raiz. */
+  --fonte-titulo: var(--fonte-fredoka), ui-rounded, system-ui, sans-serif;
+  --fonte: var(--fonte-nunito), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --fonte-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+
+  --t-rotulo: 0.8125rem;  /* 13px */
+  --t-texto: 1rem;        /* 16px: texto e campos */
+  --t-nome: 1.5rem;       /* 24px: nome do animal e número */
+  --t-titulo: 2rem;       /* 32px: título da tela */
+  --t-indicador: 2.5rem;  /* 40px: número de indicador */
 
   --e-1: 4px;
   --e-2: 8px;
@@ -20,75 +34,128 @@
   --e-6: 32px;
   --e-7: 48px;
 
-  --raio: 10px;
-  --raio-p: 6px;
-  --toque: 44px;     /* alvo mínimo de toque no celular */
-  --largura-menu: 232px;
+  --raio: 12px;          /* botões e campos */
+  --raio-cartao: 24px;   /* cartões */
+  --raio-pilula: 999px;  /* selos */
+  --toque: 44px;         /* alvo mínimo de toque (uso no celular) */
+  --largura-menu: 240px;
   --barra-celular: 60px;
 
+  /* Papéis — tema claro */
   color-scheme: light;
-  --fundo: #f6f5f2;
-  --superficie: #ffffff;
-  --superficie-2: #efede8;
-  --borda: #dcd8d0;
-  --texto: #1f2421;
-  --texto-2: #5b625d;
-  --texto-apagado: #8a908b;
-  --marca: #2f6b4f;          /* verde da associação */
-  --marca-texto: #ffffff;
-  --marca-suave: #e3efe8;
-  --foco: #1f5fbf;
-  --erro: #b3261e;
-  --erro-suave: #fbe9e7;
-  --aviso: #8a5a00;
-  --aviso-suave: #fff3d6;
-  --ok: #2f6b4f;
-  --ok-suave: #e3efe8;
-  --sombra: 0 1px 2px rgb(0 0 0 / 0.06), 0 2px 8px rgb(0 0 0 / 0.04);
+  --fundo: var(--creme);
+  --cartao: var(--branco);
+  --superficie: var(--palha);
+  --divisoria: #eadcc8;
+  --texto: var(--carvao);
+  --texto-2: #6b5443;
+  --texto-apagado: #9a8676;
+  --rotulo: var(--cordao);
+  --titulo: var(--habito);
+  --link: var(--cordao);
+
+  --acao: var(--habito);
+  --acao-texto: var(--creme);
+  --acao-hover: var(--cordao);
+
+  --menu: var(--habito);
+  --menu-texto: var(--creme);
+  --menu-texto-2: #d9c3ab;
+  --menu-ativo: var(--cordao);
+
+  --foco: var(--aureola);
+  --sombra: 0 2px 10px rgb(74 46 27 / 0.06);
+
+  --erro: #9b2c22;
+  --erro-fundo: #f7dcd8;
+  --ok: #3b5f12;
+  --ok-fundo: #e0efc9;
+  --aviso: #6b5300;
+  --aviso-fundo: #fdf0b4;
+
+  /* Selos de status (seções 03 · Status do animal e Status de saúde).
+     A cor nunca aparece sem o nome. */
+  --selo-neutro-fundo: #f1e3d3;   --selo-neutro-texto: #5a3a22;   /* em acolhimento, não vacinado, não castrado, inconclusivo */
+  --selo-verde-fundo: #e0efc9;    --selo-verde-texto: #3b5f12;    /* adotado, vacinado, castrado, não reagente */
+  --selo-azul-fundo: #dceaf6;     --selo-azul-texto: #1f4a73;     /* devolvido à comunidade, castração agendada */
+  --selo-laranja-fundo: #fce3d2;  --selo-laranja-texto: #8f4310;  /* transferido */
+  --selo-cinza-fundo: #e7e2de;    --selo-cinza-texto: #3f3a36;    /* óbito */
+  --selo-amarelo-fundo: #fdf0b4;  --selo-amarelo-texto: #6b5300;  /* para adoção, vence em breve, aguardando */
+  --selo-vermelho-fundo: #f7dcd8; --selo-vermelho-texto: #9b2c22; /* vacina vencida, reagente */
+  --selo-contorno: var(--cordao); /* local: sede, lar temporário, clínica */
 }
 
+/* Tema escuro (seção 06): fundo #1C140E, cartão #2A1F17, texto #F3E9DC, ação em Palha */
 @media (prefers-color-scheme: dark) {
   :root:not([data-tema="claro"]) {
     color-scheme: dark;
-    --fundo: #141716;
-    --superficie: #1c201e;
-    --superficie-2: #252a27;
-    --borda: #343a36;
-    --texto: #e7ebe8;
-    --texto-2: #a9b1ab;
-    --texto-apagado: #737b75;
-    --marca: #6fbf97;
-    --marca-texto: #0f1a14;
-    --marca-suave: #1f3329;
-    --foco: #7fb0ff;
-    --erro: #ff8a80;
-    --erro-suave: #3a1f1d;
-    --aviso: #f2c26b;
-    --aviso-suave: #362b14;
-    --ok: #6fbf97;
-    --ok-suave: #1f3329;
-    --sombra: 0 1px 2px rgb(0 0 0 / 0.4);
+    --fundo: #1c140e;
+    --cartao: #2a1f17;
+    --superficie: #3a2b20;
+    --divisoria: #47362a;
+    --texto: #f3e9dc;
+    --texto-2: #cdbba8;
+    --texto-apagado: #9a8676;
+    --rotulo: #d9b48c;
+    --titulo: #f3e9dc;
+    --link: #e2c29f;
+    --acao: var(--palha);
+    --acao-texto: var(--habito);
+    --acao-hover: #f5e2cd;
+    --menu: #140e0a;
+    --menu-texto: #f3e9dc;
+    --menu-texto-2: #b9a38d;
+    --menu-ativo: #5a3e27;
+    --sombra: 0 2px 10px rgb(0 0 0 / 0.35);
+    --erro: #ffb4a9;
+    --erro-fundo: #4a1f1a;
+    --ok: #c5e59a;
+    --ok-fundo: #2c3a18;
+    --aviso: #f4dc7a;
+    --aviso-fundo: #3d3412;
+    --selo-neutro-fundo: #3a2b20;   --selo-neutro-texto: #ead7c2;
+    --selo-verde-fundo: #2c3a18;    --selo-verde-texto: #c5e59a;
+    --selo-azul-fundo: #1d3247;     --selo-azul-texto: #b6d4f0;
+    --selo-laranja-fundo: #43281a;  --selo-laranja-texto: #f7c09a;
+    --selo-cinza-fundo: #36312d;    --selo-cinza-texto: #ddd6cf;
+    --selo-amarelo-fundo: #3d3412;  --selo-amarelo-texto: #f4dc7a;
+    --selo-vermelho-fundo: #4a1f1a; --selo-vermelho-texto: #ffb4a9;
+    --selo-contorno: #d9b48c;
   }
 }
 
 :root[data-tema="escuro"] {
   color-scheme: dark;
-  --fundo: #141716;
-  --superficie: #1c201e;
-  --superficie-2: #252a27;
-  --borda: #343a36;
-  --texto: #e7ebe8;
-  --texto-2: #a9b1ab;
-  --texto-apagado: #737b75;
-  --marca: #6fbf97;
-  --marca-texto: #0f1a14;
-  --marca-suave: #1f3329;
-  --foco: #7fb0ff;
-  --erro: #ff8a80;
-  --erro-suave: #3a1f1d;
-  --aviso: #f2c26b;
-  --aviso-suave: #362b14;
-  --ok: #6fbf97;
-  --ok-suave: #1f3329;
-  --sombra: 0 1px 2px rgb(0 0 0 / 0.4);
+  --fundo: #1c140e;
+  --cartao: #2a1f17;
+  --superficie: #3a2b20;
+  --divisoria: #47362a;
+  --texto: #f3e9dc;
+  --texto-2: #cdbba8;
+  --texto-apagado: #9a8676;
+  --rotulo: #d9b48c;
+  --titulo: #f3e9dc;
+  --link: #e2c29f;
+  --acao: var(--palha);
+  --acao-texto: var(--habito);
+  --acao-hover: #f5e2cd;
+  --menu: #140e0a;
+  --menu-texto: #f3e9dc;
+  --menu-texto-2: #b9a38d;
+  --menu-ativo: #5a3e27;
+  --sombra: 0 2px 10px rgb(0 0 0 / 0.35);
+  --erro: #ffb4a9;
+  --erro-fundo: #4a1f1a;
+  --ok: #c5e59a;
+  --ok-fundo: #2c3a18;
+  --aviso: #f4dc7a;
+  --aviso-fundo: #3d3412;
+  --selo-neutro-fundo: #3a2b20;   --selo-neutro-texto: #ead7c2;
+  --selo-verde-fundo: #2c3a18;    --selo-verde-texto: #c5e59a;
+  --selo-azul-fundo: #1d3247;     --selo-azul-texto: #b6d4f0;
+  --selo-laranja-fundo: #43281a;  --selo-laranja-texto: #f7c09a;
+  --selo-cinza-fundo: #36312d;    --selo-cinza-texto: #ddd6cf;
+  --selo-amarelo-fundo: #3d3412;  --selo-amarelo-texto: #f4dc7a;
+  --selo-vermelho-fundo: #4a1f1a; --selo-vermelho-texto: #ffb4a9;
+  --selo-contorno: #d9b48c;
 }
