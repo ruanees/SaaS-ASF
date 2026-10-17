@@ -34,7 +34,12 @@ export async function AbaSaude({ animal, hoje }: { animal: Animal; hoje: string 
 
   return (
     <div className="pilha" data-e="5">
-      <SelosSaude vacinacao={s.estado.vacinacao_status} castracao={s.estado.castracao_status} />
+      <SelosSaude
+        vacinacao={s.estado.vacinacao_status}
+        castracao={s.estado.castracao_status}
+        emTratamento={s.estado.em_tratamento}
+        leishmaniose={s.estado.leishmaniose_reagente}
+      />
 
       <section className="cartao pilha" aria-labelledby="t-vacinas">
         <h2 id="t-vacinas">Cartão de vacinação</h2>

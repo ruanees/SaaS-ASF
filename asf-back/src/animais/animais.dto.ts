@@ -89,6 +89,13 @@ export class AnimalResumoDto {
     nullable: true,
   })
   castracao_status: 'castrado' | 'agendada' | 'nao_castrado' | null;
+  @ApiProperty({ type: Boolean, nullable: true }) em_tratamento: boolean | null;
+  @ApiProperty({
+    type: Boolean,
+    nullable: true,
+    description: 'Selo de alerta (brandbook, seção 03)',
+  })
+  leishmaniose_reagente: boolean | null;
 }
 
 export class ListaAnimaisDto {
@@ -104,6 +111,12 @@ export class AnimalDto extends AnimalResumoDto {
   @ApiProperty({ type: String, nullable: true }) observacoes: string | null;
   @ApiProperty({ type: ClinicaDto, nullable: true }) clinica: ClinicaDto | null;
   @ApiProperty({ type: String, nullable: true }) microchip: string | null;
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'Condição de saúde na entrada',
+  })
+  condicao_entrada: string | null;
   @ApiProperty({ type: String, format: 'date', nullable: true })
   microchip_data: string | null;
   @ApiProperty({ format: 'date-time' }) criado_em: string;
@@ -367,6 +380,12 @@ export class AlterarAnimalDto {
   @IsOptional()
   @IsISO8601(DATA, MSG_DATA)
   microchip_data?: string | null;
+
+  @ApiPropertyOptional({ type: String, nullable: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  condicao_entrada?: string | null;
 }
 
 export class NovaMovimentacaoDto {

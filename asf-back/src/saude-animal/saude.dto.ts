@@ -40,6 +40,7 @@ export const TIPOS_PENDENCIA = [
   'antiparasitario',
   'castracao',
   'castracao_prioridade',
+  'exame',
 ] as const;
 
 // Respostas -------------------------------------------------------------------
@@ -83,6 +84,16 @@ export class EstadoSaudeDto {
   @ApiProperty({ type: String, format: 'date', nullable: true })
   proximo_antiparasitario: string | null;
   @ApiProperty() antiparasitario_vencido: boolean;
+  @ApiProperty({
+    description: 'Tratamento em andamento, internado ou na clínica',
+  })
+  em_tratamento: boolean;
+  @ApiProperty() internado: boolean;
+  @ApiProperty({
+    description: 'Último teste de leishmaniose (calazar) reagente',
+  })
+  leishmaniose_reagente: boolean;
+  @ApiProperty() exames_aguardando: number;
 }
 
 export class VacinacaoDto {

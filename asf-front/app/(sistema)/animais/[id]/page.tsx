@@ -7,6 +7,7 @@ import { api, chamar, obterEu } from '@/lib/api';
 import { hojeIso, idade } from '@/lib/formato';
 import { ESPECIE, SEXO, nomeDoAnimal } from '@/lib/rotulos';
 import { AbaDados } from './aba-dados';
+import { AbaProntuario } from './aba-prontuario';
 import { AbaSaude } from './aba-saude';
 import { AbaSituacao } from './aba-situacao';
 import { EnvioFoto } from './envio-foto';
@@ -17,14 +18,14 @@ const ABAS = [
   { chave: 'dados', rotulo: 'Dados' },
   { chave: 'situacao', rotulo: 'Situação' },
   { chave: 'saude', rotulo: 'Saúde' },
-  { chave: 'prontuario', rotulo: 'Prontuário', emBreve: true },
+  { chave: 'prontuario', rotulo: 'Prontuário' },
   { chave: 'adocao', rotulo: 'Adoção', emBreve: true },
 ] as const;
 
 export default async function FichaAnimal({ params, searchParams }: PageProps<'/animais/[id]'>) {
   const { id } = await params;
   const sp = await searchParams;
-  const aba = sp.aba === 'situacao' || sp.aba === 'saude' ? sp.aba : 'dados';
+  const aba = sp.aba === 'situacao' || sp.aba === 'saude' || sp.aba === 'prontuario' ? sp.aba : 'dados';
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const cliente = await api();
@@ -55,6 +56,13 @@ export default async function FichaAnimal({ params, searchParams }: PageProps<'/
     <div className="pilha" data-e="5">
       <Link href="/animais">Voltar para animais</Link>
 
+      {sp.saude === 'falhou' && (
+        <p className="aviso" data-tipo="erro" role="alert">
+          O animal foi cadastrado, mas a saúde na entrada não foi registrada. Registre a condição em Dados e os exames
+          em <Link href={`/animais/${a.id}?aba=prontuario`}>Prontuário</Link>.
+        </p>
+      )}
+
       {sp.novo === '1' && (
         <p className="aviso" data-tipo="ok" role="status">
           {nomeDoAnimal(a)} cadastrado com o número {a.numero}. Envie uma foto para facilitar a identificação e, se
@@ -74,9 +82,12 @@ export default async function FichaAnimal({ params, searchParams }: PageProps<'/
               .join(' · ')}
           </p>
           <SelosAnimal situacao={a.situacao} local={a.local} disponivel={a.disponivel_adocao} />
-                    {a.situacao === 'em_acolhimento' && (
-                      <SelosSaude vacinacao={a.vacinacao_status} castracao={a.castracao_status} />
-                    )}
+          <SelosSaude
+            vacinacao={a.situacao === 'em_acolhimento' ? a.vacinacao_status : null}
+            castracao={a.situacao === 'em_acolhimento' ? a.castracao_status : null}
+            emTratamento={a.situacao === 'em_acolhimento' ? a.em_tratamento : null}
+            leishmaniose={a.leishmaniose_reagente}
+          />
         </div>
       </header>
 
@@ -103,6 +114,8 @@ export default async function FichaAnimal({ params, searchParams }: PageProps<'/
         <AbaDados animal={a} hoje={hojeIso()} podeExcluir={podeExcluir} />
       ) : aba === 'saude' ? (
         <AbaSaude animal={a} hoje={hojeIso()} />
+      ) : aba === 'prontuario' ? (
+        <AbaProntuario animal={a} hoje={hojeIso()} tipo={typeof sp.tipo === 'string' ? sp.tipo : undefined} />
       ) : (
         <AbaSituacao animal={a} hoje={hojeIso()} />
       )}

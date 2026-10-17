@@ -436,6 +436,134 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/animais/{id}/prontuario": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ProntuarioController_daAnimal"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/{id}/atendimentos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ProntuarioController_registrar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/animais/{id}/saude-entrada": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ProntuarioController_saudeEntrada"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/atendimentos/{atendimentoId}/resultado": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["ProntuarioController_resultado"];
+        trace?: never;
+    };
+    "/atendimentos/{atendimentoId}/fim-tratamento": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["ProntuarioController_encerrarTratamento"];
+        trace?: never;
+    };
+    "/atendimentos/{atendimentoId}/alta": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["ProntuarioController_darAlta"];
+        trace?: never;
+    };
+    "/atendimentos/{atendimentoId}/laudo/assinar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ProntuarioController_assinarLaudo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/atendimentos/{atendimentoId}/laudo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ProntuarioController_urlLaudo"];
+        put?: never;
+        post: operations["ProntuarioController_registrarLaudo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -540,6 +668,9 @@ export interface components {
             vacinacao_status: "nao_vacinado" | "vencida" | "vence_em_breve" | "vacinado" | null;
             /** @enum {string|null} */
             castracao_status: "castrado" | "agendada" | "nao_castrado" | null;
+            em_tratamento: boolean | null;
+            /** @description Selo de alerta (brandbook, seção 03) */
+            leishmaniose_reagente: boolean | null;
         };
         ListaAnimaisDto: {
             itens: components["schemas"]["AnimalResumoDto"][];
@@ -618,12 +749,17 @@ export interface components {
             vacinacao_status: "nao_vacinado" | "vencida" | "vence_em_breve" | "vacinado" | null;
             /** @enum {string|null} */
             castracao_status: "castrado" | "agendada" | "nao_castrado" | null;
+            em_tratamento: boolean | null;
+            /** @description Selo de alerta (brandbook, seção 03) */
+            leishmaniose_reagente: boolean | null;
             /** @enum {string} */
             origem: "resgate" | "castracao" | "comunitario" | "outra";
             origem_detalhe: string | null;
             observacoes: string | null;
             clinica: components["schemas"]["ClinicaDto"] | null;
             microchip: string | null;
+            /** @description Condição de saúde na entrada */
+            condicao_entrada: string | null;
             /** Format: date */
             microchip_data: string | null;
             /** Format: date-time */
@@ -653,6 +789,7 @@ export interface components {
             microchip?: string | null;
             /** Format: date */
             microchip_data?: string | null;
+            condicao_entrada?: string | null;
         };
         MovimentacaoDto: {
             /** Format: uuid */
@@ -776,6 +913,12 @@ export interface components {
             /** Format: date */
             proximo_antiparasitario: string | null;
             antiparasitario_vencido: boolean;
+            /** @description Tratamento em andamento, internado ou na clínica */
+            em_tratamento: boolean;
+            internado: boolean;
+            /** @description Último teste de leishmaniose (calazar) reagente */
+            leishmaniose_reagente: boolean;
+            exames_aguardando: number;
         };
         VacinacaoDto: {
             /** Format: uuid */
@@ -907,7 +1050,7 @@ export interface components {
         };
         PendenciaDto: {
             /** @enum {string} */
-            tipo: "vacina" | "vermifugacao" | "antiparasitario" | "castracao" | "castracao_prioridade";
+            tipo: "vacina" | "vermifugacao" | "antiparasitario" | "castracao" | "castracao_prioridade" | "exame";
             /** Format: uuid */
             animal_id: string;
             numero: string;
@@ -920,6 +1063,155 @@ export interface components {
             data: string;
             /** @description Data já passou */
             vencida: boolean;
+        };
+        ExameDetalheDto: {
+            nome: string;
+            metodo: string | null;
+            /** @enum {string} */
+            resultado: "aguardando" | "reagente" | "nao_reagente" | "inconclusivo" | "normal" | "alterado" | "ver_laudo";
+            resultado_detalhe: string | null;
+            /** Format: date */
+            resultado_em: string | null;
+            tem_laudo: boolean;
+        };
+        TratamentoDetalheDto: {
+            medicamento: string;
+            dose: string | null;
+            frequencia: string | null;
+            /** Format: date */
+            inicio: string;
+            /** Format: date */
+            fim: string | null;
+        };
+        InternacaoDetalheDto: {
+            /** Format: date */
+            entrada: string;
+            /** Format: date */
+            alta: string | null;
+        };
+        DoseDetalheDto: {
+            /** @description Vacina ou produto */
+            nome: string;
+            /** Format: date */
+            proxima_dose: string | null;
+            lote: string | null;
+        };
+        AtendimentoDto: {
+            /** Format: uuid */
+            id: string;
+            /** @enum {string} */
+            tipo: "consulta" | "exame" | "teste" | "vacina" | "vermifugacao" | "castracao" | "tratamento" | "internacao" | "retorno" | "obito" | "antiparasitario";
+            /** Format: date */
+            data: string;
+            veterinario: string | null;
+            diagnostico: string | null;
+            observacoes: string | null;
+            clinica: string | null;
+            /** @description Quem registrou */
+            autor: string | null;
+            /** Format: date-time */
+            criado_em: string;
+            exame?: components["schemas"]["ExameDetalheDto"];
+            tratamento?: components["schemas"]["TratamentoDetalheDto"];
+            internacao?: components["schemas"]["InternacaoDetalheDto"];
+            /** @description Vacina, vermífugo ou antipulgas */
+            dose?: components["schemas"]["DoseDetalheDto"];
+        };
+        ProntuarioDto: {
+            itens: components["schemas"]["AtendimentoDto"][];
+            total: number;
+            pagina: number;
+            por_pagina: number;
+        };
+        NovoExameDto: {
+            /** @example Leishmaniose (calazar) */
+            nome: string;
+            /** @example Teste rápido */
+            metodo?: string;
+            /**
+             * @default aguardando
+             * @enum {string}
+             */
+            resultado: "aguardando" | "reagente" | "nao_reagente" | "inconclusivo" | "normal" | "alterado" | "ver_laudo";
+            resultado_detalhe?: string;
+        };
+        NovoTratamentoDto: {
+            medicamento: string;
+            dose?: string;
+            frequencia?: string;
+            /** Format: date */
+            inicio?: string;
+            /** Format: date */
+            fim?: string;
+        };
+        NovaInternacaoDto: {
+            /** Format: date */
+            entrada?: string;
+            /** Format: date */
+            alta?: string;
+        };
+        NovoAtendimentoDto: {
+            /** @enum {string} */
+            tipo: "consulta" | "retorno" | "exame" | "teste" | "tratamento" | "internacao" | "obito";
+            /** Format: date */
+            data: string;
+            /** Format: uuid */
+            clinica_id?: string;
+            /** @description Nome e CRMV */
+            veterinario?: string;
+            diagnostico?: string;
+            observacoes?: string;
+            /** @description Para exame e teste */
+            exame?: components["schemas"]["NovoExameDto"];
+            tratamento?: components["schemas"]["NovoTratamentoDto"];
+            internacao?: components["schemas"]["NovaInternacaoDto"];
+        };
+        TratamentoEntradaDto: {
+            medicamento: string;
+            dose?: string;
+            frequencia?: string;
+        };
+        SaudeEntradaDto: {
+            /** @example Sarna generalizada, fígado alterado */
+            condicao?: string;
+            /**
+             * @example [
+             *       "Hemograma",
+             *       "Leishmaniose (calazar)",
+             *       "4DX"
+             *     ]
+             */
+            exames?: string[];
+            tratamento?: components["schemas"]["TratamentoEntradaDto"];
+        };
+        ResultadoExameDto: {
+            /** @enum {string} */
+            resultado: "reagente" | "nao_reagente" | "inconclusivo" | "normal" | "alterado" | "ver_laudo";
+            detalhe?: string;
+            /** Format: date */
+            data?: string;
+        };
+        DataDto: {
+            /** Format: date */
+            data: string;
+        };
+        AssinarLaudoDto: {
+            /** @enum {string} */
+            tipo: "application/pdf" | "image/jpeg" | "image/png" | "image/webp";
+            /** @description Tamanho em bytes (até 10 MB) */
+            tamanho: number;
+        };
+        LaudoAssinadoDto: {
+            caminho: string;
+            /** @description URL assinada para o envio (PUT com o arquivo) */
+            url: string;
+        };
+        RegistrarLaudoDto: {
+            caminho: string;
+        };
+        LaudoUrlDto: {
+            /** @description URL assinada de leitura (5 min) */
+            url: string;
         };
     };
     responses: never;
@@ -1683,6 +1975,226 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PendenciaDto"][];
+                };
+            };
+        };
+    };
+    ProntuarioController_daAnimal: {
+        parameters: {
+            query?: {
+                tipo?: "consulta" | "exame" | "teste" | "vacina" | "vermifugacao" | "castracao" | "tratamento" | "internacao" | "retorno" | "obito" | "antiparasitario";
+                pagina?: number;
+                por_pagina?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProntuarioDto"];
+                };
+            };
+        };
+    };
+    ProntuarioController_registrar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NovoAtendimentoDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AtendimentoDto"];
+                };
+            };
+        };
+    };
+    ProntuarioController_saudeEntrada: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaudeEntradaDto"];
+            };
+        };
+        responses: {
+            /** @description Condição na entrada, exames pedidos e tratamento iniciado */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProntuarioController_resultado: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                atendimentoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResultadoExameDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AtendimentoDto"];
+                };
+            };
+        };
+    };
+    ProntuarioController_encerrarTratamento: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                atendimentoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DataDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AtendimentoDto"];
+                };
+            };
+        };
+    };
+    ProntuarioController_darAlta: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                atendimentoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DataDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AtendimentoDto"];
+                };
+            };
+        };
+    };
+    ProntuarioController_assinarLaudo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                atendimentoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssinarLaudoDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LaudoAssinadoDto"];
+                };
+            };
+        };
+    };
+    ProntuarioController_urlLaudo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                atendimentoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LaudoUrlDto"];
+                };
+            };
+        };
+    };
+    ProntuarioController_registrarLaudo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                atendimentoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegistrarLaudoDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AtendimentoDto"];
                 };
             };
         };
