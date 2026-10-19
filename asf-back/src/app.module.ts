@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AdocoesModule } from './adocoes/adocoes.module.js';
 import { AnimaisModule } from './animais/animais.module.js';
+import { AuditoriaModule } from './auditoria/auditoria.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { IndicadoresModule } from './indicadores/indicadores.module.js';
 import { PessoasModule } from './pessoas/pessoas.module.js';
@@ -23,6 +24,7 @@ import { UsuariosModule } from './usuarios/usuarios.module.js';
     PessoasModule,
     AdocoesModule,
     IndicadoresModule,
+    AuditoriaModule,
   ],
   controllers: [SaudeController],
 })

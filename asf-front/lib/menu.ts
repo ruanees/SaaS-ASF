@@ -23,7 +23,7 @@ export const MENU: ItemMenu[] = [
   { rotulo: 'Adoções', rota: '/adocoes', fase: 4 },
   { rotulo: 'Relatórios', rota: '/relatorios', fase: 5 },
   { rotulo: 'Configurações', rota: '/configuracoes', fase: 0, papeis: ['admin', 'coordenacao'] },
-  { rotulo: 'Auditoria', rota: '/auditoria', fase: 6, emBreve: true, papeis: ['admin'] },
+  { rotulo: 'Auditoria', rota: '/auditoria', fase: 6, papeis: ['admin'] },
 ];
 
 export function menuPara(papel: Papel): ItemMenu[] {

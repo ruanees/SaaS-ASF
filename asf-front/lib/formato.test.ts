@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fd, fdCurta, hojeIso, idade, nascimentoEstimado, somarDias } from './formato';
+import { fd, fdCurta, fdh, hojeIso, idade, nascimentoEstimado, somarDias } from './formato';
 
 describe('fd', () => {
   it('data pura não sofre fuso', () => {
@@ -59,5 +59,15 @@ describe('somarDias e fdCurta', () => {
   it('fdCurta para a frase de confirmação', () => {
     expect(fdCurta('2026-11-12')).toBe('12/11');
     expect(fdCurta(null)).toBe('—');
+  });
+});
+
+describe('fdh', () => {
+  it('mostra data e hora no fuso de Fortaleza (UTC-3)', () => {
+    expect(fdh('2026-10-19T15:30:00Z')).toBe('19/10/2026, 12:30');
+  });
+  it('vazio ou inválido vira travessão', () => {
+    expect(fdh(null)).toBe('—');
+    expect(fdh('xx')).toBe('—');
   });
 });
