@@ -20,6 +20,7 @@ import type {
   ConviteCriadoDto,
   ConviteDto,
   EuDto,
+  Papel,
   UsuarioDto,
 } from './usuarios.dto.js';
 
@@ -29,12 +30,34 @@ const FUNCAO_ADMIN = 'admin-usuarios';
 export class UsuariosService {
   constructor(private readonly supabase: SupabaseService) {}
 
-  // Quem entrou. Conta sem linha ativa em `usuarios` não lê a própria linha
-  // (RLS), e isso vira 403 aqui.
+  // Quem entrou. A situação vem do banco (minha_situacao_acesso): sem convite
+  // ou desativado = 403; admin/coordenação sem MFA = 403 'mfa_obrigatorio',
+  // para o front levar à tela do autenticador. Quem decide é a RLS; aqui só
+  // se escolhe a mensagem.
   async eu(usuario: UsuarioAutenticado): Promise<EuDto> {
+    const sb = this.supabase.para(usuario);
+    const situacao = dados(
+      await sb.rpc('minha_situacao_acesso').maybeSingle<{
+        papel: Papel;
+        ativo: boolean;
+        exige_mfa: boolean;
+        mfa_ok: boolean;
+      }>(),
+    );
+    if (!situacao?.ativo) {
+      throw new ForbiddenException(
+        'Sua conta não tem acesso ativo. Fale com a coordenação.',
+      );
+    }
+    if (situacao.exige_mfa && !situacao.mfa_ok) {
+      throw new ForbiddenException({
+        message: 'Confirme o código do aplicativo autenticador para continuar.',
+        codigo: 'mfa_obrigatorio',
+      });
+    }
+
     const linha = dados(
-      await this.supabase
-        .para(usuario)
+      await sb
         .from('usuarios')
         .select('user_id, nome, papel')
         .eq('user_id', usuario.id)

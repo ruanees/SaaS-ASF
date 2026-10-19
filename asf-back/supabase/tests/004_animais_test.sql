@@ -37,13 +37,13 @@ select throws_ok('select * from public.animais', '42501', null, 'anônimo não l
 reset role;
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000004","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal2"}';
 select throws_ok(
   $$select public.cadastrar_animal('cao', 'macho', '2026-01-10', 'resgate', 'sede')$$,
   '42501', null, 'sem convite não cadastra');
 
 -- Voluntária cadastra -----------------------------------------------------------
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
 
 insert into ids select 'bolinha', (public.cadastrar_animal('cao', 'femea', '2026-01-10', 'resgate', 'sede', 'Bolinha', '2024-01-10', 'aproximada', 'medio')).id;
 select is(
@@ -149,7 +149,7 @@ select throws_ok(
   $$insert into public.clinicas (nome) values ('Clínica Fictícia')$$,
   '42501', null, 'voluntária não cadastra clínica');
 
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 select lives_ok($$select public.excluir_animal((select valor from ids where chave = 'bolinha'))$$, 'admin exclui animal');
 select is(
   (select count(*)::int from public.animais where id = (select valor from ids where chave = 'bolinha')),

@@ -84,6 +84,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sessao/mfa/fatores": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SessaoController_fatores"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sessao/mfa/inscrever": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SessaoController_inscreverMfa"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sessao/mfa/verificar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SessaoController_verificarMfa"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sessao/sair": {
         parameters: {
             query?: never;
@@ -891,6 +939,26 @@ export interface components {
         NovaSenhaDto: {
             /** @description Ao menos 10 caracteres, com letras e números */
             senha: string;
+        };
+        FatorDto: {
+            /** Format: uuid */
+            id: string;
+            /** @description false = inscrição começada e não confirmada */
+            verificado: boolean;
+        };
+        InscricaoMfaDto: {
+            /** Format: uuid */
+            fator_id: string;
+            /** @description Imagem do QR code (data URI SVG) */
+            qr_code: string;
+            /** @description Código para digitar no app, se não der para ler o QR */
+            segredo: string;
+        };
+        VerificarMfaDto: {
+            /** Format: uuid */
+            fator_id: string;
+            /** @example 123456 */
+            codigo: string;
         };
         EuDto: {
             /** Format: uuid */
@@ -1871,6 +1939,68 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    SessaoController_fatores: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FatorDto"][];
+                };
+            };
+        };
+    };
+    SessaoController_inscreverMfa: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InscricaoMfaDto"];
+                };
+            };
+        };
+    };
+    SessaoController_verificarMfa: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerificarMfaDto"];
+            };
+        };
+        responses: {
+            /** @description Sessão nova, com o segundo fator */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessaoDto"];
+                };
             };
         };
     };

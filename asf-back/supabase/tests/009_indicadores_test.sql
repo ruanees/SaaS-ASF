@@ -22,7 +22,7 @@ create function pg_temp.id(p text) returns uuid language sql as $$ select valor 
 grant execute on function pg_temp.id(text) to authenticated, anon;
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d4000000-0000-4000-8000-000000000001","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"d4000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 
 -- Sistema recém-instalado: tudo zero, não erro.
 select is((public.indicadores(app.hoje() - 30, app.hoje()) ->> 'total')::int, 0, 'sem animais, os números são zero');
@@ -104,10 +104,10 @@ select is((public.indicadores(app.hoje() - 2, app.hoje()) ->> 'adocoes')::int, 0
 select throws_ok($$select public.indicadores(app.hoje(), app.hoje() - 1)$$,
   'P0001', 'O início do período não pode ser depois do fim.', 'período invertido é recusado');
 
-set local request.jwt.claims = '{"sub":"d4000000-0000-4000-8000-000000000002","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"d4000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
 select is((public.indicadores(app.hoje() - 30, app.hoje()) ->> 'total')::int, 6, 'voluntário vê os indicadores');
 
-set local request.jwt.claims = '{"sub":"d4000000-0000-4000-8000-000000000003","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"d4000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal2"}';
 select throws_ok($$select public.indicadores()$$, '42501', null, 'conta sem linha em usuarios não vê indicadores');
 
 select * from finish();

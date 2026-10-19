@@ -28,14 +28,14 @@ grant execute on function pg_temp.id(text) to authenticated, anon;
 set local role authenticated;
 
 -- Cadastro de pessoa: só administração e coordenação ---------------------------------
-set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000004","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal2"}';
 select throws_ok($$select public.cadastrar_pessoa('Pessoa Fictícia', 'consentimento', array['adotante']::public.vinculo_pessoa[])$$,
   '42501', null, 'voluntário não cadastra pessoa');
 insert into ids select 'nina', (public.cadastrar_animal('cao', 'femea', app.hoje() - 30, 'resgate', 'sede', 'Nina Fictícia')).id;
 insert into ids select 'bento', (public.cadastrar_animal('cao', 'macho', app.hoje() - 30, 'resgate', 'sede', 'Bento Fictício')).id;
 insert into ids select 'mia', (public.cadastrar_animal('gato', 'femea', app.hoje() - 30, 'comunitario', 'sede', 'Mia Fictícia')).id;
 
-set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000002","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
 select throws_ok($$select public.cadastrar_pessoa('Pessoa Fictícia', 'consentimento', '{}')$$,
   'P0001', 'Escolha o vínculo: adotante ou lar temporário.', 'pessoa sem vínculo é recusada');
 select throws_ok($$select public.cadastrar_pessoa('Pessoa Fictícia', null, array['adotante']::public.vinculo_pessoa[])$$,
@@ -54,7 +54,7 @@ select lives_ok(format($$select public.alterar_contato(%L, '(88) 90000-0009', 'm
   'coordenação corrige o telefone');
 
 -- Voluntário e veterinário veem o nome, nunca o contato -------------------------------
-set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000004","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal2"}';
 select is((select nome from public.pessoas where id = pg_temp.id('maria')), 'Maria Fictícia', 'voluntário vê o nome da pessoa');
 select throws_ok($$select count(*) from public.pessoas_contato$$, '42501', null, 'voluntário não lê pessoas_contato');
 select throws_ok(format($$select * from public.ler_contato(%L)$$, pg_temp.id('maria')), '42501', null,
@@ -62,13 +62,13 @@ select throws_ok(format($$select * from public.ler_contato(%L)$$, pg_temp.id('ma
 select throws_ok(format($$select public.exportar_pessoa(%L)$$, pg_temp.id('maria')), '42501', null,
   'voluntário não exporta dados de pessoa');
 
-set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000003","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal2"}';
 select throws_ok($$select count(*) from public.pessoas_contato$$, '42501', null, 'veterinário não lê pessoas_contato');
 select throws_ok(format($$select * from public.ler_contato(%L)$$, pg_temp.id('maria')), '42501', null,
   'veterinário não lê o contato pela função');
 
 -- Auditoria: a leitura fica registrada; a alteração guarda o nome do campo, não o valor
-set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000001","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 select is((select count(*)::int from public.auditoria
             where tabela = 'pessoas_contato' and registro_id = pg_temp.id('maria') and operacao = 'leitura_sensivel'), 1,
   'a leitura do contato foi registrada na auditoria');
@@ -77,7 +77,7 @@ select is((select campos_alterados from public.auditoria
   array['telefone'], 'a auditoria guarda que o telefone mudou, sem o valor');
 
 -- Lar temporário (o voluntário registra, escolhendo a pessoa pelo nome) ---------------
-set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000004","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal2"}';
 select throws_ok(format($$select public.mover_animal(%L, 'em_acolhimento', 'lar_temporario', false, app.hoje() - 20)$$, pg_temp.id('nina')),
   'P0001', 'Escolha a pessoa do lar temporário.', 'lar temporário sem pessoa é recusado');
 select lives_ok(format($$select public.mover_animal(%L, 'em_acolhimento', 'lar_temporario', false, app.hoje() - 20,
@@ -86,12 +86,12 @@ select lives_ok(format($$select public.mover_animal(%L, 'em_acolhimento', 'lar_t
 select results_eq(format($$select local::text, pessoa_id from public.animais where id = %L$$, pg_temp.id('nina')),
   format($$values ('lar_temporario', %L::uuid)$$, pg_temp.id('maria')), 'a ficha mostra com quem a Nina está');
 
-set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000002","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
 select throws_ok(format($$select public.anonimizar_pessoa(%L)$$, pg_temp.id('maria')),
   'P0001', 'Esta pessoa está com um animal em lar temporário agora. Registre a saída do animal do lar antes de anonimizar.',
   'não anonimiza quem está com animal em lar temporário');
 
-set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000004","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal2"}';
 select lives_ok(format($$select public.mover_animal(%L, 'em_acolhimento', 'sede', true, app.hoje() - 15)$$, pg_temp.id('nina')),
   'Nina volta para a sede, disponível');
 select is((select pessoa_id from public.animais where id = pg_temp.id('nina')), null, 'fora do lar, a ficha não tem responsável');
@@ -102,7 +102,7 @@ select throws_ok(format($$select public.registrar_adocao(%L, %L, app.hoje() - 10
 select throws_ok(format($$select public.mover_animal(%L, 'adotado', null, false, app.hoje())$$, pg_temp.id('nina')),
   'P0001', 'A adoção é registrada pelo fluxo de adoção.', 'adoção não passa por mover_animal');
 
-set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000002","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
 insert into ids select 'adocao1', public.registrar_adocao(pg_temp.id('nina'), pg_temp.id('joao'), app.hoje() - 10);
 select results_eq(format($$select situacao::text, local, disponivel_adocao from public.animais where id = %L$$, pg_temp.id('nina')),
   $$values ('adotado', null::public.local_animal, false)$$, 'adoção move a Nina para adotado na mesma transação');
@@ -143,7 +143,7 @@ select throws_ok(format($$select public.registrar_adocao(%L, %L, app.hoje())$$, 
   'P0001', 'Esta pessoa foi anonimizada. Para um novo vínculo, faça um cadastro novo.', 'pessoa anonimizada não ganha vínculo novo');
 
 -- Transferência e devolução à comunidade ------------------------------------------------
-set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000004","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal2"}';
 select throws_ok(format($$select public.mover_animal(%L, 'transferido', null, false, app.hoje())$$, pg_temp.id('nina')),
   'P0001', 'Informe para qual entidade o animal foi transferido.', 'transferência sem destino é recusada');
 select throws_ok(format($$select public.mover_animal(%L, 'devolvido_comunidade', null, false, app.hoje())$$, pg_temp.id('mia')),
@@ -154,7 +154,7 @@ select lives_ok(format($$select public.mover_animal(%L, 'devolvido_comunidade', 
   null, 'mudanca', null, null, null, 'Bairro Fictício')$$, pg_temp.id('mia')), 'Mia devolvida à comunidade, com o bairro');
 
 -- Conta sem linha ativa em usuarios não lê nada -------------------------------------------
-set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000005","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"c3000000-0000-4000-8000-000000000005","role":"authenticated","aal":"aal2"}';
 select is((select count(*)::int from public.pessoas) + (select count(*)::int from public.adocoes), 0,
   'conta sem linha em usuarios não lê pessoas nem adoções');
 

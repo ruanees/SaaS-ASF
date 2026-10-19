@@ -66,7 +66,7 @@ select throws_ok($$delete from public.usuarios$$, '42501', null, 'ninguém apaga
 select is((select count(*) from public.auditoria)::int, 0, 'voluntário não lê auditoria');
 
 -- Admin -----------------------------------------------------------------------
-set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 select is(pg_temp.linhas('update public.configuracoes set resumo_diario_email = true'), 1,
   'admin altera configuracoes');
 select is((select atualizado_por from public.configuracoes),

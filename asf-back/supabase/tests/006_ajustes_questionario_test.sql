@@ -27,7 +27,7 @@ select is((select count(*)::int from public.clinicas where nome = 'Clínica Mund
 insert into ids select 'v10', id from public.vacinas_tipos where nome = 'V10' and especie = 'cao';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"a1000000-0000-4000-8000-000000000001","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"a1000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 
 insert into ids select 'filhote', (public.cadastrar_animal('cao', 'femea', app.hoje() - 10, 'resgate', 'sede', 'Eva Fictícia', app.hoje() - 60, 'aproximada')).id;
 insert into ids select 'adulto', (public.cadastrar_animal('cao', 'macho', app.hoje() - 10, 'resgate', 'sede', 'Rex Fictício', app.hoje() - 1000, 'aproximada')).id;
@@ -86,7 +86,7 @@ update public.animais set situacao = 'adotado', local = null, disponivel_adocao 
 select is((select status from public.castracoes where animal_id = (select valor from ids where chave = 'gata')), 'agendada',
   'adoção não cancela a castração agendada');
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"a1000000-0000-4000-8000-000000000001","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"a1000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 select ok(exists (select 1 from public.pendencias_saude() where tipo = 'castracao' and animal_id = pg_temp.id('gata')
   and descricao = 'Castração agendada (com o adotante)'), 'castração do adotado aparece em Pendências');
 

@@ -31,14 +31,14 @@ select is(app.hoje_em('2026-10-17 03:00:00+00'), '2026-10-17'::date,
 
 -- Catálogo: coordenação cadastra, voluntária não ---------------------------------
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 insert into public.vacinas_tipos (nome, especie, reforco_dias) values ('V10', 'cao', 365), ('V4', 'gato', 365), ('Antirrábica', 'cao', 365);
 insert into ids select 'v10', id from public.vacinas_tipos where nome = 'V10';
 insert into ids select 'v4', id from public.vacinas_tipos where nome = 'V4';
 insert into ids select 'raiva', id from public.vacinas_tipos where nome = 'Antirrábica';
 select is((select count(*)::int from public.vacinas_tipos), 3, 'coordenação cadastra o catálogo');
 
-set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000002","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
 select throws_ok($$insert into public.vacinas_tipos (nome, especie) values ('V8', 'cao')$$, '42501', null,
   'voluntária não mexe no catálogo');
 

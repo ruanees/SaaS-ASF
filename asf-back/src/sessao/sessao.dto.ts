@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsOptional,
   IsString,
+  IsUUID,
   Length,
   Matches,
   MaxLength,
@@ -56,6 +57,38 @@ export class NovaSenhaDto {
     message: 'A senha precisa ter letras e números.',
   })
   senha: string;
+}
+
+export class FatorDto {
+  @ApiProperty({ format: 'uuid' })
+  id: string;
+
+  @ApiProperty({ description: 'false = inscrição começada e não confirmada' })
+  verificado: boolean;
+}
+
+export class InscricaoMfaDto {
+  @ApiProperty({ format: 'uuid' })
+  fator_id: string;
+
+  @ApiProperty({ description: 'Imagem do QR code (data URI SVG)' })
+  qr_code: string;
+
+  @ApiProperty({
+    description: 'Código para digitar no app, se não der para ler o QR',
+  })
+  segredo: string;
+}
+
+export class VerificarMfaDto {
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID('all', { message: 'Fator inválido.' })
+  fator_id: string;
+
+  @ApiProperty({ example: '123456' })
+  @Transform(aparar)
+  @Matches(/^\d{6}$/, { message: 'O código tem 6 números.' })
+  codigo: string;
 }
 
 export class SessaoDto {
