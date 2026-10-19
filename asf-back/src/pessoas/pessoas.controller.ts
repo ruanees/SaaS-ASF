@@ -27,6 +27,7 @@ import {
   LarTemporarioDto,
   ListaPessoasDto,
   NovaPessoaDto,
+  PessoaAlemDoPrazoDto,
   PessoaDto,
 } from './pessoas.dto.js';
 import { PessoasService } from './pessoas.service.js';
@@ -57,6 +58,18 @@ export class PessoasController {
     @Body() corpo: NovaPessoaDto,
   ): Promise<PessoaDto> {
     return this.pessoas.criar(usuario, corpo);
+  }
+
+  // Antes de pessoas/:id: senão "alem-do-prazo" seria lido como id.
+  @Get('pessoas/alem-do-prazo')
+  @ApiOkResponse({
+    type: [PessoaAlemDoPrazoDto],
+    description: 'Só administração e coordenação',
+  })
+  alemDoPrazo(
+    @Usuario() usuario: UsuarioAutenticado,
+  ): Promise<PessoaAlemDoPrazoDto[]> {
+    return this.pessoas.alemDoPrazo(usuario);
   }
 
   @Get('pessoas/:id')

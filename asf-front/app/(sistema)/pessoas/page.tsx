@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { api, chamar, obterEu } from '@/lib/api';
+import { fd } from '@/lib/formato';
 import { ESPECIE, VINCULO, nomeDoAnimal } from '@/lib/rotulos';
 import type { Vinculo } from '@/lib/tipos';
 
@@ -56,6 +57,42 @@ async function Lares() {
         </li>
       ))}
     </ul>
+  );
+}
+
+// Prazo de guarda (Fase 6): calculado a cada abertura; a coordenação abre a
+// pessoa e anonimiza. Ninguém é anonimizado sozinho.
+async function Prazo() {
+  const cliente = await api();
+  const r = await chamar(cliente.GET('/pessoas/alem-do-prazo'));
+  if (!r.ok) return <Erro mensagem={r.falha.mensagem} href="/pessoas?aba=prazo" />;
+  return (
+    <div className="pilha">
+      <p className="ajuda">
+        Pessoas cujo último vínculo com a associação (cadastro, adoção, devolução ou lar temporário) passou do prazo de
+        guarda. Abra a pessoa, exporte os dados se for preciso e anonimize. Quem está com animal em lar temporário agora
+        não aparece aqui.
+      </p>
+      {r.dados.length === 0 ? (
+        <div className="cartao pilha" style={{ alignItems: 'center', textAlign: 'center' }}>
+          <span className="aureola" aria-hidden="true" />
+          <p>Ninguém passou do prazo de guarda.</p>
+        </div>
+      ) : (
+        <ul className="lista-pessoas">
+          {r.dados.map((p) => (
+            <li key={p.id}>
+              <Link href={`/pessoas/${p.id}`} className="cartao cartao-pessoa">
+                <span className="nome-pessoa">{p.nome}</span>
+                <span className="ajuda">
+                  Último vínculo em {fd(p.ultimo_evento)} · prazo venceu em {fd(p.venceu_em)}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
@@ -182,7 +219,7 @@ async function ListaPessoas(f: Filtro) {
 export default async function PaginaPessoas({ searchParams }: PageProps<'/pessoas'>) {
   const params = await searchParams;
   const um = (k: string) => (typeof params[k] === 'string' ? (params[k] as string) : undefined);
-  const aba = um('aba') === 'lares' ? 'lares' : 'pessoas';
+  const abaPedida = um('aba');
   const busca = um('q')?.slice(0, 40);
   const vinculo = um('vinculo') === 'adotante' || um('vinculo') === 'lar_temporario' ? (um('vinculo') as Vinculo) : undefined;
   const anonimizadas = um('anonimizadas') === '1';
@@ -190,6 +227,7 @@ export default async function PaginaPessoas({ searchParams }: PageProps<'/pessoa
 
   const eu = await obterEu();
   const coordena = eu.ok && (eu.dados.papel === 'admin' || eu.dados.papel === 'coordenacao');
+  const aba = abaPedida === 'lares' ? 'lares' : abaPedida === 'prazo' && coordena ? 'prazo' : 'pessoas';
 
   return (
     <div className="pilha" data-e="5">
@@ -212,9 +250,14 @@ export default async function PaginaPessoas({ searchParams }: PageProps<'/pessoa
         <Link className="aba" href="/pessoas?aba=lares" aria-current={aba === 'lares' ? 'page' : undefined}>
           Lares temporários
         </Link>
+        {coordena && (
+          <Link className="aba" href="/pessoas?aba=prazo" aria-current={aba === 'prazo' ? 'page' : undefined}>
+            Prazo de guarda
+          </Link>
+        )}
       </nav>
 
-      {aba === 'lares' ? <Lares /> : <ListaPessoas busca={busca} vinculo={vinculo} anonimizadas={anonimizadas} pagina={pagina} />}
+      {aba === 'prazo' ? <Prazo /> : aba === 'lares' ? <Lares /> : <ListaPessoas busca={busca} vinculo={vinculo} anonimizadas={anonimizadas} pagina={pagina} />}
     </div>
   );
 }
