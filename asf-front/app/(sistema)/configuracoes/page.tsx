@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { api, chamar, obterEu } from '@/lib/api';
 import { fd, nomePapel } from '@/lib/formato';
 import { ESPECIE } from '@/lib/rotulos';
-import { FormClinica, FormConvite, FormVacinaTipo, LinhaUsuario, LinhaVacinaTipo } from './formularios';
+import { FormClinica, FormConvite, FormVacinaTipo, LimparArquivos, LinhaUsuario, LinhaVacinaTipo } from './formularios';
 
 export const metadata: Metadata = { title: 'Configurações' };
 
@@ -23,10 +23,11 @@ export default async function Configuracoes() {
   }
 
   const cliente = await api();
-  const [usuarios, clinicas, vacinas] = await Promise.all([
+  const [usuarios, clinicas, vacinas, soltos] = await Promise.all([
     admin ? chamar(cliente.GET('/usuarios')) : Promise.resolve(null),
     chamar(cliente.GET('/clinicas')),
     chamar(cliente.GET('/vacinas-tipos', { params: { query: { todas: 'sim' } } })),
+    admin ? chamar(cliente.GET('/arquivos-soltos')) : Promise.resolve(null),
   ]);
 
   return (
@@ -143,6 +144,26 @@ export default async function Configuracoes() {
         )}
         <FormClinica />
       </section>
+
+      {admin && soltos && (
+        <section className="cartao pilha" aria-labelledby="titulo-soltos">
+          <h2 id="titulo-soltos">Arquivos soltos</h2>
+          <p className="ajuda">
+            Fotos, laudos e termos que foram enviados mas não ficaram ligados a nenhum registro (envio interrompido,
+            laudo ou termo trocado). Só entram os que têm mais de um dia. O que está ligado a um animal, exame ou adoção
+            nunca é apagado.
+          </p>
+          {!soltos.ok ? (
+            <p className="aviso" data-tipo="erro" role="alert">
+              {soltos.falha.mensagem}
+            </p>
+          ) : soltos.dados.length === 0 ? (
+            <p>Nenhum arquivo solto.</p>
+          ) : (
+            <LimparArquivos quantidade={soltos.dados.length} />
+          )}
+        </section>
+      )}
     </div>
   );
 }

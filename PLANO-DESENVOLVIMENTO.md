@@ -981,13 +981,13 @@ Cada número tem uma definição escrita. Sem isso, "total de animais" significa
 Funcionalidade: F-20.
 
 - [x] MFA obrigatório para `admin` e `coordenacao` (veio da Fase 0; PR #15 atualizado com a `main`, migração renumerada para 20261021090000)
-- [ ] Rotina semanal de retenção: lista pessoas além do prazo para a coordenação aprovar a anonimização
-- [ ] Rotina semanal de arquivos órfãos e de conferência de backup
+- [x] Rotina semanal de retenção: lista pessoas além do prazo para a coordenação aprovar a anonimização (feita como lista calculada a cada abertura, em Pessoas → Prazo de guarda, igual às pendências; não precisa de agendamento)
+- [ ] Rotina semanal de arquivos órfãos e de conferência de backup (arquivos soltos: feito em Configurações, só admin; conferência de backup espera o plano pago)
 - [x] Tela de auditoria para admin (quem acessou contato, quem exportou)
-- [ ] Roteiro de incidente de segurança escrito e com responsáveis definidos
+- [ ] Roteiro de incidente de segurança escrito e com responsáveis definidos (rascunho em `docs/lgpd/roteiro-incidente.md`; faltam os responsáveis)
 - [ ] Revisão da política de privacidade, do registro das operações de tratamento e do acordo com quem mantém o sistema, pela assessoria jurídica
 - [ ] Encarregado de dados indicado pela associação
-- [ ] Revisão das políticas de RLS tabela por tabela, com o Security Advisor e o Performance Advisor do Supabase sem alertas
+- [ ] Revisão das políticas de RLS tabela por tabela, com o Security Advisor e o Performance Advisor do Supabase sem alertas (revisão automática na CI: prova 011; falta olhar os Advisors no painel)
 - [ ] Supabase em plano pago, com backup diário; teste de restauração feito
 - [ ] Regras de WAF e limite de requisições revisadas na Cloudflare; Cloudflare Access ligado, se a associação decidir
 - [ ] Alertas do Sentry testados (taxa de erro, falha de rotina)

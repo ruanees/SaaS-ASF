@@ -1,8 +1,16 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState, useTransition } from 'react';
 import type { Usuario, VacinaTipo } from '@/lib/tipos';
-import { alterarUsuario, alterarVacinaTipo, convidar, criarClinica, criarVacinaTipo, type EstadoAcao } from '../acoes';
+import {
+  alterarUsuario,
+  alterarVacinaTipo,
+  convidar,
+  criarClinica,
+  criarVacinaTipo,
+  limparArquivosSoltos,
+  type EstadoAcao,
+} from '../acoes';
 
 const PAPEIS = [
   ['voluntario', 'Voluntário(a)'],
@@ -244,5 +252,34 @@ export function LinhaVacinaTipo({ vacina, especie }: { vacina: VacinaTipo; espec
         </form>
       </td>
     </tr>
+  );
+}
+
+export function LimparArquivos({ quantidade }: { quantidade: number }) {
+  const [estado, setEstado] = useState<{ ok?: string; erro?: string }>({});
+  const [limpando, iniciar] = useTransition();
+  return (
+    <div className="pilha" data-e="2">
+      {estado.erro && (
+        <p className="aviso" data-tipo="erro" role="alert">
+          {estado.erro}
+        </p>
+      )}
+      {estado.ok && (
+        <p className="aviso" data-tipo="ok" role="status">
+          {estado.ok}
+        </p>
+      )}
+      <div>
+        <button
+          type="button"
+          className="botao"
+          disabled={limpando || quantidade === 0}
+          onClick={() => iniciar(async () => setEstado(await limparArquivosSoltos()))}
+        >
+          {limpando ? 'Apagando…' : `Apagar ${quantidade} ${quantidade === 1 ? 'arquivo solto' : 'arquivos soltos'}`}
+        </button>
+      </div>
+    </div>
   );
 }

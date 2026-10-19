@@ -15,6 +15,7 @@ import type {
   ListaPessoasDto,
   NovaPessoaDto,
   PassagemLarDto,
+  PessoaAlemDoPrazoDto,
   PessoaDto,
   PessoaResumoDto,
 } from './pessoas.dto.js';
@@ -199,6 +200,15 @@ export class PessoasService {
         ? 'A pessoa foi anonimizada, mas algum termo de adoção não saiu do armazenamento. Avise a administração.'
         : null,
     };
+  }
+
+  // Calculado no banco a cada abertura; ninguém é anonimizado sozinho.
+  async alemDoPrazo(
+    usuario: UsuarioAutenticado,
+  ): Promise<PessoaAlemDoPrazoDto[]> {
+    return (dados(
+      await this.supabase.para(usuario).rpc('pessoas_alem_do_prazo'),
+    ) ?? []) as PessoaAlemDoPrazoDto[];
   }
 
   async lares(usuario: UsuarioAutenticado): Promise<LarTemporarioDto[]> {

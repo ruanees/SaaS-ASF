@@ -7,6 +7,7 @@
 | [Política de privacidade](politica-de-privacidade.md) | Adotantes, lares temporários, voluntários, público | O que a associação faz com os dados, por quanto tempo e como pedir acesso, correção ou anonimização. Inclui o **aviso curto** que aparece no formulário de pessoa e no termo de adoção. |
 | [Registro das operações de tratamento](registro-operacoes-tratamento.md) | Associação (documento interno, art. 37) | Cada uso de dado pessoal: finalidade, base legal, quem acessa, fornecedores, prazo e medidas de segurança. |
 | [Acordo entre controladora e operador](acordo-controladora-operador.md) | Associação e quem desenvolve e mantém o sistema | O que o operador pode e não pode fazer com os dados, segurança, incidentes e fim do contrato. |
+| [Roteiro de incidente de segurança](roteiro-incidente.md) | Equipe da associação | Quem avisa quem, como conter, como entender o que aconteceu e quando comunicar a ANPD e as pessoas. |
 
 ## Decisões que a associação precisa tomar
 
@@ -29,7 +30,7 @@ O que está escrito aqui é cumprido pelo código. Se uma regra mudar, o código
 | Só quem precisa vê o contato | RLS de `pessoas_contato`: só admin e coordenação leem (ADR 0006, Fase 4) |
 | Registro de quem acessou o contato | Tabela `auditoria`, que guarda o nome do campo e nunca o valor (migração 002) |
 | Anonimizar em vez de apagar | Função `anonimizar_pessoa` (ADR 0007, Fase 4) |
-| Retenção com aprovação | Rotina semanal que lista o que passou do prazo, para a coordenação aprovar (Fase 6) |
+| Retenção com aprovação | Aba Pessoas → Prazo de guarda: lista calculada a cada abertura, a coordenação aprova a anonimização (Fase 6) |
 | Foto sem localização | O front reprocessa a imagem e remove o EXIF com GPS antes do envio (Fase 1) |
 | Dado no Brasil | Banco no Supabase, região São Paulo (ADR 0008) |
 | Sem dado pessoal em log e monitoramento | Filtro `beforeSend` do Sentry; os erros do back não trazem dado (Fase 0) |

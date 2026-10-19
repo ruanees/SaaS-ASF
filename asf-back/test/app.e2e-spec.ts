@@ -78,6 +78,9 @@ describe('asf-back (e2e)', () => {
     ['post', '/sessao/mfa/inscrever'],
     ['post', '/sessao/mfa/verificar'],
     ['get', '/auditoria'],
+    ['get', '/pessoas/alem-do-prazo'],
+    ['get', '/arquivos-soltos'],
+    ['post', '/arquivos-soltos/apagar'],
   ] as const)('%s %s sem sessão responde 401', async (metodo, rota) => {
     const res = await request(app.getHttpServer())[metodo](rota).expect(401);
     expect(res.body.mensagem).toBe('Sessão ausente. Entre de novo.');
@@ -117,6 +120,8 @@ describe('asf-back (e2e)', () => {
       '/animais/{id}/sugestao',
       '/animais/{id}/vacinas',
       '/animais/{id}/vermifugacoes',
+      '/arquivos-soltos',
+      '/arquivos-soltos/apagar',
       '/atendimentos/{atendimentoId}/alta',
       '/atendimentos/{atendimentoId}/fim-tratamento',
       '/atendimentos/{atendimentoId}/laudo',
@@ -130,6 +135,7 @@ describe('asf-back (e2e)', () => {
       '/lares-temporarios',
       '/pendencias',
       '/pessoas',
+      '/pessoas/alem-do-prazo',
       '/pessoas/{id}',
       '/pessoas/{id}/anonimizar',
       '/pessoas/{id}/contato',

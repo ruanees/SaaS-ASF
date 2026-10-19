@@ -628,6 +628,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/pessoas/alem-do-prazo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PessoasController_alemDoPrazo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/pessoas/{id}": {
         parameters: {
             query?: never;
@@ -894,6 +910,38 @@ export interface paths {
         get: operations["AuditoriaController_listar"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/arquivos-soltos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ManutencaoController_soltos"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/arquivos-soltos/apagar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ManutencaoController_limpar"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1657,6 +1705,19 @@ export interface components {
             lar_atual: components["schemas"]["AnimalLigadoDto"][];
             lar_historico: components["schemas"]["PassagemLarDto"][];
         };
+        PessoaAlemDoPrazoDto: {
+            /** Format: uuid */
+            id: string;
+            nome: string;
+            vinculos: ("adotante" | "lar_temporario")[];
+            /**
+             * Format: date
+             * @description Último evento com a pessoa
+             */
+            ultimo_evento: string;
+            /** Format: date */
+            venceu_em: string;
+        };
         AlterarPessoaDto: {
             nome: string;
             /** @enum {string} */
@@ -1824,6 +1885,19 @@ export interface components {
             total: number;
             pagina: number;
             por_pagina: number;
+        };
+        ArquivoSoltoDto: {
+            /** @enum {string} */
+            balde: "fotos-animais" | "laudos" | "termos";
+            /** @description Caminho no Storage (só ids, sem dado pessoal) */
+            caminho: string;
+            /** Format: date-time */
+            criado_em: string;
+        };
+        LimpezaDto: {
+            apagados: number;
+            /** @description O que não saiu (tente de novo) */
+            restantes: number;
         };
     };
     responses: never;
@@ -2928,6 +3002,26 @@ export interface operations {
             };
         };
     };
+    PessoasController_alemDoPrazo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Só administração e coordenação */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PessoaAlemDoPrazoDto"][];
+                };
+            };
+        };
+    };
     PessoasController_buscar: {
         parameters: {
             query?: never;
@@ -3402,6 +3496,45 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ListaAuditoriaDto"];
+                };
+            };
+        };
+    };
+    ManutencaoController_soltos: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Só admin. Arquivos sem registro há mais de um dia. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArquivoSoltoDto"][];
+                };
+            };
+        };
+    };
+    ManutencaoController_limpar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LimpezaDto"];
                 };
             };
         };

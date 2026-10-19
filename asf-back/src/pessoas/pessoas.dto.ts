@@ -104,6 +104,20 @@ export class LarTemporarioDto {
   @ApiProperty({ type: [AnimalLigadoDto] }) animais: AnimalLigadoDto[];
 }
 
+// Prazo de guarda (Fase 6): quem passou do prazo, para a coordenação aprovar.
+export class PessoaAlemDoPrazoDto {
+  @ApiProperty({ format: 'uuid' }) id: string;
+  @ApiProperty() nome: string;
+  @ApiProperty({ enum: VINCULOS, isArray: true }) vinculos: Vinculo[];
+  @ApiProperty({
+    type: String,
+    format: 'date',
+    description: 'Último evento com a pessoa',
+  })
+  ultimo_evento: string;
+  @ApiProperty({ type: String, format: 'date' }) venceu_em: string;
+}
+
 export class AnonimizacaoDto {
   @ApiProperty({
     type: String,

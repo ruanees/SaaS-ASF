@@ -111,3 +111,15 @@ export async function alterarVacinaTipo(_: EstadoAcao, form: FormData): Promise<
   revalidatePath('/configuracoes');
   return { ok: 'Alteração salva.' };
 }
+
+// Arquivos soltos no Storage (Fase 6): o banco lista, a política só deixa o
+// admin apagar o que não está ligado a nenhum registro.
+export async function limparArquivosSoltos(): Promise<{ ok?: string; erro?: string }> {
+  const cliente = await api();
+  const r = await chamar(cliente.POST('/arquivos-soltos/apagar'));
+  if (!r.ok) return { erro: r.falha.mensagem };
+  revalidatePath('/configuracoes');
+  return r.dados.restantes > 0
+    ? { erro: `${r.dados.apagados} apagados; ${r.dados.restantes} não saíram. Tente de novo mais tarde.` }
+    : { ok: `${r.dados.apagados} ${r.dados.apagados === 1 ? 'arquivo apagado' : 'arquivos apagados'}.` };
+}
