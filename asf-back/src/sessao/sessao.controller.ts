@@ -1,10 +1,20 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Usuario, type UsuarioAutenticado } from '../auth/usuario.js';
 import { Publico } from '../comum/publico.decorator.js';
 import {
   EntrarDto,
+  FatorDto,
+  InscricaoMfaDto,
   NovaSenhaDto,
+  VerificarMfaDto,
   RecuperarDto,
   RenovarDto,
   SessaoDto,
@@ -51,6 +61,34 @@ export class SessaoController {
     @Body() corpo: NovaSenhaDto,
   ): Promise<void> {
     return this.sessao.trocarSenha(usuario, corpo.senha);
+  }
+
+  @Get('mfa/fatores')
+  @ApiOkResponse({ type: [FatorDto] })
+  fatores(@Usuario() usuario: UsuarioAutenticado): Promise<FatorDto[]> {
+    return this.sessao.fatores(usuario);
+  }
+
+  @Post('mfa/inscrever')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: InscricaoMfaDto })
+  inscreverMfa(
+    @Usuario() usuario: UsuarioAutenticado,
+  ): Promise<InscricaoMfaDto> {
+    return this.sessao.inscreverMfa(usuario);
+  }
+
+  @Post('mfa/verificar')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    type: SessaoDto,
+    description: 'Sessão nova, com o segundo fator',
+  })
+  verificarMfa(
+    @Usuario() usuario: UsuarioAutenticado,
+    @Body() corpo: VerificarMfaDto,
+  ): Promise<SessaoDto> {
+    return this.sessao.verificarMfa(usuario, corpo.fator_id, corpo.codigo);
   }
 
   @Post('sair')

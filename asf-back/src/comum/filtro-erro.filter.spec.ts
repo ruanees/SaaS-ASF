@@ -60,6 +60,20 @@ describe('traduzirErro', () => {
     });
   });
 
+  it('HttpException com codigo leva o codigo para o front', () => {
+    expect(
+      traduzirErro(
+        new ForbiddenException({
+          message: 'Falta MFA.',
+          codigo: 'mfa_obrigatorio',
+        }),
+      ),
+    ).toEqual({
+      status: 403,
+      corpo: { mensagem: 'Falta MFA.', codigo: 'mfa_obrigatorio' },
+    });
+  });
+
   it('erro qualquer vira 500 sem detalhe', () => {
     const r = traduzirErro(new Error('segredo'));
     expect(r.status).toBe(500);

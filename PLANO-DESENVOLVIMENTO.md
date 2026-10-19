@@ -980,7 +980,7 @@ Cada número tem uma definição escrita. Sem isso, "total de animais" significa
 
 Funcionalidade: F-20.
 
-- [ ] MFA obrigatório para `admin` e `coordenacao` (veio da Fase 0; PR #15: atualizar com a `main` e renumerar a migração antes do merge)
+- [x] MFA obrigatório para `admin` e `coordenacao` (veio da Fase 0; PR #15 atualizado com a `main`, migração renumerada para 20261021090000)
 - [ ] Rotina semanal de retenção: lista pessoas além do prazo para a coordenação aprovar a anonimização
 - [ ] Rotina semanal de arquivos órfãos e de conferência de backup
 - [ ] Tela de auditoria para admin (quem acessou contato, quem exportou)

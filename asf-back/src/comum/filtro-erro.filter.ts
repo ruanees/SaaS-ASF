@@ -44,7 +44,9 @@ const FALHA_DE_REDE =
 
 export interface RespostaDeErro {
   status: number;
-  corpo: { mensagem: string };
+  // `codigo` só quando o front precisa agir de um jeito específico
+  // (ex.: 'mfa_obrigatorio' leva para a tela do autenticador).
+  corpo: { mensagem: string; codigo?: string };
 }
 
 export function traduzirErro(erro: unknown): RespostaDeErro {
@@ -55,7 +57,15 @@ export function traduzirErro(erro: unknown): RespostaDeErro {
         ? resposta
         : (juntarMensagem((resposta as { message?: unknown }).message) ??
           erro.message);
-    return { status: erro.getStatus(), corpo: { mensagem } };
+    const codigo =
+      typeof resposta === 'object' &&
+      typeof (resposta as { codigo?: unknown }).codigo === 'string'
+        ? (resposta as { codigo: string }).codigo
+        : undefined;
+    return {
+      status: erro.getStatus(),
+      corpo: codigo ? { mensagem, codigo } : { mensagem },
+    };
   }
 
   const { code, message } = (erro ?? {}) as ErroComCodigo;

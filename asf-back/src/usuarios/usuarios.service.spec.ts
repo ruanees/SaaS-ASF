@@ -25,19 +25,33 @@ function consulta(resultado: { data: unknown; error: unknown }) {
 function servico(opcoes: {
   linhas?: Array<{ data: unknown; error: unknown }>;
   invoke?: { data: unknown; error: unknown };
+  situacao?: { data: unknown; error: unknown };
 }) {
   const linhas = [...(opcoes.linhas ?? [])];
   const cliente = {
     from: vi.fn(() => consulta(linhas.shift() ?? { data: null, error: null })),
+    rpc: vi.fn(() => consulta(opcoes.situacao ?? { data: null, error: null })),
     functions: { invoke: vi.fn(() => Promise.resolve(opcoes.invoke)) },
   };
   const supabase = { para: vi.fn(() => cliente) } as unknown as SupabaseService;
   return { service: new UsuariosService(supabase), cliente };
 }
 
+const situacao = (s: Record<string, unknown>) => ({
+  data: {
+    papel: 'voluntario',
+    ativo: true,
+    exige_mfa: false,
+    mfa_ok: false,
+    ...s,
+  },
+  error: null,
+});
+
 describe('UsuariosService.eu', () => {
   it('devolve nome e papel de quem entrou', async () => {
     const { service } = servico({
+      situacao: situacao({ papel: 'admin', exige_mfa: true, mfa_ok: true }),
       linhas: [
         { data: { user_id: EU.id, nome: 'Ana', papel: 'admin' }, error: null },
       ],
@@ -49,14 +63,30 @@ describe('UsuariosService.eu', () => {
     });
   });
 
-  it('conta sem linha ativa (RLS não devolve nada) recebe 403', async () => {
-    const { service } = servico({ linhas: [{ data: null, error: null }] });
+  it('sem convite (nenhuma situação) recebe 403', async () => {
+    const { service } = servico({ situacao: { data: null, error: null } });
     await expect(service.eu(EU)).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('desativado recebe 403', async () => {
+    const { service } = servico({ situacao: situacao({ ativo: false }) });
+    await expect(service.eu(EU)).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('admin sem MFA recebe 403 com codigo mfa_obrigatorio', async () => {
+    const { service } = servico({
+      situacao: situacao({ papel: 'admin', exige_mfa: true, mfa_ok: false }),
+    });
+    const erro = (await service
+      .eu(EU)
+      .catch((e: unknown) => e)) as HttpException;
+    expect(erro.getStatus()).toBe(403);
+    expect(erro.getResponse()).toMatchObject({ codigo: 'mfa_obrigatorio' });
   });
 
   it('erro do banco sobe para o FiltroErro', async () => {
     const { service } = servico({
-      linhas: [{ data: null, error: { code: '', message: 'fetch failed' } }],
+      situacao: { data: null, error: { code: '', message: 'fetch failed' } },
     });
     await expect(service.eu(EU)).rejects.toEqual({
       code: '',

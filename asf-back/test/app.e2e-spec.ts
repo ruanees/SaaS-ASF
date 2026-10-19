@@ -74,6 +74,9 @@ describe('asf-back (e2e)', () => {
     ['get', '/relatorios/animais'],
     ['get', '/relatorios/animais/csv'],
     ['post', '/relatorios/animais/impressao'],
+    ['get', '/sessao/mfa/fatores'],
+    ['post', '/sessao/mfa/inscrever'],
+    ['post', '/sessao/mfa/verificar'],
   ] as const)('%s %s sem sessão responde 401', async (metodo, rota) => {
     const res = await request(app.getHttpServer())[metodo](rota).expect(401);
     expect(res.body.mensagem).toBe('Sessão ausente. Entre de novo.');
@@ -134,6 +137,9 @@ describe('asf-back (e2e)', () => {
       '/relatorios/{secao}/impressao',
       '/saude',
       '/sessao/entrar',
+      '/sessao/mfa/fatores',
+      '/sessao/mfa/inscrever',
+      '/sessao/mfa/verificar',
       '/sessao/recuperar',
       '/sessao/renovar',
       '/sessao/sair',

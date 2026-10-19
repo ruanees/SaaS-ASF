@@ -24,7 +24,7 @@ grant execute on function pg_temp.id(text) to authenticated, anon;
 set local role authenticated;
 
 -- Voluntário cadastra; registra a condição de entrada, mas não exames ---------------
-set local request.jwt.claims = '{"sub":"b2000000-0000-4000-8000-000000000002","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"b2000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
 insert into ids select 'eva', (public.cadastrar_animal('cao', 'femea', app.hoje() - 5, 'resgate', 'sede', 'Eva Fictícia')).id;
 insert into ids select 'tom', (public.cadastrar_animal('cao', 'macho', app.hoje() - 30, 'resgate', 'sede', 'Tom Fictício')).id;
 insert into ids select 'lua', (public.cadastrar_animal('gato', 'femea', app.hoje() - 30, 'resgate', 'sede', 'Lua Fictícia')).id;
@@ -39,7 +39,7 @@ select throws_ok($$select public.registrar_atendimento(pg_temp.id('tom'), 'consu
   'voluntário não registra atendimento clínico');
 
 -- Coordenação: exemplo da Eva (fígado alterado, hemograma, calazar, 4DX, medicação) -----
-set local request.jwt.claims = '{"sub":"b2000000-0000-4000-8000-000000000003","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"b2000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal2"}';
 select lives_ok($$select public.registrar_saude_entrada(pg_temp.id('eva'), 'Sarna generalizada, fígado alterado',
   array['Hemograma', 'Leishmaniose (calazar)', '4DX'],
   '{"medicamento": "Ivermectina", "dose": "0,2 mg/kg", "frequencia": "1 vez por semana"}'::jsonb)$$,
@@ -57,7 +57,7 @@ select is((select count(*)::int from public.pendencias_saude() where tipo = 'exa
   'os 3 exames aguardando aparecem em Pendências');
 
 -- Veterinária: consulta, teste pendente, tratamento, internação (Pronto quando) --------
-set local request.jwt.claims = '{"sub":"b2000000-0000-4000-8000-000000000001","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"b2000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 insert into ids select 'consulta', public.registrar_atendimento(pg_temp.id('tom'), 'consulta', app.hoje() - 3, null, 'Dra. Fictícia CRMV 0000', 'Apatia e perda de peso');
 insert into ids select 'leish', public.registrar_atendimento(pg_temp.id('tom'), 'teste', app.hoje() - 3, null, null, null, null,
   '{"nome": "Leishmaniose (calazar)", "metodo": "Teste rápido"}'::jsonb);
@@ -107,7 +107,7 @@ select results_eq(
            (select count(*)::int from public.movimentacoes where animal_id = pg_temp.id('tom') and situacao = 'obito')$$,
   $$values ('obito', 1, 1)$$, 'óbito pelo prontuário grava situação, atendimento e movimentação');
 
-set local request.jwt.claims = '{"sub":"b2000000-0000-4000-8000-000000000002","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"b2000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
 select lives_ok($$select public.mover_animal(pg_temp.id('lua'), 'obito', null, false, app.hoje(), 'Fictício')$$,
   'óbito pela aba Situação (voluntário)');
 select is((select count(*)::int from public.atendimentos where animal_id = pg_temp.id('lua') and tipo = 'obito'), 1,

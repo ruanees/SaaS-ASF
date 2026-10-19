@@ -24,6 +24,8 @@ export function apiCom(token: string | undefined) {
 export interface Falha {
   status: number;
   mensagem: string;
+  /** Só quando a tela precisa agir (ex.: 'mfa_obrigatorio'). */
+  codigo?: string;
 }
 
 export type Resultado<T> = { ok: true; dados: T } | { ok: false; falha: Falha };
@@ -37,11 +39,15 @@ export async function chamar<T>(
   try {
     const { data, error, response } = await pedido;
     if (response.ok) return { ok: true, dados: data as T };
+    const corpo = (error && typeof error === 'object' ? error : {}) as {
+      mensagem?: unknown;
+      codigo?: unknown;
+    };
     const mensagem =
-      error && typeof error === 'object' && 'mensagem' in error && typeof error.mensagem === 'string'
-        ? error.mensagem
-        : 'Não foi possível concluir a operação.';
-    return { ok: false, falha: { status: response.status, mensagem } };
+      typeof corpo.mensagem === 'string' ? corpo.mensagem : 'Não foi possível concluir a operação.';
+    const falha: Falha = { status: response.status, mensagem };
+    if (typeof corpo.codigo === 'string') falha.codigo = corpo.codigo;
+    return { ok: false, falha };
   } catch {
     return { ok: false, falha: { status: 503, mensagem: SEM_CONEXAO } };
   }
