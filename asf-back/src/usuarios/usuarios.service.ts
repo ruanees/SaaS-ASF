@@ -31,9 +31,9 @@ export class UsuariosService {
   constructor(private readonly supabase: SupabaseService) {}
 
   // Quem entrou. A situação vem do banco (minha_situacao_acesso): sem convite
-  // ou desativado = 403; admin/coordenação sem MFA = 403 'mfa_obrigatorio',
-  // para o front levar à tela do autenticador. Quem decide é a RLS; aqui só
-  // se escolhe a mensagem.
+  // ou desativado = 403; quando o banco exige MFA (hoje desligado, ADR 0012),
+  // admin/coordenação sem o código = 403 'mfa_obrigatorio', para o front levar à
+  // tela do autenticador. Quem decide é a RLS; aqui só se escolhe a mensagem.
   async eu(usuario: UsuarioAutenticado): Promise<EuDto> {
     const sb = this.supabase.para(usuario);
     const situacao = dados(

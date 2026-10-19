@@ -83,7 +83,7 @@ set local request.jwt.claims = '{"sub":"e5000000-0000-4000-8000-000000000002","r
 select throws_ok($$select * from public.arquivos_soltos()$$, '42501', null, 'coordenação não vê arquivos soltos');
 
 set local request.jwt.claims = '{"sub":"e5000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
-select throws_ok($$select * from public.arquivos_soltos()$$, '42501', null, 'admin sem o segundo fator também não');
+select is((select count(*)::int from public.arquivos_soltos()), 2, 'admin só com senha vê (MFA desligado, ADR 0012)');
 
 select * from finish();
 rollback;

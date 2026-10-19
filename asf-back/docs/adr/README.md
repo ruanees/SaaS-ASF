@@ -15,3 +15,4 @@ Cada registro guarda o porquê de uma escolha: o contexto, a decisão, as conseq
 | [0009](0009-um-repositorio-duas-pastas.md) | Um repositório com duas pastas independentes, separável depois | aceita |
 | [0010](0010-fase-4-antes-da-revisao-lgpd.md) | Fase 4 construída antes da revisão da LGPD, com padrões provisórios | aceita |
 | [0011](0011-prazo-de-guarda-calculado-na-abertura.md) | Prazo de guarda calculado a cada abertura, sem rotina agendada | aceita; substitui a parte da rotina semanal do 0007 |
+| [0012](0012-mfa-desligado-por-enquanto.md) | MFA desligado por enquanto; o código fica guardado para voltar | aceita |

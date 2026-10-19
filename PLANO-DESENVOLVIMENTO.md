@@ -980,7 +980,7 @@ Cada número tem uma definição escrita. Sem isso, "total de animais" significa
 
 Funcionalidade: F-20.
 
-- [x] MFA obrigatório para `admin` e `coordenacao` (veio da Fase 0; PR #15 atualizado com a `main`, migração renumerada para 20261021090000)
+- [ ] MFA obrigatório para `admin` e `coordenacao` — **desligado por enquanto (ADR 0012, 19/10/2026)**. Ficou no ar de 19/10 até a migração 20261023090000; o código continua no repositório para religar com uma migração nova.
 - [x] Rotina semanal de retenção: lista pessoas além do prazo para a coordenação aprovar a anonimização (feita como lista calculada a cada abertura, em Pessoas → Prazo de guarda, igual às pendências; não precisa de agendamento)
 - [ ] Rotina semanal de arquivos órfãos e de conferência de backup (arquivos soltos: feito em Configurações, só admin; conferência de backup espera o plano pago)
 - [x] Tela de auditoria para admin (quem acessou contato, quem exportou)
