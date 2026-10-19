@@ -13,8 +13,8 @@ export function porBalde(arquivos: ArquivoSoltoDto[]): Map<string, string[]> {
   return grupos;
 }
 
-// Quem pode ver e apagar decide o banco: a função só responde ao admin com
-// segundo fator, e a política do balde só deixa apagar o que está solto.
+// Quem pode ver e apagar decide o banco: a função só responde ao admin, e a
+// política do balde só deixa apagar o que está solto.
 @Injectable()
 export class ManutencaoService {
   constructor(private readonly supabase: SupabaseService) {}
