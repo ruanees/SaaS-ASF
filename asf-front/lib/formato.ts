@@ -110,3 +110,19 @@ export function fdCurta(iso: string | null | undefined): string {
   const d = iso ? DATA_PURA.exec(iso) : null;
   return d ? `${d[3]}/${d[2]}` : '—';
 }
+
+const formatoDataHora = new Intl.DateTimeFormat('pt-BR', {
+  timeZone: FUSO,
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+
+/** Instante (data-hora ISO) para "dd/mm/aaaa, hh:mm" no fuso da associação. */
+export function fdh(iso: string | null | undefined): string {
+  if (!iso) return '—';
+  const data = new Date(iso);
+  return Number.isNaN(data.getTime()) ? '—' : formatoDataHora.format(data);
+}
