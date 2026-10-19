@@ -24,7 +24,7 @@ function Indicador({
   extra?: { texto: string; href: string };
 }) {
   return (
-    <div className="cartao indicador">
+    <div className="cartao cartao-indicador">
       <Link href={href} className="indicador-link">
         <span className="indicador-valor">{valor ?? '—'}</span>
         <span className="indicador-rotulo">{rotulo}</span>
