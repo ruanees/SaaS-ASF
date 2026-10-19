@@ -983,7 +983,7 @@ Funcionalidade: F-20.
 - [x] MFA obrigatório para `admin` e `coordenacao` (veio da Fase 0; PR #15 atualizado com a `main`, migração renumerada para 20261021090000)
 - [ ] Rotina semanal de retenção: lista pessoas além do prazo para a coordenação aprovar a anonimização
 - [ ] Rotina semanal de arquivos órfãos e de conferência de backup
-- [ ] Tela de auditoria para admin (quem acessou contato, quem exportou)
+- [x] Tela de auditoria para admin (quem acessou contato, quem exportou)
 - [ ] Roteiro de incidente de segurança escrito e com responsáveis definidos
 - [ ] Revisão da política de privacidade, do registro das operações de tratamento e do acordo com quem mantém o sistema, pela assessoria jurídica
 - [ ] Encarregado de dados indicado pela associação

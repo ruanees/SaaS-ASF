@@ -77,6 +77,7 @@ describe('asf-back (e2e)', () => {
     ['get', '/sessao/mfa/fatores'],
     ['post', '/sessao/mfa/inscrever'],
     ['post', '/sessao/mfa/verificar'],
+    ['get', '/auditoria'],
   ] as const)('%s %s sem sessão responde 401', async (metodo, rota) => {
     const res = await request(app.getHttpServer())[metodo](rota).expect(401);
     expect(res.body.mensagem).toBe('Sessão ausente. Entre de novo.');
@@ -91,7 +92,7 @@ describe('asf-back (e2e)', () => {
     expect(res.body.mensagem).toContain('property admin should not exist');
   });
 
-  it('openapi lista as rotas das fases 0 a 5', async () => {
+  it('openapi lista as rotas das fases 0 a 6', async () => {
     const res = await request(app.getHttpServer()).get('/openapi.json');
     expect(Object.keys(res.body.paths).sort()).toEqual([
       '/adocoes',
@@ -121,6 +122,7 @@ describe('asf-back (e2e)', () => {
       '/atendimentos/{atendimentoId}/laudo',
       '/atendimentos/{atendimentoId}/laudo/assinar',
       '/atendimentos/{atendimentoId}/resultado',
+      '/auditoria',
       '/clinicas',
       '/eu',
       '/indicadores',
