@@ -214,3 +214,72 @@ describe('SessaoService MFA', () => {
     expect(erro.message).toContain('Código incorreto');
   });
 });
+
+describe('SessaoService.trocarComAtual', () => {
+  const EU = { id: 'u', token: 'jwt-atual' };
+  const respostaUsuario = () =>
+    new Response(JSON.stringify({ email: 'pessoa@exemplo.test' }), {
+      status: 200,
+    });
+
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('senha atual errada: recusa e não troca nada', async () => {
+    const fetchFalso = vi.fn().mockResolvedValue(respostaUsuario());
+    vi.stubGlobal('fetch', fetchFalso);
+    const entrar = vi.fn().mockResolvedValue({
+      data: { session: null },
+      error: { status: 400, code: 'invalid_credentials' },
+    });
+    const erro = (await servico({ signInWithPassword: entrar })
+      .trocarComAtual(EU, 'errada123x', 'novaSenha123')
+      .catch((e: unknown) => e)) as HttpException;
+    expect(erro.getStatus()).toBe(400);
+    expect(erro.message).toBe('A senha atual não confere.');
+    const metodos = fetchFalso.mock.calls.map(
+      (c) => (c[1] as RequestInit).method,
+    );
+    expect(metodos).toEqual(['GET']); // só leu quem é; não trocou
+  });
+
+  it('senha atual certa: confere, fecha a sessão extra e troca', async () => {
+    const fetchFalso = vi
+      .fn()
+      .mockResolvedValueOnce(respostaUsuario())
+      .mockResolvedValue(new Response(null, { status: 200 }));
+    vi.stubGlobal('fetch', fetchFalso);
+    const entrar = vi.fn().mockResolvedValue({
+      data: { session: { ...SESSAO, access_token: 'sessao-extra' } },
+      error: null,
+    });
+    await servico({ signInWithPassword: entrar }).trocarComAtual(
+      EU,
+      'atualSenha1',
+      'novaSenha123',
+    );
+    expect(entrar).toHaveBeenCalledWith({
+      email: 'pessoa@exemplo.test',
+      password: 'atualSenha1',
+    });
+    const chamadas = fetchFalso.mock.calls.map((c) => [
+      (c[1] as RequestInit).method,
+      String(c[0]).replace('https://exemplo.supabase.co/auth/v1', ''),
+      ((c[1] as RequestInit).headers as Record<string, string>).Authorization,
+    ]);
+    expect(chamadas).toEqual([
+      ['GET', '/user', 'Bearer jwt-atual'],
+      ['POST', '/logout?scope=local', 'Bearer sessao-extra'],
+      ['PUT', '/user', 'Bearer jwt-atual'],
+    ]);
+  });
+
+  it('nova igual à atual: recusa antes de qualquer chamada', async () => {
+    const fetchFalso = vi.fn();
+    vi.stubGlobal('fetch', fetchFalso);
+    const erro = (await servico({})
+      .trocarComAtual(EU, 'mesmaSenha1', 'mesmaSenha1')
+      .catch((e: unknown) => e)) as HttpException;
+    expect(erro.getStatus()).toBe(422);
+    expect(fetchFalso).not.toHaveBeenCalled();
+  });
+});

@@ -84,6 +84,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sessao/trocar-senha": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SessaoController_trocarSenha"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sessao/mfa/fatores": {
         parameters: {
             query?: never;
@@ -987,6 +1003,12 @@ export interface components {
         NovaSenhaDto: {
             /** @description Ao menos 10 caracteres, com letras e números */
             senha: string;
+        };
+        TrocarSenhaDto: {
+            /** @description Ao menos 10 caracteres, com letras e números */
+            senha: string;
+            /** @description Senha atual */
+            atual: string;
         };
         FatorDto: {
             /** Format: uuid */
@@ -2005,6 +2027,27 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["NovaSenhaDto"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SessaoController_trocarSenha: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TrocarSenhaDto"];
             };
         };
         responses: {

@@ -14,6 +14,7 @@ import {
   FatorDto,
   InscricaoMfaDto,
   NovaSenhaDto,
+  TrocarSenhaDto,
   VerificarMfaDto,
   RecuperarDto,
   RenovarDto,
@@ -61,6 +62,17 @@ export class SessaoController {
     @Body() corpo: NovaSenhaDto,
   ): Promise<void> {
     return this.sessao.trocarSenha(usuario, corpo.senha);
+  }
+
+  // Tela "Trocar minha senha": confere a senha atual antes.
+  @Post('trocar-senha')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
+  trocarSenha(
+    @Usuario() usuario: UsuarioAutenticado,
+    @Body() corpo: TrocarSenhaDto,
+  ): Promise<void> {
+    return this.sessao.trocarComAtual(usuario, corpo.atual, corpo.senha);
   }
 
   @Get('mfa/fatores')

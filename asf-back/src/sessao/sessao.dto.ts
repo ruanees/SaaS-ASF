@@ -59,6 +59,15 @@ export class NovaSenhaDto {
   senha: string;
 }
 
+// Troca de senha de quem já está dentro: pede a atual (celular esquecido aberto
+// não basta para trocar a senha de alguém).
+export class TrocarSenhaDto extends NovaSenhaDto {
+  @ApiProperty({ description: 'Senha atual' })
+  @IsString()
+  @Length(1, 200, { message: 'Informe a senha atual.' })
+  atual: string;
+}
+
 export class FatorDto {
   @ApiProperty({ format: 'uuid' })
   id: string;
