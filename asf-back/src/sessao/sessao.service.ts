@@ -146,6 +146,46 @@ export class SessaoService {
     );
   }
 
+  // Quem já está dentro troca a senha confirmando a atual. A conferência abre
+  // uma sessão a mais no Auth, que é encerrada logo em seguida.
+  async trocarComAtual(
+    usuario: UsuarioAutenticado,
+    atual: string,
+    nova: string,
+  ): Promise<void> {
+    if (atual === nova) {
+      throw new UnprocessableEntityException(
+        'A nova senha precisa ser diferente da atual.',
+      );
+    }
+    const quem = await this.chamarAuth('GET', '/user', usuario);
+    const email = quem.ok
+      ? ((await quem.json().catch(() => ({}))) as { email?: string }).email
+      : undefined;
+    if (!email) {
+      throw traduzirErroAuth(
+        { status: quem.status },
+        new UnauthorizedException('Sessão expirada. Entre de novo.'),
+      );
+    }
+
+    const { data, error } = await this.supabase
+      .anonimo()
+      .auth.signInWithPassword({ email, password: atual });
+    if (error || !data.session) {
+      throw traduzirErroAuth(
+        error ?? {},
+        new BadRequestException('A senha atual não confere.'),
+      );
+    }
+    await this.chamarAuth('POST', '/logout?scope=local', {
+      id: usuario.id,
+      token: data.session.access_token,
+    }).catch(() => undefined);
+
+    await this.trocarSenha(usuario, nova);
+  }
+
   async sair(usuario: UsuarioAutenticado): Promise<void> {
     const resposta = await this.chamarAuth(
       'POST',
