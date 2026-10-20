@@ -37,7 +37,6 @@ declare
   d int[];
   s int;
   r int;
-  i int;
 begin
   if p_cpf is null or p_cpf !~ '^[0-9]{11}$' or p_cpf ~ '^([0-9])\1{10}$' then
     return false;
