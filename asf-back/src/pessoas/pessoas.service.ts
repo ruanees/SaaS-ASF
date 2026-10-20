@@ -129,6 +129,9 @@ export class PessoasService {
         p_telefone: c.telefone ?? null,
         p_email: c.email ?? null,
         p_endereco: c.endereco ?? null,
+        p_cpf: c.cpf ?? null,
+        p_rg: c.rg ?? null,
+        p_profissao: c.profissao ?? null,
       }),
     ) as string;
     return this.buscar(usuario, id);
@@ -155,7 +158,16 @@ export class PessoasService {
     const linhas = dados(
       await this.supabase.para(usuario).rpc('ler_contato', { p_pessoa: id }),
     ) as ContatoDto[] | null;
-    return linhas?.[0] ?? { telefone: null, email: null, endereco: null };
+    return (
+      linhas?.[0] ?? {
+        telefone: null,
+        email: null,
+        endereco: null,
+        cpf: null,
+        rg: null,
+        profissao: null,
+      }
+    );
   }
 
   async alterarContato(
@@ -169,6 +181,9 @@ export class PessoasService {
         p_telefone: c.telefone ?? null,
         p_email: c.email ?? null,
         p_endereco: c.endereco ?? null,
+        p_cpf: c.cpf ?? null,
+        p_rg: c.rg ?? null,
+        p_profissao: c.profissao ?? null,
       }),
     );
   }

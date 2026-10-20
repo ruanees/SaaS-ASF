@@ -126,3 +126,9 @@ export function fdh(iso: string | null | undefined): string {
   const data = new Date(iso);
   return Number.isNaN(data.getTime()) ? '—' : formatoDataHora.format(data);
 }
+
+/** CPF guardado só com números -> 000.000.000-00. */
+export function formatarCpf(cpf: string | null | undefined): string {
+  const d = (cpf ?? '').replace(/\D/g, '');
+  return d.length === 11 ? `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}` : (cpf ?? '');
+}

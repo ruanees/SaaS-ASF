@@ -10,6 +10,7 @@ import {
   IsUUID,
   Length,
   Max,
+  MaxLength,
   Min,
 } from 'class-validator';
 import { AnimalLigadoDto } from '../pessoas/pessoas.dto.js';
@@ -44,6 +45,21 @@ export class ListaAdocoesDto {
   @ApiProperty() total: number;
   @ApiProperty() pagina: number;
   @ApiProperty() por_pagina: number;
+}
+
+export const FORMAS_ACOMPANHAMENTO = [
+  'visita',
+  'whatsapp',
+  'ligacao',
+  'outro',
+] as const;
+export type FormaAcompanhamento = (typeof FORMAS_ACOMPANHAMENTO)[number];
+
+export class AcompanhamentoDto {
+  @ApiProperty({ format: 'uuid' }) id: string;
+  @ApiProperty({ type: String, format: 'date' }) data: string;
+  @ApiProperty({ enum: FORMAS_ACOMPANHAMENTO }) forma: FormaAcompanhamento;
+  @ApiProperty({ type: String, nullable: true }) observacoes: string | null;
 }
 
 export class TermoAssinadoDto {
@@ -101,6 +117,25 @@ export class DevolucaoDto {
   @IsString()
   @Length(1, 500, { message: 'Informe o motivo da devolução.' })
   motivo: string;
+}
+
+export class NovoAcompanhamentoDto {
+  @ApiProperty({ format: 'date' })
+  @IsISO8601(DATA, { message: 'Informe a data.' })
+  data: string;
+
+  @ApiProperty({ enum: FORMAS_ACOMPANHAMENTO })
+  @IsIn(FORMAS_ACOMPANHAMENTO, {
+    message: 'Escolha como foi o acompanhamento.',
+  })
+  forma: FormaAcompanhamento;
+
+  @ApiPropertyOptional({ maxLength: 1000 })
+  @IsOptional()
+  @Transform(aparar)
+  @IsString()
+  @MaxLength(1000)
+  observacoes?: string;
 }
 
 export const TIPOS_TERMO = [

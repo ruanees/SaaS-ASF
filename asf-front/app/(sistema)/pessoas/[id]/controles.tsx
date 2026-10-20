@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useActionState, useRef, useState, useTransition } from 'react';
+import { formatarCpf } from '@/lib/formato';
 import type { Contato } from '@/lib/tipos';
 import { alterarContato, anonimizarPessoa, exportarDados, verContato, type EstadoAcao } from '../acoes';
 
@@ -18,6 +19,9 @@ export function ContatoPessoa({ id, pedeEndereco }: { id: string; pedeEndereco: 
         telefone: (form.get('telefone') as string).trim() || null,
         email: (form.get('email') as string).trim() || null,
         endereco: ((form.get('endereco') as string | null) ?? '').trim() || null,
+        cpf: ((form.get('cpf') as string | null) ?? '').replace(/\D/g, '') || null,
+        rg: ((form.get('rg') as string | null) ?? '').trim() || null,
+        profissao: ((form.get('profissao') as string | null) ?? '').trim() || null,
       });
       setEditando(false);
     }
@@ -72,10 +76,26 @@ export function ContatoPessoa({ id, pedeEndereco }: { id: string; pedeEndereco: 
           </div>
         </div>
         {pedeEndereco && (
-          <div className="campo">
-            <label htmlFor="c-endereco">Endereço</label>
-            <input id="c-endereco" name="endereco" maxLength={300} defaultValue={contato.endereco ?? ''} />
-          </div>
+          <>
+            <div className="campo">
+              <label htmlFor="c-endereco">Endereço</label>
+              <input id="c-endereco" name="endereco" maxLength={300} defaultValue={contato.endereco ?? ''} />
+            </div>
+            <div className="grade" data-n="3">
+              <div className="campo">
+                <label htmlFor="c-cpf">CPF</label>
+                <input id="c-cpf" name="cpf" inputMode="numeric" maxLength={14} defaultValue={formatarCpf(contato.cpf)} />
+              </div>
+              <div className="campo">
+                <label htmlFor="c-rg">Identidade (RG)</label>
+                <input id="c-rg" name="rg" maxLength={30} defaultValue={contato.rg ?? ''} />
+              </div>
+              <div className="campo">
+                <label htmlFor="c-profissao">Profissão</label>
+                <input id="c-profissao" name="profissao" maxLength={80} defaultValue={contato.profissao ?? ''} />
+              </div>
+            </div>
+          </>
         )}
         <div className="linha">
           <button className="botao" type="submit" disabled={salvando}>
@@ -105,6 +125,12 @@ export function ContatoPessoa({ id, pedeEndereco }: { id: string; pedeEndereco: 
           <>
             <dt>Endereço</dt>
             <dd>{contato.endereco ?? 'não informado'}</dd>
+            <dt>CPF</dt>
+            <dd>{contato.cpf ? formatarCpf(contato.cpf) : 'não informado'}</dd>
+            <dt>Identidade (RG)</dt>
+            <dd>{contato.rg ?? 'não informado'}</dd>
+            <dt>Profissão</dt>
+            <dd>{contato.profissao ?? 'não informada'}</dd>
           </>
         )}
       </dl>

@@ -10,12 +10,14 @@ import { BALDE_TERMOS } from '../pessoas/pessoas.service.js';
 import { dados, um } from '../supabase/resultado.js';
 import { SupabaseService } from '../supabase/supabase.service.js';
 import type {
+  AcompanhamentoDto,
   AdocaoDto,
   AssinarTermoDto,
   DevolucaoDto,
   FiltroAdocoesDto,
   ListaAdocoesDto,
   NovaAdocaoDto,
+  NovoAcompanhamentoDto,
   PessoaLigadaDto,
   TermoAssinadoDto,
   TermoUrlDto,
@@ -128,6 +130,43 @@ export class AdocoesService {
       }),
     );
     return this.buscar(usuario, id);
+  }
+
+  async uma(usuario: UsuarioAutenticado, id: string): Promise<AdocaoDto> {
+    return this.buscar(usuario, id);
+  }
+
+  // Acompanhamento pós-adoção (visita, WhatsApp, ligação) ---------------------
+
+  async acompanhamentos(
+    usuario: UsuarioAutenticado,
+    id: string,
+  ): Promise<AcompanhamentoDto[]> {
+    return (dados(
+      await this.supabase
+        .para(usuario)
+        .from('acompanhamentos')
+        .select('id, data, forma, observacoes')
+        .eq('adocao_id', id)
+        .order('data', { ascending: false })
+        .order('criado_em', { ascending: false }),
+    ) ?? []) as AcompanhamentoDto[];
+  }
+
+  async registrarAcompanhamento(
+    usuario: UsuarioAutenticado,
+    id: string,
+    c: NovoAcompanhamentoDto,
+  ): Promise<AcompanhamentoDto[]> {
+    dados(
+      await this.supabase.para(usuario).rpc('registrar_acompanhamento', {
+        p_adocao: id,
+        p_data: c.data,
+        p_forma: c.forma,
+        p_observacoes: c.observacoes ?? null,
+      }),
+    );
+    return this.acompanhamentos(usuario, id);
   }
 
   // Termo assinado ----------------------------------------------------------------

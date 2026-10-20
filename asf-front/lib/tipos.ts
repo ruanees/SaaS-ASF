@@ -30,3 +30,4 @@ export type Indicadores = Esquemas['IndicadoresDto'];
 export type PontoMensal = Esquemas['PontoMensalDto'];
 export type Relatorio = Esquemas['RelatorioDto'];
 export type SecaoRelatorio = Relatorio['secao'];
+export type Acompanhamento = Esquemas['AcompanhamentoDto'];

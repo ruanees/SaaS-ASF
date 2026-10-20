@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { useActionState } from 'react';
 import { EnvioArquivo } from '@/components/envio-arquivo';
 import { PessoaSeletor } from '@/components/pessoa-seletor';
+import { FORMA_ACOMPANHAMENTO } from '@/lib/rotulos';
 import type { Adocao, PessoaResumo } from '@/lib/tipos';
 import {
   abrirTermo,
   assinarTermo,
+  registrarAcompanhamento,
   registrarAdocao,
   registrarDevolucao,
   registrarTermo,
@@ -115,5 +117,54 @@ export function AcoesAdocao({ animalId, adocao, hoje }: { animalId: string; adoc
         </form>
       </details>
     </div>
+  );
+}
+
+// Acompanhamento pós-adoção: visita, fotos e vídeos por WhatsApp, ligação.
+export function FormAcompanhamento({
+  animalId,
+  adocao,
+  hoje,
+}: {
+  animalId: string;
+  adocao: Adocao;
+  hoje: string;
+}) {
+  const [estado, acao, enviando] = useActionState<EstadoAcao, FormData>(
+    registrarAcompanhamento.bind(null, adocao.id, animalId),
+    {},
+  );
+  return (
+    <details>
+      <summary>Registrar acompanhamento</summary>
+      <form action={acao} className="pilha" style={{ marginTop: 'var(--e-3)' }}>
+        <Mensagem estado={estado} />
+        <div className="grade" data-n="2">
+          <div className="campo">
+            <label htmlFor={`ac-data-${adocao.id}`}>Data</label>
+            <input id={`ac-data-${adocao.id}`} name="data" type="date" min={adocao.data_adocao} max={adocao.data_devolucao ?? hoje} defaultValue={adocao.data_devolucao ?? hoje} required />
+          </div>
+          <div className="campo">
+            <label htmlFor={`ac-forma-${adocao.id}`}>Como foi</label>
+            <select id={`ac-forma-${adocao.id}`} name="forma" defaultValue="whatsapp" required>
+              {Object.entries(FORMA_ACOMPANHAMENTO).map(([v, r]) => (
+                <option key={v} value={v}>
+                  {r}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="campo">
+          <label htmlFor={`ac-obs-${adocao.id}`}>Como está o animal</label>
+          <input id={`ac-obs-${adocao.id}`} name="observacoes" maxLength={1000} placeholder="Ex.: mandou vídeo, animal bem, castração marcada" />
+        </div>
+        <div>
+          <button className="botao" type="submit" disabled={enviando}>
+            {enviando ? 'Registrando…' : 'Registrar acompanhamento'}
+          </button>
+        </div>
+      </form>
+    </details>
   );
 }

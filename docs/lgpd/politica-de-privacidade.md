@@ -53,7 +53,7 @@ Os dados dos animais (vacinas, exames e histórico) não são dados pessoais.
 
 ## 5. Por quanto tempo
 
-- **Adotantes e lares temporários:** enquanto durar o vínculo com o animal, e depois por **[60 meses]**. Passado esse prazo, os dados são **anonimizados**: o nome vira "Pessoa anonimizada" e os contatos são apagados. O histórico do animal continua existindo, mas sem identificar você.
+- **Adotantes e lares temporários:** enquanto durar o vínculo com o animal (para o adotante, enquanto a associação acompanha o animal, até o fim da vida dele), e depois por **60 meses**. Passado esse prazo, os dados são **anonimizados**: o nome vira "Pessoa anonimizada" e os contatos são apagados. O histórico do animal continua existindo, mas sem identificar você.
 - **Usuários do sistema:** enquanto a pessoa fizer parte da associação. Quando alguém sai, o acesso é desativado no mesmo dia. O nome continua nos registros que a pessoa fez, porque eles fazem parte do histórico dos animais.
 - **Registros de acesso (IP e sessão):** [prazo a definir, sugestão de 6 meses].
 
@@ -92,4 +92,4 @@ Se esta política mudar, a nova versão fica disponível com a data de atualiza�
 
 Texto para a tela de cadastro de pessoa e para o fim do termo de adoção (brandbook, seção 07):
 
-> Seus dados servem só para acompanhar esta adoção (ou o lar temporário) e falar com você sobre o animal. Só a coordenação da associação vê seu telefone e endereço. Guardamos por [60 meses] depois do fim do vínculo e depois anonimizamos. Para ver, corrigir ou pedir a anonimização dos seus dados: [e-mail do encarregado].
+> Seus dados servem só para acompanhar esta adoção (ou o lar temporário) e falar com você sobre o animal. Só a coordenação da associação vê seu telefone, endereço e documentos. Guardamos enquanto a associação acompanha o animal e por 60 meses depois, e então anonimizamos. Para ver, corrigir ou pedir a anonimização dos seus dados: [e-mail do encarregado].

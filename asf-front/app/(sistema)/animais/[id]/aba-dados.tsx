@@ -16,6 +16,8 @@ const ROTULO_CAMPO: Record<string, string> = {
   nascimento_estimado: 'nascimento',
   idade_precisao: 'precisão da idade',
   porte: 'porte',
+  raca: 'raça',
+  pelagem: 'cor da pelagem',
   data_entrada: 'data de entrada',
   origem: 'origem',
   origem_detalhe: 'detalhe da origem',
@@ -87,6 +89,14 @@ export function AbaDados({ animal, hoje, podeExcluir }: { animal: Animal; hoje: 
                 </option>
               ))}
             </select>
+          </div>
+          <div className="campo">
+            <label htmlFor="d-raca">Raça</label>
+            <input id="d-raca" defaultValue={animal.raca ?? ''} maxLength={60} placeholder="SRD (sem raça definida)" onBlur={(e) => texto('raca', e.target.value)} />
+          </div>
+          <div className="campo">
+            <label htmlFor="d-pelagem">Cor da pelagem</label>
+            <input id="d-pelagem" defaultValue={animal.pelagem ?? ''} maxLength={60} placeholder="Caramelo, preto e branco…" onBlur={(e) => texto('pelagem', e.target.value)} />
           </div>
           <div className="campo">
             <label htmlFor="d-especie">Espécie</label>

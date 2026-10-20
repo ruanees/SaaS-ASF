@@ -16,6 +16,7 @@ const SECOES: { chave: SecaoRelatorio; rotulo: string; periodo: boolean }[] = [
   { chave: 'castracao', rotulo: 'Castração', periodo: false },
   { chave: 'adocoes', rotulo: 'Adoções', periodo: true },
   { chave: 'movimentacoes', rotulo: 'Movimentações', periodo: true },
+  { chave: 'social', rotulo: 'Relatório social', periodo: true },
 ];
 
 export default async function Relatorios({ searchParams }: PageProps<'/relatorios'>) {

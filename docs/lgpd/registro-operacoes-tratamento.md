@@ -16,13 +16,13 @@
 | Item | Descrição |
 |---|---|
 | Titulares | Pessoas que adotam animais da associação |
-| Dados | Nome, telefone, e-mail e endereço. **Nenhum dado sensível.** |
+| Dados | Nome, telefone, e-mail, endereço, CPF, identidade (RG) e profissão, como no termo de adoção da associação (ADR 0013). **Nenhum dado sensível.** |
 | Finalidade | Registrar a adoção, emitir o termo e fazer contato sobre o animal |
 | Base legal | Execução de contrato, art. 7º, V |
 | Onde fica | Tabelas `pessoas` (nome) e `pessoas_contato` (contato), no Supabase em São Paulo |
 | Quem acessa | Nome: todos os papéis. Contato: só admin e coordenação, com registro de cada leitura na `auditoria` |
 | Compartilhamento | Nenhum, além dos fornecedores da seção "Fornecedores" |
-| Retenção | Durante o vínculo, depois [60 meses]; então anonimização aprovada pela coordenação |
+| Retenção | Enquanto o animal adotado viver (acompanhamento pós-adoção até o fim da vida, pedido da associação), depois 60 meses a contar do óbito, da devolução ou do último acompanhamento; então anonimização aprovada pela coordenação (ADR 0013) |
 | Segurança | RLS forçada, tabela de contato separada, auditoria sem valores, HTTPS e backups diários |
 
 ### 2. Cadastro de lar temporário (Fase 4)
@@ -30,6 +30,7 @@
 Igual à operação 1, com estas diferenças:
 - **Finalidade:** saber onde o animal está e falar com o responsável.
 - **Base legal:** execução de contrato ou acordo de voluntariado (art. 7º, V).
+- **Dados:** nome, telefone, e-mail, endereço e CPF ou identidade (RG), pedido da associação (ADR 0013).
 - **Regra extra:** a anonimização é recusada enquanto houver animal no lar.
 
 ### 3. Usuários do sistema (Fase 0, em uso)

@@ -96,6 +96,10 @@ export class ContatoDto {
   @ApiProperty({ type: String, nullable: true }) telefone: string | null;
   @ApiProperty({ type: String, nullable: true }) email: string | null;
   @ApiProperty({ type: String, nullable: true }) endereco: string | null;
+  @ApiProperty({ type: String, nullable: true, description: 'Só números' })
+  cpf: string | null;
+  @ApiProperty({ type: String, nullable: true }) rg: string | null;
+  @ApiProperty({ type: String, nullable: true }) profissao: string | null;
 }
 
 export class LarTemporarioDto {
@@ -187,6 +191,29 @@ export class ContatoEntradaDto {
   @IsString()
   @MaxLength(300)
   endereco?: string;
+
+  @ApiPropertyOptional({ example: '000.000.000-00' })
+  @IsOptional()
+  @Transform(limpo)
+  @IsString()
+  @Matches(/^[0-9.\-\s]{11,14}$/, {
+    message: 'CPF inválido. Confira os números.',
+  })
+  cpf?: string;
+
+  @ApiPropertyOptional({ maxLength: 30, description: 'Identidade (RG)' })
+  @IsOptional()
+  @Transform(limpo)
+  @IsString()
+  @MaxLength(30)
+  rg?: string;
+
+  @ApiPropertyOptional({ maxLength: 80 })
+  @IsOptional()
+  @Transform(limpo)
+  @IsString()
+  @MaxLength(80)
+  profissao?: string;
 }
 
 export class AlterarPessoaDto {
@@ -231,4 +258,27 @@ export class NovaPessoaDto extends AlterarPessoaDto {
   @IsString()
   @MaxLength(300)
   endereco?: string;
+
+  @ApiPropertyOptional({ example: '000.000.000-00' })
+  @IsOptional()
+  @Transform(limpo)
+  @IsString()
+  @Matches(/^[0-9.\-\s]{11,14}$/, {
+    message: 'CPF inválido. Confira os números.',
+  })
+  cpf?: string;
+
+  @ApiPropertyOptional({ maxLength: 30, description: 'Identidade (RG)' })
+  @IsOptional()
+  @Transform(limpo)
+  @IsString()
+  @MaxLength(30)
+  rg?: string;
+
+  @ApiPropertyOptional({ maxLength: 80 })
+  @IsOptional()
+  @Transform(limpo)
+  @IsString()
+  @MaxLength(80)
+  profissao?: string;
 }

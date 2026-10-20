@@ -128,7 +128,7 @@ export class AnimaisService {
       await sb
         .from('animais')
         .select(
-          `${CAMPOS_RESUMO}, origem, origem_detalhe, observacoes, microchip, microchip_data, condicao_entrada, criado_em, atualizado_em, clinica:clinicas(id, nome, ativo), responsavel:pessoas!animais_pessoa_fk(id, nome), animal_fotos(caminho)`,
+          `${CAMPOS_RESUMO}, origem, origem_detalhe, observacoes, microchip, microchip_data, condicao_entrada, raca, pelagem, criado_em, atualizado_em, clinica:clinicas(id, nome, ativo), responsavel:pessoas!animais_pessoa_fk(id, nome), animal_fotos(caminho)`,
         )
         .eq('id', id)
         .eq('animal_fotos.principal', true)
@@ -141,6 +141,8 @@ export class AnimaisService {
           microchip: string | null;
           microchip_data: string | null;
           condicao_entrada: string | null;
+          raca: string | null;
+          pelagem: string | null;
           criado_em: string;
           atualizado_em: string;
           clinica: AnimalDto['clinica'];
@@ -161,6 +163,8 @@ export class AnimaisService {
       microchip: linha.microchip,
       microchip_data: linha.microchip_data,
       condicao_entrada: linha.condicao_entrada,
+      raca: linha.raca,
+      pelagem: linha.pelagem,
       clinica: linha.clinica,
       responsavel: linha.responsavel,
       criado_em: linha.criado_em,

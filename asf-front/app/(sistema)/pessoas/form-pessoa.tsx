@@ -116,12 +116,29 @@ export function FormNovaPessoa({ vinculoInicial, voltar }: { vinculoInicial?: Vi
           </div>
         </div>
         {pedeEndereco ? (
-          <div className="campo">
-            <label htmlFor="p-endereco">Endereço</label>
-            <input id="p-endereco" {...campo('endereco')} maxLength={300} placeholder="Rua, número, bairro, cidade" />
-          </div>
+          <>
+            <div className="campo">
+              <label htmlFor="p-endereco">Endereço</label>
+              <input id="p-endereco" {...campo('endereco')} maxLength={300} placeholder="Rua, número, bairro, cidade/UF" />
+            </div>
+            <div className="grade" data-n="3">
+              <div className="campo">
+                <label htmlFor="p-cpf">CPF</label>
+                <input id="p-cpf" {...campo('cpf')} inputMode="numeric" maxLength={14} placeholder="000.000.000-00" />
+              </div>
+              <div className="campo">
+                <label htmlFor="p-rg">Identidade (RG)</label>
+                <input id="p-rg" {...campo('rg')} maxLength={30} />
+              </div>
+              <div className="campo">
+                <label htmlFor="p-profissao">Profissão</label>
+                <input id="p-profissao" {...campo('profissao')} maxLength={80} />
+              </div>
+            </div>
+            <p className="ajuda">CPF ou identidade: pedidos para lar temporário e no termo de adoção.</p>
+          </>
         ) : (
-          <p className="ajuda">O endereço aparece ao escolher o vínculo.</p>
+          <p className="ajuda">Endereço e documentos aparecem ao escolher o vínculo.</p>
         )}
       </section>
 
