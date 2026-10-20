@@ -123,3 +123,20 @@ export async function limparArquivosSoltos(): Promise<{ ok?: string; erro?: stri
     ? { erro: `${r.dados.apagados} apagados; ${r.dados.restantes} não saíram. Tente de novo mais tarde.` }
     : { ok: `${r.dados.apagados} ${r.dados.apagados === 1 ? 'arquivo apagado' : 'arquivos apagados'}.` };
 }
+
+// Trocar a própria senha (tela Minha senha): o back confere a senha atual.
+export async function trocarMinhaSenha(_: EstadoAcao, form: FormData): Promise<EstadoAcao> {
+  const atual = texto(form, 'atual');
+  const senha = texto(form, 'senha');
+  const repeticao = texto(form, 'repeticao');
+  if (!atual) return { erro: 'Informe a senha atual.' };
+  if (senha.length < 10) return { erro: 'A senha nova precisa ter ao menos 10 caracteres.' };
+  if (!/\p{L}/u.test(senha) || !/\d/.test(senha)) return { erro: 'A senha nova precisa ter letras e números.' };
+  if (senha !== repeticao) return { erro: 'As duas senhas novas não são iguais.' };
+  if (senha === atual) return { erro: 'A nova senha precisa ser diferente da atual.' };
+
+  const cliente = await api();
+  const r = await chamar(cliente.POST('/sessao/trocar-senha', { body: { atual, senha } }));
+  if (!r.ok) return { erro: r.falha.mensagem };
+  return { ok: 'Senha trocada. Use a nova no próximo acesso.' };
+}
