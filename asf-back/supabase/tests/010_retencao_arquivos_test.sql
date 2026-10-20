@@ -46,7 +46,7 @@ select public.anonimizar_pessoa('e5100000-0000-4000-8000-000000000005');
 -- Prazo de guarda -------------------------------------------------------------------
 select results_eq(
   $$select nome from public.pessoas_alem_do_prazo() order by nome$$,
-  $values ('Sem Evento Fictícia')$,
+  $$values ('Sem Evento Fictícia')$$,
   'só quem passou do prazo, sem animal em lar temporário e sem adotado vivo (ADR 0013)');
 select is((select count(*)::int from public.pessoas_alem_do_prazo() where nome = 'Adotou Há Tempo Fictícia'), 0,
   'adoção antiga de animal vivo: o vínculo continua (acompanhamento até o fim da vida, ADR 0013)');
