@@ -83,3 +83,26 @@ export async function abrirTermo(adocaoId: string): Promise<{ url?: string; erro
   const r = await chamar(cliente.GET('/adocoes/{adocaoId}/termo', { params: { path: { adocaoId } } }));
   return r.ok ? { url: r.dados.url } : { erro: r.falha.mensagem };
 }
+
+// Acompanhamento pós-adoção: qualquer papel registra (visita, WhatsApp, ligação).
+export async function registrarAcompanhamento(
+  adocaoId: string,
+  animalId: string,
+  _: EstadoAcao,
+  form: FormData,
+): Promise<EstadoAcao> {
+  const data = texto(form, 'data');
+  const forma = texto(form, 'forma') as 'visita' | 'whatsapp' | 'ligacao' | 'outro';
+  if (!data) return { erro: 'Informe a data.' };
+  if (!forma) return { erro: 'Escolha como foi o acompanhamento.' };
+  const cliente = await api();
+  const r = await chamar(
+    cliente.POST('/adocoes/{adocaoId}/acompanhamentos', {
+      params: { path: { adocaoId } },
+      body: { data, forma, observacoes: texto(form, 'observacoes') || undefined },
+    }),
+  );
+  if (!r.ok) return { erro: r.falha.mensagem };
+  revalidatePath(`/animais/${animalId}`);
+  return { ok: 'Acompanhamento registrado.' };
+}

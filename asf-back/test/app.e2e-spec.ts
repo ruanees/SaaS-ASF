@@ -78,6 +78,9 @@ describe('asf-back (e2e)', () => {
     ['post', '/sessao/mfa/inscrever'],
     ['post', '/sessao/mfa/verificar'],
     ['get', '/auditoria'],
+    ['get', '/adocoes/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d'],
+    ['get', '/adocoes/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/acompanhamentos'],
+    ['post', '/adocoes/6f1c2b8e-3d4a-4f5b-9c6d-7e8f9a0b1c2d/acompanhamentos'],
     ['get', '/pessoas/alem-do-prazo'],
     ['get', '/arquivos-soltos'],
     ['post', '/arquivos-soltos/apagar'],
@@ -99,6 +102,8 @@ describe('asf-back (e2e)', () => {
     const res = await request(app.getHttpServer()).get('/openapi.json');
     expect(Object.keys(res.body.paths).sort()).toEqual([
       '/adocoes',
+      '/adocoes/{adocaoId}',
+      '/adocoes/{adocaoId}/acompanhamentos',
       '/adocoes/{adocaoId}/devolucao',
       '/adocoes/{adocaoId}/termo',
       '/adocoes/{adocaoId}/termo/assinar',

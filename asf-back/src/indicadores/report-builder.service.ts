@@ -126,6 +126,8 @@ export class ReportBuilderService {
         return this.adocoes(usuario, q);
       case 'movimentacoes':
         return this.movimentacoes(usuario, q);
+      case 'social':
+        return this.social(usuario, q);
     }
   }
 
@@ -343,6 +345,42 @@ export class ReportBuilderService {
     };
   }
 
+  // Relatório social (Sua Nota Tem Valor, SEFAZ-CE): o que a associação fez no
+  // período, mês a mês e no total. A parte financeira fica fora do sistema.
+  private async social(
+    usuario: UsuarioAutenticado,
+    q: RelatorioQueryDto,
+  ): Promise<RelatorioDto> {
+    const { de, ate } = this.periodo(q);
+    const linhas = (dados(
+      await this.supabase
+        .para(usuario)
+        .rpc('relatorio_social', { p_de: de, p_ate: ate }),
+    ) ?? []) as LinhaSocial[];
+    const total = linhas.find((l) => l.mes === null);
+    return {
+      secao: 'social',
+      titulo: 'Relatório social',
+      descricao:
+        'O que a associação fez no período, mês a mês. "Animais atendidos" conta cada animal uma vez. Para a prestação de contas do Sua Nota Tem Valor (SEFAZ-CE), junto com a parte financeira.',
+      de,
+      ate,
+      quadros: total
+        ? COLUNAS_SOCIAL.map(([chave, rotulo]) => ({
+            rotulo,
+            valor: total[chave] as number,
+          }))
+        : [],
+      colunas: col([['mes', 'Mês'], ...COLUNAS_SOCIAL]),
+      linhas: linhas.map((l) => ({
+        mes: l.mes ? mesPorExtenso(l.mes) : 'Total do período',
+        ...Object.fromEntries(
+          COLUNAS_SOCIAL.map(([chave]) => [chave, String(l[chave])]),
+        ),
+      })),
+    };
+  }
+
   private async movimentacoes(
     usuario: UsuarioAutenticado,
     q: RelatorioQueryDto,
@@ -402,6 +440,53 @@ export class ReportBuilderService {
       })),
     };
   }
+}
+
+const COLUNAS_SOCIAL: [keyof LinhaSocial, string][] = [
+  ['animais_atendidos', 'Animais atendidos'],
+  ['entradas', 'Entradas (resgates e reentradas)'],
+  ['adocoes', 'Adoções'],
+  ['castracoes', 'Castrações'],
+  ['vacinas', 'Vacinas aplicadas'],
+  ['vermifugacoes', 'Vermifugações'],
+  ['antiparasitarios', 'Antipulgas e carrapatos'],
+  ['atendimentos_clinicos', 'Consultas, exames e tratamentos'],
+  ['devolvidos_comunidade', 'Castrados e devolvidos à comunidade'],
+  ['obitos', 'Óbitos'],
+];
+
+type LinhaSocial = {
+  mes: string | null;
+  animais_atendidos: number;
+  entradas: number;
+  adocoes: number;
+  castracoes: number;
+  vacinas: number;
+  vermifugacoes: number;
+  antiparasitarios: number;
+  atendimentos_clinicos: number;
+  devolvidos_comunidade: number;
+  obitos: number;
+};
+
+const MESES = [
+  'janeiro',
+  'fevereiro',
+  'março',
+  'abril',
+  'maio',
+  'junho',
+  'julho',
+  'agosto',
+  'setembro',
+  'outubro',
+  'novembro',
+  'dezembro',
+];
+
+/** 2026-03-01 -> "março/2026". */
+export function mesPorExtenso(iso: string): string {
+  return `${MESES[Number(iso.slice(5, 7)) - 1]}/${iso.slice(0, 4)}`;
 }
 
 function col(pares: [string, string][]): ColunaDto[] {

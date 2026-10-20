@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fd, fdCurta, fdh, hojeIso, idade, nascimentoEstimado, somarDias } from './formato';
+import { fd, fdCurta, fdh, formatarCpf, hojeIso, idade, nascimentoEstimado, somarDias } from './formato';
 
 describe('fd', () => {
   it('data pura não sofre fuso', () => {
@@ -69,5 +69,14 @@ describe('fdh', () => {
   it('vazio ou inválido vira travessão', () => {
     expect(fdh(null)).toBe('—');
     expect(fdh('xx')).toBe('—');
+  });
+});
+
+describe('formatarCpf', () => {
+  it('só números vira 000.000.000-00', () => {
+    expect(formatarCpf('52998224725')).toBe('529.982.247-25');
+  });
+  it('vazio continua vazio', () => {
+    expect(formatarCpf(null)).toBe('');
   });
 });

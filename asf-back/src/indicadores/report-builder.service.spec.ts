@@ -1,4 +1,4 @@
-import { dataBr, paraCsv } from './report-builder.service.js';
+import { dataBr, mesPorExtenso, paraCsv } from './report-builder.service.js';
 
 describe('paraCsv', () => {
   const colunas = [
@@ -39,5 +39,12 @@ describe('dataBr', () => {
   it('converte sem mexer no dia', () => {
     expect(dataBr('2026-01-31')).toBe('31/01/2026');
     expect(dataBr(null)).toBeNull();
+  });
+});
+
+describe('mesPorExtenso', () => {
+  it('mês e ano por extenso para o relatório social', () => {
+    expect(mesPorExtenso('2026-03-01')).toBe('março/2026');
+    expect(mesPorExtenso('2026-12-01')).toBe('dezembro/2026');
   });
 });

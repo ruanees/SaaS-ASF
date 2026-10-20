@@ -3,7 +3,8 @@ import { AvisoPrivacidade } from '@/components/aviso-privacidade';
 import { api, chamar, obterEu } from '@/lib/api';
 import { fd } from '@/lib/formato';
 import type { Animal } from '@/lib/tipos';
-import { AcoesAdocao, FormAdocao } from './forms-adocao';
+import { FORMA_ACOMPANHAMENTO } from '@/lib/rotulos';
+import { AcoesAdocao, FormAcompanhamento, FormAdocao } from './forms-adocao';
 
 export async function AbaAdocao({ animal, hoje, pessoa }: { animal: Animal; hoje: string; pessoa?: string }) {
   const cliente = await api();
@@ -32,6 +33,14 @@ export async function AbaAdocao({ animal, hoje, pessoa }: { animal: Animal; hoje
     );
   }
   const ativa = adocoes.dados.find((a) => a.data_devolucao === null);
+  const acompanhamentos = new Map(
+    await Promise.all(
+      adocoes.dados.map(async (a) => {
+        const r = await chamar(cliente.GET('/adocoes/{adocaoId}/acompanhamentos', { params: { path: { adocaoId: a.id } } }));
+        return [a.id, r.ok ? r.dados : []] as const;
+      }),
+    ),
+  );
 
   return (
     <div className="pilha" data-e="5">
@@ -52,7 +61,30 @@ export async function AbaAdocao({ animal, hoje, pessoa }: { animal: Animal; hoje
                     </span>
                   </span>
                   {a.motivo_devolucao && <span className="ajuda">Motivo da devolução: {a.motivo_devolucao}</span>}
+                  {coordena && (
+                    <span>
+                      <Link className="botao" data-tipo="texto" href={`/imprimir/termo/${a.id}`} target="_blank">
+                        Gerar termo de adoção para imprimir
+                      </Link>
+                    </span>
+                  )}
                   {coordena && a.id === ativa?.id && <AcoesAdocao animalId={animal.id} adocao={a} hoje={hoje} />}
+                  <span className="pilha" data-e="2">
+                    <span className="rotulo">Acompanhamentos</span>
+                    {(acompanhamentos.get(a.id) ?? []).length === 0 ? (
+                      <span className="ajuda">Nenhum acompanhamento registrado.</span>
+                    ) : (
+                      <ul className="pilha" data-e="1" style={{ margin: 0, paddingLeft: 'var(--e-4)' }}>
+                        {(acompanhamentos.get(a.id) ?? []).map((ac) => (
+                          <li key={ac.id}>
+                            <b>{fd(ac.data)}</b> · {FORMA_ACOMPANHAMENTO[ac.forma]}
+                            {ac.observacoes && <span className="ajuda"> · {ac.observacoes}</span>}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {animal.situacao !== 'obito' && <FormAcompanhamento animalId={animal.id} adocao={a} hoje={hoje} />}
+                  </span>
                   {!coordena && a.tem_termo && <span className="ajuda">Termo assinado anexado.</span>}
                 </span>
               </li>

@@ -128,6 +128,9 @@ export class AnimalDto extends AnimalResumoDto {
     description: 'Condição de saúde na entrada',
   })
   condicao_entrada: string | null;
+  @ApiProperty({ type: String, nullable: true }) raca: string | null;
+  @ApiProperty({ type: String, nullable: true, description: 'Cor da pelagem' })
+  pelagem: string | null;
   @ApiProperty({ type: String, format: 'date', nullable: true })
   microchip_data: string | null;
   @ApiProperty({ format: 'date-time' }) criado_em: string;
@@ -429,6 +432,18 @@ export class AlterarAnimalDto {
   @IsString()
   @MaxLength(2000)
   condicao_entrada?: string | null;
+
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 60 })
+  @IsOptional()
+  @IsString()
+  @MaxLength(60)
+  raca?: string | null;
+
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 60 })
+  @IsOptional()
+  @IsString()
+  @MaxLength(60)
+  pelagem?: string | null;
 }
 
 export class NovaMovimentacaoDto {

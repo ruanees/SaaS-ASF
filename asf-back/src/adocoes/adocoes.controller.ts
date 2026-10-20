@@ -12,12 +12,14 @@ import {
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Usuario, type UsuarioAutenticado } from '../auth/usuario.js';
 import {
+  AcompanhamentoDto,
   AdocaoDto,
   AssinarTermoDto,
   DevolucaoDto,
   FiltroAdocoesDto,
   ListaAdocoesDto,
   NovaAdocaoDto,
+  NovoAcompanhamentoDto,
   RegistrarTermoDto,
   TermoAssinadoDto,
   TermoUrlDto,
@@ -58,6 +60,37 @@ export class AdocoesController {
     @Body() corpo: NovaAdocaoDto,
   ): Promise<AdocaoDto> {
     return this.adocoes.registrar(usuario, id, corpo);
+  }
+
+  @Get('adocoes/:adocaoId')
+  @ApiOkResponse({ type: AdocaoDto })
+  uma(
+    @Usuario() usuario: UsuarioAutenticado,
+    @Uuid('adocaoId') adocaoId: string,
+  ): Promise<AdocaoDto> {
+    return this.adocoes.uma(usuario, adocaoId);
+  }
+
+  @Get('adocoes/:adocaoId/acompanhamentos')
+  @ApiOkResponse({ type: [AcompanhamentoDto] })
+  acompanhamentos(
+    @Usuario() usuario: UsuarioAutenticado,
+    @Uuid('adocaoId') adocaoId: string,
+  ): Promise<AcompanhamentoDto[]> {
+    return this.adocoes.acompanhamentos(usuario, adocaoId);
+  }
+
+  @Post('adocoes/:adocaoId/acompanhamentos')
+  @ApiCreatedResponse({
+    type: [AcompanhamentoDto],
+    description: 'A lista atualizada',
+  })
+  registrarAcompanhamento(
+    @Usuario() usuario: UsuarioAutenticado,
+    @Uuid('adocaoId') adocaoId: string,
+    @Body() corpo: NovoAcompanhamentoDto,
+  ): Promise<AcompanhamentoDto[]> {
+    return this.adocoes.registrarAcompanhamento(usuario, adocaoId, corpo);
   }
 
   @Post('adocoes/:adocaoId/devolucao')

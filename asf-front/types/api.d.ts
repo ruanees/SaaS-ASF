@@ -772,6 +772,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/adocoes/{adocaoId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdocoesController_uma"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/adocoes/{adocaoId}/acompanhamentos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdocoesController_acompanhamentos"];
+        put?: never;
+        post: operations["AdocoesController_registrarAcompanhamento"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/adocoes/{adocaoId}/devolucao": {
         parameters: {
             query?: never;
@@ -1171,6 +1203,9 @@ export interface components {
             microchip: string | null;
             /** @description Condição de saúde na entrada */
             condicao_entrada: string | null;
+            raca: string | null;
+            /** @description Cor da pelagem */
+            pelagem: string | null;
             /** Format: date */
             microchip_data: string | null;
             /** Format: date-time */
@@ -1201,6 +1236,8 @@ export interface components {
             /** Format: date */
             microchip_data?: string | null;
             condicao_entrada?: string | null;
+            raca?: string | null;
+            pelagem?: string | null;
         };
         MovimentacaoDto: {
             /** Format: uuid */
@@ -1662,6 +1699,11 @@ export interface components {
             telefone?: string;
             email?: string;
             endereco?: string;
+            /** @example 000.000.000-00 */
+            cpf?: string;
+            /** @description Identidade (RG) */
+            rg?: string;
+            profissao?: string;
         };
         AnimalLigadoDto: {
             /** Format: uuid */
@@ -1728,6 +1770,10 @@ export interface components {
             telefone: string | null;
             email: string | null;
             endereco: string | null;
+            /** @description Só números */
+            cpf: string | null;
+            rg: string | null;
+            profissao: string | null;
         };
         ContatoEntradaDto: {
             /** @example (88) 90000-0000 */
@@ -1735,6 +1781,11 @@ export interface components {
             email?: string;
             /** @description Só para adotante e lar temporário */
             endereco?: string;
+            /** @example 000.000.000-00 */
+            cpf?: string;
+            /** @description Identidade (RG) */
+            rg?: string;
+            profissao?: string;
         };
         AnonimizacaoDto: {
             /** @description Preenchido quando algum termo não saiu do Storage */
@@ -1775,6 +1826,22 @@ export interface components {
             pessoa_id: string;
             /** Format: date */
             data: string;
+        };
+        AcompanhamentoDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date */
+            data: string;
+            /** @enum {string} */
+            forma: "visita" | "whatsapp" | "ligacao" | "outro";
+            observacoes: string | null;
+        };
+        NovoAcompanhamentoDto: {
+            /** Format: date */
+            data: string;
+            /** @enum {string} */
+            forma: "visita" | "whatsapp" | "ligacao" | "outro";
+            observacoes?: string;
         };
         DevolucaoDto: {
             /** Format: date */
@@ -1854,7 +1921,7 @@ export interface components {
         };
         RelatorioDto: {
             /** @enum {string} */
-            secao: "animais" | "vacinacao" | "castracao" | "adocoes" | "movimentacoes";
+            secao: "animais" | "vacinacao" | "castracao" | "adocoes" | "movimentacoes" | "social";
             titulo: string;
             descricao: string;
             /** Format: date */
@@ -3248,6 +3315,74 @@ export interface operations {
             };
         };
     };
+    AdocoesController_uma: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                adocaoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdocaoDto"];
+                };
+            };
+        };
+    };
+    AdocoesController_acompanhamentos: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                adocaoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcompanhamentoDto"][];
+                };
+            };
+        };
+    };
+    AdocoesController_registrarAcompanhamento: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                adocaoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NovoAcompanhamentoDto"];
+            };
+        };
+        responses: {
+            /** @description A lista atualizada */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcompanhamentoDto"][];
+                };
+            };
+        };
+    };
     AdocoesController_devolver: {
         parameters: {
             query?: never;
@@ -3406,7 +3541,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                secao: "animais" | "vacinacao" | "castracao" | "adocoes" | "movimentacoes";
+                secao: "animais" | "vacinacao" | "castracao" | "adocoes" | "movimentacoes" | "social";
             };
             cookie?: never;
         };
@@ -3436,7 +3571,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                secao: "animais" | "vacinacao" | "castracao" | "adocoes" | "movimentacoes";
+                secao: "animais" | "vacinacao" | "castracao" | "adocoes" | "movimentacoes" | "social";
             };
             cookie?: never;
         };
@@ -3458,7 +3593,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                secao: "animais" | "vacinacao" | "castracao" | "adocoes" | "movimentacoes";
+                secao: "animais" | "vacinacao" | "castracao" | "adocoes" | "movimentacoes" | "social";
             };
             cookie?: never;
         };

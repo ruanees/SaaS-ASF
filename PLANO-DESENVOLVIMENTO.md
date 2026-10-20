@@ -994,9 +994,11 @@ Funcionalidade: F-20.
 - [ ] Varredura no navegador: todas as rotas nos dois temas, no celular e no computador, com os três estados de cada tela
 - [ ] Acessibilidade: contraste, navegação por teclado, rótulos de formulário
 - [ ] Teste em celular de entrada de linha com rede 3G simulada: lista e ficha abrem em menos de 3 s
-- [ ] Domínio de produção e URL de retorno da recuperação de senha cadastrada no Supabase
-- [ ] Migração dos dados que a associação já tem (planilha ou papel), se houver: script com conferência de contagem antes e depois
-- [ ] Treinamento da equipe e manual curto de uso
+- [ ] Domínio de produção e URL de retorno da recuperação de senha cadastrada no Supabase (a associação quer domínio próprio; o registro ainda não foi pago, então segue o endereço atual)
+- [x] Migração dos dados que a associação já tem (planilha ou papel), se houver: script com conferência de contagem antes e depois — **não se aplica** (resposta de 20/10/2026: não há planilha; os animais atuais são cadastrados pela tela)
+- [ ] Treinamento da equipe e manual curto de uso (manual pronto em `docs/manual/`; falta o treinamento)
+
+**Respostas da associação (20/10/2026, ADR 0013):** vacinas de gato (V4, V5 e antirrábica) no catálogo; CPF, RG e profissão no contato (lar temporário e termo de adoção); raça e pelagem do animal; termo de adoção gerado pelo sistema a partir do modelo deles; acompanhamento pós-adoção até o fim da vida do animal, com o prazo de guarda contando depois; bairro ou rua obrigatório na devolução à comunidade; indicadores confirmados; relatório social para o Sua Nota Tem Valor (SEFAZ-CE). Ainda faltam: encarregado de dados, dados da associação (razão social, CNPJ, endereço), revisão jurídica, dois administradores e o e-mail de contato.
 
 **Pronto quando:** a Associação São Francisco usa o sistema no dia a dia por duas semanas, sem planilha paralela.
 

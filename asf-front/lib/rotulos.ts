@@ -127,6 +127,13 @@ export const BASE_SUGERIDA: Record<Vinculo, BaseLegal> = {
 // até a associação indicar o encarregado e revisar o texto (ADR 0010).
 export const AVISO_PRIVACIDADE =
   'Os dados servem só para acompanhar a adoção ou o lar temporário e falar com a pessoa sobre o animal. ' +
-  'Só a coordenação da associação vê telefone, e-mail e endereço. Guardamos por 60 meses depois do fim do ' +
-  'vínculo e depois anonimizamos. Para ver, corrigir ou pedir a anonimização dos dados, a pessoa fala com a ' +
+  'Só a coordenação da associação vê telefone, e-mail, endereço e documentos. Guardamos enquanto a associação ' +
+  'acompanha o animal e por 60 meses depois, e então anonimizamos. Para ver, corrigir ou pedir a anonimização dos dados, a pessoa fala com a ' +
   'coordenação da associação.';
+
+export const FORMA_ACOMPANHAMENTO: Record<Esquemas['AcompanhamentoDto']['forma'], string> = {
+  visita: 'Visita',
+  whatsapp: 'WhatsApp (fotos e vídeos)',
+  ligacao: 'Ligação',
+  outro: 'Outro',
+};

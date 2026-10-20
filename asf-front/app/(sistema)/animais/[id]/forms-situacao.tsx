@@ -118,11 +118,51 @@ export function FormsSituacao({
     return <p className="ajuda">Óbito é a situação final. O histórico continua disponível abaixo.</p>;
   }
 
+  const blocoObito = (
+    <div className="pilha" data-e="2">
+      <div>
+        <button type="button" className="botao" data-tipo="perigo" onClick={() => dialogoObito.current?.showModal()}>
+          Registrar óbito
+        </button>
+      </div>
+      <dialog ref={dialogoObito} className="cartao dialogo">
+        <form action={enviarObito} className="pilha">
+          <h2>Registrar óbito</h2>
+          <p>Óbito é a situação final: depois dele o animal não pode ser movido.</p>
+          <Mensagem estado={obito} />
+          <input type="hidden" name="situacao" value="obito" />
+          <div className="campo">
+            <label htmlFor="o-data">Data do óbito</label>
+            <input id="o-data" name="data" type="date" max={hoje} min={animal.data_entrada} defaultValue={hoje} required />
+          </div>
+          <div className="campo">
+            <label htmlFor="o-motivo">Causa ou observação</label>
+            <input id="o-motivo" name="motivo" maxLength={500} />
+          </div>
+          <div className="linha">
+            <button className="botao" data-tipo="perigo" type="submit" disabled={registrandoObito}>
+              {registrandoObito ? 'Registrando…' : 'Registrar óbito'}
+            </button>
+            <button type="button" className="botao" data-tipo="texto" onClick={() => dialogoObito.current?.close()}>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </dialog>
+    </div>
+  );
+
+  // Adotado: volta pela devolução (aba Adoção); o óbito dele se registra aqui,
+  // porque o acompanhamento vai até o fim da vida do animal.
   if (animal.situacao === 'adotado') {
     return (
-      <p className="ajuda">
-        Animal adotado. Se voltar, registre a devolução na aba <Link href={`/animais/${animal.id}?aba=adocao`}>Adoção</Link>.
-      </p>
+      <div className="pilha">
+        <p className="ajuda">
+          Animal adotado. Se voltar, registre a devolução na aba <Link href={`/animais/${animal.id}?aba=adocao`}>Adoção</Link>.
+          Se morrer com o adotante, registre o óbito aqui.
+        </p>
+        {blocoObito}
+      </div>
     );
   }
 
@@ -240,8 +280,12 @@ export function FormsSituacao({
         )}
         <div className="grade" data-n="2">
           <div className="campo">
-            <label htmlFor="s-destino">{destinoSaida === 'transferido' ? 'Entidade' : 'Bairro ou local (opcional)'}</label>
-            <input id="s-destino" name="destino" maxLength={200} required={destinoSaida === 'transferido'} />
+            <label htmlFor="s-destino">{destinoSaida === 'transferido' ? 'Entidade' : 'Bairro ou rua onde foi solto'}</label>
+            <input id="s-destino" name="destino" maxLength={200} required list={destinoSaida === 'transferido' ? 's-entidades' : undefined} />
+            <datalist id="s-entidades">
+              <option value="Ibama" />
+              <option value="Instituto Pró-Silvestre" />
+            </datalist>
           </div>
           <div className="campo">
             <label htmlFor="s-data">Data</label>
@@ -259,37 +303,7 @@ export function FormsSituacao({
         </div>
       </form>
 
-      <div className="pilha" data-e="2">
-        <div>
-          <button type="button" className="botao" data-tipo="perigo" onClick={() => dialogoObito.current?.showModal()}>
-            Registrar óbito
-          </button>
-        </div>
-        <dialog ref={dialogoObito} className="cartao dialogo">
-          <form action={enviarObito} className="pilha">
-            <h2>Registrar óbito</h2>
-            <p>Óbito é a situação final: depois dele o animal não pode ser movido.</p>
-            <Mensagem estado={obito} />
-            <input type="hidden" name="situacao" value="obito" />
-            <div className="campo">
-              <label htmlFor="o-data">Data do óbito</label>
-              <input id="o-data" name="data" type="date" max={hoje} min={animal.data_entrada} defaultValue={hoje} required />
-            </div>
-            <div className="campo">
-              <label htmlFor="o-motivo">Causa ou observação</label>
-              <input id="o-motivo" name="motivo" maxLength={500} />
-            </div>
-            <div className="linha">
-              <button className="botao" data-tipo="perigo" type="submit" disabled={registrandoObito}>
-                {registrandoObito ? 'Registrando…' : 'Registrar óbito'}
-              </button>
-              <button type="button" className="botao" data-tipo="texto" onClick={() => dialogoObito.current?.close()}>
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </dialog>
-      </div>
+      {blocoObito}
     </div>
   );
 }

@@ -9,6 +9,7 @@ export const SECOES = [
   'castracao',
   'adocoes',
   'movimentacoes',
+  'social',
 ] as const;
 export type Secao = (typeof SECOES)[number];
 
